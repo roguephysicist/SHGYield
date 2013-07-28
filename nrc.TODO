@@ -1,1 +1,10 @@
- ☐ 
+What this program needs to do:
+ ☐ Read appropriate matrix element tensor files
+ ☐ Convert them into literal matrices to be operated on
+ ☐ Applies the different math functions on each necessary element
+ ☐ Returns formatted files that can be ploted
+
+ It would be nice:
+ ☐ Include all the rotation stuff into the script, even though that's done at a different stage in the calculation
+ ☐ Automatically create gnuplot scripts, or
+ ☐ Actually connect with gnuplot and plot automagically
