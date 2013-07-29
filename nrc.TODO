@@ -4,7 +4,19 @@ What this program needs to do:
  ☐ Applies the different math functions on each necessary element
  ☐ Returns formatted files that can be ploted
 
- It would be nice:
+A few thoughts on how to accomplish this:
+ ☐ Use numpy (installed) and scipy (not installed)
+ ☐ Hard code angles theta and phi into program (or not?)
+ ☐ Separate all math into functions (see below)
+ ☐ Hard code nonzero components, or read them from file
+
+Separate all the math into 10 different functions:
+  ☐ 4 for fresnel factors (with omega as a variable you can also get T = t(2omega) from the same functions)
+  ☐ 4 for r
+  ☐ 1 for constants in R
+  ☐ 1 for R
+
+ Optional, but nice:
  ☐ Include all the rotation stuff into the script, even though that's done at a different stage in the calculation
  ☐ Automatically create gnuplot scripts, or
  ☐ Actually connect with gnuplot and plot automagically
