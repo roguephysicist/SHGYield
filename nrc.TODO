@@ -10,11 +10,11 @@ A few thoughts on how to accomplish this:
  ☐ Separate all math into functions (see below)
  ☐ Hard code nonzero components, or read them from file
 
-Separate all the math into 10 different functions:
-  ☐ 4 for fresnel factors (with omega as a variable you can also get T = t(2omega) from the same functions)
+Separate all the math into different functions:
+  ✔ 1 for fresnel factors (with omega as a variable you can also get T = t(2omega) from the same functions) @done (13-07-30 16:21)
   ☐ 4 for r
-  ☐ 1 for constants in R
-  ☐ 1 for R
+  ✔ 1 for constants in R @done (13-07-30 16:21)
+  ✔ 1 for R @done (13-07-30 16:21)
 
  Optional, but nice:
  ☐ Include all the rotation stuff into the script, even though that's done at a different stage in the calculation
