@@ -1,20 +1,12 @@
 What this program needs to do:
- ☐ Read appropriate matrix element tensor files
- ☐ Loop through values
- ☐ Applies the different math functions on each necessary element
+ ✔ Read appropriate matrix element tensor files @done (13-07-31 13:17)
+ ✔ Loop through values @done (13-07-31 13:17)
+ ✔ Applies the different math functions on each necessary element @done (13-07-31 13:17)
  ☐ Returns formatted files that can be ploted
 
-A few thoughts on how to accomplish this:
- ✔ Use scipy (may need to be installed) @done (13-07-30 20:56)
- ✔ Hard code angles theta and phi into program (or not?) @done (13-07-30 20:56)
- ✔ Separate all math into functions (see below) @done (13-07-30 20:56)
- ✔ Hard code nonzero components, or read them from file @done (13-07-30 20:56)
-
-Separate all the math into different functions:
-  ✔ 1 for fresnel factors (with omega as a variable you can also get T = t(2omega) from the same functions) @done (13-07-30 16:21)
-  ✔ 4 for r @done (13-07-30 20:56)
-  ✔ 1 for constants in R @done (13-07-30 16:21)
-  ✔ 1 for R @done (13-07-30 16:21)
+Current:
+ ☐ Complete output_stage to combine lists (energy and R) into final csv file
+ ☐ Optimize program, possibly add more definitions to clean up
 
  Optional, but nice:
  ☐ Include all the rotation stuff into the script, even though that's done at a different stage in the calculation
