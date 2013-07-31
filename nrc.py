@@ -1,11 +1,12 @@
 import math
+import csv
 from scipy import constants # physical constants (Scipy will need to be installed on medusa)
 
 ## User Input
 # Files
-file_path = 0 # full path to 'res' folder for desired structure
-kpts = 0 # kpoints of the case you want to use
-ecut = 0 # ecut of the case you want to use
+file_path = "/Users/sma/Downloads/res/" # full path to 'res' folder for desired structure
+kpts = 514 # kpoints of the case you want to use
+ecut = 25 # ecut of the case you want to use
 # Polarization
 entry = "p" # 's' or 'p'
 exit = "p" # 's' or 'p'
@@ -13,34 +14,37 @@ exit = "p" # 's' or 'p'
 theta_deg = 65 # angle of incidence in degrees
 phi_deg = 30 # azimuthal angle
 
-## Constants
-pi = constants.pi
-e = constants.e
-c = constants.c
-n_0 = constants.N_A # electronic density - for testing purposes
-
-## Responses
-chi_3perp = 0 # zzz
-chi_perp2par = 0 # zxx
-chi_2parperp = 0 # xxz
-chi_3par = 0 # xxx
-
 ## Housekeeping
+n_0 = constants.N_A # electronic density - for testing purposes
 theta = math.radians(theta_deg)
 phi = math.radians(phi_deg)
-omega = 2 # for testing purposes
-epsilon = 1 # for testing purposes
+omega = 1
+epsilon = 1
+
 
 ## Functions
+def csv_import(file):
+	with open(file, 'rb') as csvfile:
+			reader = csv.reader(csvfile, delimiter=' ', quoting=csv.QUOTE_NONE, skipinitialspace=True)
+			for row in reader:
+				comp_list = row[3]
+			return comp_list
+
+def chi(component):
+		path = file_path + "shgC.sm_" + component + "_" + str(kpts) + "_half-slab_" + str(ecut) + "-nospin_scissor_0_Nc_29"
+		chi = csv_import(path)
+		#chi = 1
+		return chi
+
 def rif_constants():
-	const = (32 * pi ** 3 * omega ** 2) / (n_0 * e ** 2 * c ** 3 * math.cos(theta) ** 2)
+	const = (32 * constants.pi ** 3 * omega ** 2) / (n_0 * constants.e ** 2 * constants.c ** 3 * math.cos(theta) ** 2)
 	return const
 
 def wave_vector(layer):
 	if layer == "s":
-		k = (omega / c) * math.sqrt(epsilon - math.sin(theta) ** 2)
+		k = (omega / constants.c) * math.sqrt(epsilon - math.sin(theta) ** 2)
 	elif layer == "b":
-		k = (omega / c) * math.sqrt(epsilon - math.sin(theta) ** 2)
+		k = (omega / constants.c) * math.sqrt(epsilon - math.sin(theta) ** 2)
 	return k
 
 def fresnel(polarization, material):
@@ -54,19 +58,20 @@ def fresnel(polarization, material):
 		t = (2 * wave_vector("s")) / (epsilon * wave_vector("s") + epsilon * wave_vector("b"))
 	return t
 
-def r_factors():
-	if entry == "p" and exit == "p":
-		r = math.sin(theta) * epsilon * (((math.sin(theta) ** 2) * (epsilon ** 2) * chi_3perp) + (wave_vector("b") ** 2) * (epsilon ** 2) * chi_perp2par) + epsilon * epsilon * wave_vector("b") * wave_vector("b") * (-2 * math.sin(theta) * epsilon * chi_2parperp + wave_vector("b") * epsilon * chi_3par * math.cos(3 * phi))
-	elif entry == "s" and exit == "p":
-		r = math.sin(theta) * epsilon * chi_perp2par - wave_vector("b") * epsilon * chi_3par * math.cos(3 * phi)
-	elif entry == "p" and exit == "s":
-		r = -(wave_vector("b") ** 2) * (epsilon ** 2) * chi_3par * math.sin(3 * phi)
-	elif entry == "s" and exit == "s":
-		r = chi_3par * math.sin(3 * phi)
+def r_factors(p_entry, p_exit):
+	if p_entry == "p" and p_exit == "p":
+		r = math.sin(theta) * epsilon * (((math.sin(theta) ** 2) * (epsilon ** 2) * chi("zzz")) + (wave_vector("b") ** 2) * (epsilon ** 2) * chi("zxx")) + epsilon * epsilon * wave_vector("b") * wave_vector("b") * (-2 * math.sin(theta) * epsilon * chi("xxz") + wave_vector("b") * epsilon * chi("xxx") * math.cos(3 * phi))
+	elif p_entry == "s" and p_exit == "p":
+		r = math.sin(theta) * epsilon * chi("zxx") - wave_vector("b") * epsilon * chi("xxx") * math.cos(3 * phi)
+	elif p_entry == "p" and p_exit == "s":
+		r = -(wave_vector("b") ** 2) * (epsilon ** 2) * chi("xxx") * math.sin(3 * phi)
+	elif p_entry == "s" and p_exit == "s":
+		r = chi("xxx") * math.sin(3 * phi)
 	return r
 
-def rif_all():
- 	Rif = rif_constants() * math.fabs(fresnel(exit, "vs") * fresnel(exit, "sb") * ((fresnel(entry, "vs") * fresnel(entry, "sb")) ** 2) * r_factors()) ** 2
- 	return Rif
+def nonlinear_reflection_coefficient(polar_in, polar_out):
+	Rif = rif_constants() * math.fabs(fresnel(polar_out, "vs") * fresnel(polar_out, "sb") * ((fresnel(polar_in, "vs") * fresnel(polar_in, "sb")) ** 2) * r_factors(polar_in, polar_out)) ** 2
+	return Rif
 
-print rif_all()
+# print nonlinear_reflection_coefficient(entry, exit)
+# print chi("zzz")
