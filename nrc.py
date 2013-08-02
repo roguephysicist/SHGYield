@@ -33,7 +33,8 @@ def nonlinear_reflection_coefficient(polar_in, polar_out):
 	for omega, epsilon, zzz, zxx, xxz, xxx in izip(omeg, epsi, chi_zzz, chi_zxx, chi_xxz, chi_xxx):
 		R = rif_constants(float(omega)) * math.fabs(fresnel(polar_out, "vs", float(omega), float(epsilon)) * fresnel(polar_out, "sb", float(omega), float(epsilon)) * ((fresnel(polar_in, "vs", float(omega), float(epsilon)) * fresnel(polar_in, "sb", float(omega), float(epsilon))) ** 2) * r_factors(polar_in, polar_out, float(zzz), float(zxx), float(xxz), float(xxx), float(omega), float(epsilon))) ** 2
 		nrc.append(R)
-	return nrc
+	omeg.extend(nrc)
+	return omeg
 
 def values(component):
 		if component == "linear":
@@ -61,7 +62,7 @@ def rif_constants(frequency):
 	const = (32 * 3.14159265359 ** 3 * frequency ** 2) / (n_0 * 1.602176565e-19 ** 2 * 299792458.0 ** 3 * math.cos(theta) ** 2)
 	return const
 
-def fresnel(polarization, material, frequency, linear): # REMOVE PLUS ONE FROM LINE 69 ASAP)
+def fresnel(polarization, material, frequency, linear): # REMOVE PLUS ONE FROM LINE 69 ASAP
 	if polarization == "s" and material == "vs":
 		t = (2 * math.cos(theta)) / (math.cos(theta) + wave_vector("s", frequency, linear))
 	elif polarization == "s" and material == "sb":
@@ -90,10 +91,11 @@ def wave_vector(layer, frequency, linear): # the absolute value thing is just te
 		k = (frequency / 299792458.0) * math.sqrt(math.fabs(linear - math.sin(theta) ** 2))
 	return k
 
-def output_stage(energies, results, outfile):
+def output_stage(energies, outfile):
+	results = nonlinear_reflection_coefficient(entry, exit)
  	with open(outfile, 'wb') as csvfile:
  		output = csv.writer(csvfile)
  		for row in results:
  			output.writerow(row)
 
-print type(nonlinear_reflection_coefficient(entry, exit))
+print nonlinear_reflection_coefficient(entry, exit)
