@@ -6,9 +6,13 @@ What this program needs to do:
 
 Current:
  ☐ Complete output_stage to combine lists (energy and R) into final csv file
- ☐ Optimize program, possibly add more definitions to clean up
+ ☐ Optimize program, possibly add more definitions to clean up ton of variables
+ ☐ Energies go from 1.5 to 2.5 at 1w.
+ ☐ Troubleshoot lists with strings and floats
+ ☐ Add in 2w dependencies
 
- Optional, but nice:
+Future:
  ☐ Include all the rotation stuff into the script, even though that's done at a different stage in the calculation
+ ☐ Integrate "splines" or some type of interpolation
  ☐ Automatically create gnuplot scripts, or
  ☐ Actually connect with gnuplot and plot automagically
