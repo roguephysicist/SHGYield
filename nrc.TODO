@@ -2,17 +2,18 @@ What this program needs to do:
  ✔ Read appropriate matrix element tensor files @done (13-07-31 13:17)
  ✔ Loop through values @done (13-07-31 13:17)
  ✔ Applies the different math functions on each necessary element @done (13-07-31 13:17)
- ☐ Returns formatted files that can be ploted
+ ✔ Returns formatted files that can be ploted @done (13-08-04 11:18)
 
 Current:
- ☐ Complete output_stage to combine lists (energy and R) into final csv file
+ ✔ Complete output_stage to combine lists (energy and R) into final csv file @done (13-08-04 11:18)
  ☐ Optimize program, possibly add more definitions to clean up ton of variables
  ☐ Energies go from 1.5 to 2.5 at 1w.
  ☐ Troubleshoot lists with strings and floats
  ☐ Add in 2w dependencies
+ ☐ Add function to go from Chi1 to epsilon
 
-Future:
+Optional:
  ☐ Include all the rotation stuff into the script, even though that's done at a different stage in the calculation
+ ☐ Make a graphical interface
  ☐ Integrate "splines" or some type of interpolation
- ☐ Automatically create gnuplot scripts, or
- ☐ Actually connect with gnuplot and plot automagically
+ ☐ Actually create plots in addition to saving the data files.

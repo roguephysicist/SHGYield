@@ -1,12 +1,13 @@
 import math
 import csv
 from itertools import izip
+from scipy import constants
 
 ## User Input
 # Input
-file_path = "/Users/sma/Downloads/res/" # full path to 'res' folder for desired structure
+file_path = "./sample_data/" # full path to 'res' folder for desired structure
 kpts = 514 # kpoints of the case you want to use
-ecut = 25 # ecut of the case you want to use
+ecut = 10 # ecut of the case you want to use
 # Polarization
 entry = "s" # 's' or 'p'
 exit = "s" # 's' or 'p'
@@ -15,22 +16,25 @@ theta_deg = 65 # angle of incidence in degrees
 phi_deg = 30 # azimuthal angle
 
 ## Housekeeping
-n_0 = 6.02214129e+23 # electronic density - for testing purposes
+n_0 = constants.N_A # electronic density - for testing purposes
 theta = math.radians(theta_deg)
 phi = math.radians(phi_deg)
 
 ## Functions
 def nonlinear_reflection_coefficient(polar_in, polar_out):
-	nrc = []
 	energy = [row[0] for row in values("epsilon")]
-	epsilon = [row[1] for row in values("epsilon")]
-	zzz = [row[0] for row in values("zzz")]
-	zxx = [row[0] for row in values("zxx")]
-	xxz = [row[0] for row in values("xxz")]
-	xxx = [row[0] for row in values("xxx")]
+	epsilon = [float(row[1]) for row in values("epsilon")]
+	zzz = [float(row[0]) for row in values("zzz")]
+	zxx = [float(row[0]) for row in values("zxx")]
+	xxz = [float(row[0]) for row in values("xxz")]
+	xxx = [float(row[0]) for row in values("xxx")]
+	nrc = [[] for l in range(len(energy))]
+	i = 0
 	for energy, epsilon, zzz, zxx, xxz, xxx in izip(energy, epsilon, zzz, zxx, xxz, xxx):
-		R = rif_constants(float(energy)) * math.fabs(fresnel(polar_out, "vs", float(energy), float(epsilon)) * fresnel(polar_out, "sb", float(energy), float(epsilon)) * ((fresnel(polar_in, "vs", float(energy), float(epsilon)) * fresnel(polar_in, "sb", float(energy), float(epsilon))) ** 2) * r_factors(polar_in, polar_out, float(zzz), float(zxx), float(xxz), float(xxx), float(energy), float(epsilon))) ** 2
-		nrc.append(str(R))
+		R = rif_constants(float(energy)) * math.fabs(fresnel(polar_out, "vs", float(energy), epsilon) * fresnel(polar_out, "sb", float(energy), epsilon) * ((fresnel(polar_in, "vs", float(energy), epsilon) * fresnel(polar_in, "sb", float(energy), epsilon)) ** 2) * r_factors(polar_in, polar_out, zzz, zxx, xxz, xxx, float(energy), epsilon)) ** 2
+		nrc[i].append(energy)
+		nrc[i].append(R)
+		i = i + 1
 	return nrc
 
 def values(component):
@@ -52,7 +56,7 @@ def input_stage(file, type):
 	return comp_list
 
 def rif_constants(energy):
-	const = (32 * 3.14159265359 ** 3 * energy ** 2) / (n_0 * 1.602176565e-19 ** 2 * 299792458.0 ** 3 * math.cos(theta) ** 2)
+	const = (32 * constants.pi ** 3 * energy ** 2) / (n_0 * constants.e ** 2 * constants.c ** 3 * math.cos(theta) ** 2)
 	return const
 
 def fresnel(polarization, material, energy, epsilon): # REMOVE PLUS ONE FROM LINE 69 ASAP
@@ -78,26 +82,13 @@ def r_factors(polar_in, polar_out, triperp, perpbipar, biparperp, tripar, energy
 	return r
 
 def wave_vector(energy, epsilon): # the absolute value thing is just temporary
-	k = (energy / 299792458.0) * math.sqrt(math.fabs(epsilon - math.sin(theta) ** 2))
+	k = (energy / constants.c) * math.sqrt(math.fabs(epsilon - math.sin(theta) ** 2))
 	return k
 
 def output_stage():
-	energy = [row[0] for row in values("epsilon")]
-	#print omega
-	print nonlinear_reflection_coefficient(entry, exit)
-	#out_file = file_path + "R" + entry + exit + "_" + str(kpts) + "_" + str(ecut)
-	#omega = [row[0] for row in values("epsilon")]
-	#results = nonlinear_reflection_coefficient(entry, exit)
-	#newdata = []
-	#with open(out_file, 'wb') as csvfile:
- 	#	output = csv.writer(csvfile)
-	#	for c1, c2 in zip(omega, results):
-	#		c = "%s  %s" % (c1, c2)
-	#		newdata.append(c)
-	#	print newdata
- 	#	#for row in new_data:
- 	#	#	output.writerow(row)
+	out_file = file_path + "R" + entry + exit + "_" + str(kpts) + "_" + str(ecut)
+	with open(out_file, 'wb') as csvfile:
+ 		output = csv.writer(csvfile, delimiter=' ')
+ 		output.writerows(nonlinear_reflection_coefficient(entry, exit))
 
-#print type(nonlinear_reflection_coefficient(entry, exit))
 output_stage()
-
