@@ -6,10 +6,11 @@ What this program needs to do:
 
 Current:
  ✔ Complete output_stage to combine lists (energy and R) into final csv file @done (13-08-04 11:18)
- ☐ Optimize program, possibly add more definitions to clean up ton of variables
- ☐ Energies go from 1.5 to 2.5 at 1w.
- ☐ Troubleshoot lists with strings and floats
- ☐ Add in 2w dependencies
+ ✔ Optimize program, possibly add more definitions to clean up ton of variables @done (13-08-04 12:40)
+ ✔ Troubleshoot lists with strings and floats @done (13-08-04 12:41)
+ ☐ Add in 2w dependencies for epsilon and wave_vector
+ ☐ Energies go from 1.25 to 2.5 at 1w
+ ☐ Should convert all files into a list of lists or a matrix, so we can reference exact values for 1w or 2w
  ☐ Add function to go from Chi1 to epsilon
 
 Optional:
