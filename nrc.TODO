@@ -10,8 +10,10 @@ Current:
  ✔ Troubleshoot lists with strings and floats @done (13-08-04 12:41)
  ☐ Add in 2w dependencies for epsilon and wave_vector
  ☐ Energies go from 1.25 to 2.5 at 1w
- ☐ Should convert all files into a list of lists, or tuples, or matrices, so we can reference exact values for 1w or 2w
+ ☐ Use AWK to make singular file with all necessary data which we
+ ☐ Should convert into a list of lists, or tuples, or matrices, so we can reference exact values for 1w or 2w
  ☐ Add function to go from Chi1 to epsilon
+ ☐ write final output to same file
 
 Optional:
  ☐ Include all the rotation stuff into the script, even though that's done at a different stage in the calculation

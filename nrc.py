@@ -1,6 +1,7 @@
 import math
 import csv
 from itertools import izip
+import numpy as np
 from scipy import constants
 
 ## User Input
@@ -37,23 +38,22 @@ def nonlinear_reflection_coefficient(polar_in, polar_out):
 		i = i + 1
 	return nrc
 
+def matrix_tests():
+	matrix = np.array(values("epsilon"), float)
+	return matrix
+
 def values(component):
 	if component == "epsilon":
 		path = file_path + "chi1.sm_xx_" + str(kpts) + "_" + str(ecut) + "-nospin_scissor_0_Nc_29"
-		value = input_stage(path, "epsilon")
-	else:
+		with open(path, 'rb') as csvfile:
+			data = csv.reader(csvfile, delimiter=' ', skipinitialspace=True)
+			value = [[row[0], row[1]] for row in data]
+	elif component == "zzz" or component == "zxx" or component == "xxz" or component == "xxx":
 		path = file_path + "shgC.sm_" + component + "_" + str(kpts) + "_half-slab_" + str(ecut) + "-nospin_scissor_0_Nc_29"
-		value = input_stage(path, "chi")
+		with open(path, 'rb') as csvfile:
+			data = csv.reader(csvfile, delimiter=' ', skipinitialspace=True)
+			value = [[row[0], row[3]] for row in data]
 	return value
-
-def input_stage(file, type):
-	with open(file, 'rb') as csvfile:
-		data = csv.reader(csvfile, delimiter=' ', skipinitialspace=True)
-		if type == "epsilon":
-			comp_list=[[row[0], row[2]] for row in data]
-		elif type == "chi":
-			comp_list=[[row[3]] for row in data]
-	return comp_list
 
 def rif_constants(energy):
 	const = (32 * constants.pi ** 3 * energy ** 2) / (n_0 * constants.e ** 2 * constants.c ** 3 * math.cos(theta) ** 2)
@@ -92,3 +92,7 @@ def output_stage():
  		output.writerows(nonlinear_reflection_coefficient(entry, exit))
 
 output_stage()
+#print type(matrix_tests())
+#print type(values("zzz")[0][0])
+
+
