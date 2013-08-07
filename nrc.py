@@ -1,8 +1,8 @@
 import math
 import csv
-from itertools import izip
 import numpy as np
 from scipy import constants
+from itertools import izip
 
 ## User Input
 # Input
@@ -23,27 +23,36 @@ phi = math.radians(phi_deg)
 
 ## Functions
 def nonlinear_reflection_coefficient(polar_in, polar_out):
-	energy = [row[0] for row in values("epsilon")]
-	epsilon = [float(row[1]) for row in values("epsilon")]
-	zzz = [float(row[0]) for row in values("zzz")]
-	zxx = [float(row[0]) for row in values("zxx")]
-	xxz = [float(row[0]) for row in values("xxz")]
-	xxx = [float(row[0]) for row in values("xxx")]
+	energy = [row[0] for row in values("chi1")]
+	chi1 = [float(row[1]) for row in values("chi1")]
+	zzz = [float(row[1]) for row in values("zzz")]
+	zxx = [float(row[1]) for row in values("zxx")]
+	xxz = [float(row[1]) for row in values("xxz")]
+	xxx = [float(row[1]) for row in values("xxx")]
 	nrc = [[] for l in range(len(energy))]
 	i = 0
-	for energy, epsilon, zzz, zxx, xxz, xxx in izip(energy, epsilon, zzz, zxx, xxz, xxx):
-		R = rif_constants(float(energy)) * math.fabs(fresnel(polar_out, "vs", float(energy), epsilon) * fresnel(polar_out, "sb", float(energy), epsilon) * ((fresnel(polar_in, "vs", float(energy), epsilon) * fresnel(polar_in, "sb", float(energy), epsilon)) ** 2) * r_factors(polar_in, polar_out, zzz, zxx, xxz, xxx, float(energy), epsilon)) ** 2
+	for energy, chi1, zzz, zxx, xxz, xxx in izip(energy, chi1, zzz, zxx, xxz, xxx):
+		R = rif_constants(float(energy)) * math.fabs(fresnel(polar_out, "vs", float(energy), chi1) * fresnel(polar_out, "sb", float(energy), chi1) * ((fresnel(polar_in, "vs", float(energy), chi1) * fresnel(polar_in, "sb", float(energy), chi1)) ** 2) * r_factors(polar_in, polar_out, zzz, zxx, xxz, xxx, float(energy), chi1)) ** 2
 		nrc[i].append(energy)
 		nrc[i].append(R)
 		i = i + 1
 	return nrc
 
-def matrix_tests():
-	matrix = np.array(values("epsilon"), float)
-	return matrix
+def matrix(f):
+	if type(f) == types.StringType:
+		fo = open(f, 'r')
+		matrix = load_matrix_from_file(fo)
+		fo.close()
+		return matrix
+	elif type(f) == types.FileType:
+		file_content = f.read().strip()
+		file_content = file_content.replace('\r\n', ';')
+		file_content = file_content.replace('\n', ';')
+		file_content = file_content.replace('\r', ';')
+	return numpy.matrix(file_content)
 
 def values(component):
-	if component == "epsilon":
+	if component == "chi1":
 		path = file_path + "chi1.sm_xx_" + str(kpts) + "_" + str(ecut) + "-nospin_scissor_0_Nc_29"
 		with open(path, 'rb') as csvfile:
 			data = csv.reader(csvfile, delimiter=' ', skipinitialspace=True)
@@ -59,30 +68,34 @@ def rif_constants(energy):
 	const = (32 * constants.pi ** 3 * energy ** 2) / (n_0 * constants.e ** 2 * constants.c ** 3 * math.cos(theta) ** 2)
 	return const
 
-def fresnel(polarization, material, energy, epsilon): # REMOVE PLUS ONE FROM LINE 69 ASAP
+def epsilon(chi1):
+	epsilon = 1 + (4 * constants.pi * chi1)
+	return epsilon
+
+def fresnel(polarization, material, energy, chi1): # REMOVE PLUS ONE FROM LINE 69 ASAP
 	if polarization == "s" and material == "vs":
-		t = (2 * math.cos(theta)) / (math.cos(theta) + wave_vector(energy, epsilon))
+		t = (2 * math.cos(theta)) / (math.cos(theta) + wave_vector(energy, chi1))
 	elif polarization == "s" and material == "sb":
-		t = (2 * wave_vector(energy, epsilon)) / (1 + wave_vector(energy, epsilon) + wave_vector(energy, epsilon))
+		t = (2 * wave_vector(energy, chi1)) / (1 + wave_vector(energy, chi1) + wave_vector(energy, chi1))
 	elif polarization == "p" and material == "vs":
-		t = (2 * math.cos(theta)) / (epsilon * math.cos(theta) + wave_vector(energy, epsilon))
+		t = (2 * math.cos(theta)) / (epsilon(chi1) * math.cos(theta) + wave_vector(energy, chi1))
 	elif polarization == "p" and material == "sb":
-		t = (2 * wave_vector(energy, epsilon)) / (epsilon * wave_vector(energy, epsilon) + epsilon * wave_vector(energy, epsilon))
+		t = (2 * wave_vector(energy, chi1)) / (epsilon(chi1) * wave_vector(energy, chi1) + epsilon(chi1) * wave_vector(energy, chi1))
 	return t
 
-def r_factors(polar_in, polar_out, triperp, perpbipar, biparperp, tripar, energy, epsilon):
+def r_factors(polar_in, polar_out, triperp, perpbipar, biparperp, tripar, energy, chi1):
 	if polar_in == "p" and polar_out == "p":
-		r = math.sin(theta) * epsilon * (((math.sin(theta) ** 2) * (epsilon ** 2) * triperp) + (wave_vector(energy, epsilon) ** 2) * (epsilon ** 2) * perpbipar) + epsilon * epsilon * wave_vector(energy, epsilon) * wave_vector(energy, epsilon) * (-2 * math.sin(theta) * epsilon * biparperp + wave_vector(energy, epsilon) * epsilon * tripar * math.cos(3 * phi))
+		r = math.sin(theta) * epsilon(chi1) * (((math.sin(theta) ** 2) * (epsilon(chi1) ** 2) * triperp) + (wave_vector(energy, chi1) ** 2) * (epsilon(chi1) ** 2) * perpbipar) + epsilon(chi1) * epsilon(chi1) * wave_vector(energy, chi1) * wave_vector(energy, chi1) * (-2 * math.sin(theta) * epsilon(chi1) * biparperp + wave_vector(energy, chi1) * epsilon(chi1) * tripar * math.cos(3 * phi))
 	elif polar_in == "s" and polar_out == "p":
-		r = math.sin(theta) * epsilon * perpbipar - wave_vector(energy, epsilon) * epsilon * tripar * math.cos(3 * phi)
+		r = math.sin(theta) * epsilon(chi1) * perpbipar - wave_vector(energy, chi1) * epsilon(chi1) * tripar * math.cos(3 * phi)
 	elif polar_in == "p" and polar_out == "s":
-		r = -(wave_vector(energy, epsilon) ** 2) * (epsilon ** 2) * tripar * math.sin(3 * phi)
+		r = -(wave_vector(energy, chi1) ** 2) * (epsilon(chi1) ** 2) * tripar * math.sin(3 * phi)
 	elif polar_in == "s" and polar_out == "s":
 		r = tripar * math.sin(3 * phi)
 	return r
 
-def wave_vector(energy, epsilon): # the absolute value thing is just temporary
-	k = (energy / constants.c) * math.sqrt(math.fabs(epsilon - math.sin(theta) ** 2))
+def wave_vector(energy, chi1): # the absolute value thing is just temporary
+	k = (energy / constants.c) * math.sqrt(math.fabs(epsilon(chi1) - math.sin(theta) ** 2))
 	return k
 
 def output_stage():
