@@ -7,17 +7,17 @@ from itertools import izip
 ## User Input
 # Input
 file_path = "./sample_data/" # full path to 'res' folder for desired structure
-kpts = 514 # kpoints of the case you want to use
-ecut = 10 # ecut of the case you want to use
+kpts = 1219 # kpoints of the case you want to use
+ecut = 15 # ecut of the case you want to use
 # Polarization
-entry = "s" # 's' or 'p'
-exit = "s" # 's' or 'p'
+entry = "p" # 's' or 'p'
+exit = "p" # 's' or 'p'
 # Angles
 theta_deg = 65 # angle of incidence in degrees
 phi_deg = 30 # azimuthal angle
 
 ## Housekeeping
-n_0 = constants.N_A # electronic density - for testing purposes
+n_0 = 50 # electronic density
 theta = math.radians(theta_deg)
 phi = math.radians(phi_deg)
 
@@ -53,7 +53,7 @@ def matrix(f):
 
 def values(component):
 	if component == "chi1":
-		path = file_path + "chi1.sm_xx_" + str(kpts) + "_" + str(ecut) + "-nospin_scissor_0_Nc_29"
+		path = file_path + "chi1.sm_xx_yy_zz_" + str(kpts) + "_" + str(ecut) + "-nospin_scissor_0_Nc_29"
 		with open(path, 'rb') as csvfile:
 			data = csv.reader(csvfile, delimiter=' ', skipinitialspace=True)
 			value = [[row[0], row[1]] for row in data]
@@ -72,7 +72,7 @@ def epsilon(chi1):
 	epsilon = 1 + (4 * constants.pi * chi1)
 	return epsilon
 
-def fresnel(polarization, material, energy, chi1): # REMOVE PLUS ONE FROM LINE 69 ASAP
+def fresnel(polarization, material, energy, chi1): # Remove plus ones!!!
 	if polarization == "s" and material == "vs":
 		t = (2 * math.cos(theta)) / (math.cos(theta) + wave_vector(energy, chi1))
 	elif polarization == "s" and material == "sb":
@@ -80,7 +80,7 @@ def fresnel(polarization, material, energy, chi1): # REMOVE PLUS ONE FROM LINE 6
 	elif polarization == "p" and material == "vs":
 		t = (2 * math.cos(theta)) / (epsilon(chi1) * math.cos(theta) + wave_vector(energy, chi1))
 	elif polarization == "p" and material == "sb":
-		t = (2 * wave_vector(energy, chi1)) / (epsilon(chi1) * wave_vector(energy, chi1) + epsilon(chi1) * wave_vector(energy, chi1))
+		t = (2 * wave_vector(energy, chi1)) / (1 + epsilon(chi1) * wave_vector(energy, chi1) + epsilon(chi1) * wave_vector(energy, chi1))
 	return t
 
 def r_factors(polar_in, polar_out, triperp, perpbipar, biparperp, tripar, energy, chi1):
