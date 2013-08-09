@@ -1,11 +1,17 @@
 import math
+import random
 import csv
 import numpy as np
 from scipy import constants
 from itertools import izip
 
-## User Input
-# Input
+########### user input ###########
+# XYZ file disorder
+l = 2.351 # bond length in angstrom for Si
+disorder_amount = 0.5 
+
+
+# Nonlinear reflection coefficient
 file_path = "./sample_data/" # full path to 'res' folder for desired structure
 kpts = 1219 # kpoints of the case you want to use
 ecut = 15 # ecut of the case you want to use
@@ -15,6 +21,7 @@ exit = "p" # 's' or 'p'
 # Angles
 theta_deg = 65 # angle of incidence in degrees
 phi_deg = 30 # azimuthal angle
+########### end user input ###########
 
 ## Housekeeping
 n_0 = 50 # electronic density
@@ -22,6 +29,30 @@ theta = math.radians(theta_deg)
 phi = math.radians(phi_deg)
 
 ## Functions
+def load_matrix_from_file(f):
+	if type(f) == types.StringType:
+		fo = open(f, 'r')
+		matrix = load_matrix_from_file(fo)
+		fo.close()
+		return matrix
+	elif type(f) == types.FileType:
+		file_content = f.read().strip()
+		file_content = file_content.replace('\r\n', ';')
+		file_content = file_content.replace('\n', ';')
+		file_content = file_content.replace('\r', ';')
+	return numpy.matrix(file_content)
+
+def disorder(file, f, l):
+	bl_bohr = l * constants.angstrom / constants.value("Bohr radius")
+	matrix = load_matrix_from_file(file)
+	polar = random.random() * constants.pi
+	azimuthal = random.random() * 2 * constants.pi
+	rho = f * (bl_bohr / 2)
+	cx = ATOM[0] + rho * math.sin(polar) * math.cos(azimuthal)
+	cy = ATOM[1] + rho * math.sin(polar) * math.sin(azimuthal)
+	cz = ATOM[2] + rho * math.cos(polar)
+	DISATOM=`echo "$CX $CY $CZ"`
+
 def nonlinear_reflection_coefficient(polar_in, polar_out):
 	energy = [row[0] for row in values("chi1")]
 	chi1 = [float(row[1]) for row in values("chi1")]
@@ -37,19 +68,6 @@ def nonlinear_reflection_coefficient(polar_in, polar_out):
 		nrc[i].append(R)
 		i = i + 1
 	return nrc
-
-def matrix(f):
-	if type(f) == types.StringType:
-		fo = open(f, 'r')
-		matrix = load_matrix_from_file(fo)
-		fo.close()
-		return matrix
-	elif type(f) == types.FileType:
-		file_content = f.read().strip()
-		file_content = file_content.replace('\r\n', ';')
-		file_content = file_content.replace('\n', ';')
-		file_content = file_content.replace('\r', ';')
-	return numpy.matrix(file_content)
 
 def values(component):
 	if component == "chi1":
@@ -104,7 +122,8 @@ def output_stage():
  		output = csv.writer(csvfile, delimiter=' ')
  		output.writerows(nonlinear_reflection_coefficient(entry, exit))
 
-output_stage()
+disorder(disorder_amount, l)
+#output_stage()
 #print type(matrix_tests())
 #print type(values("zzz")[0][0])
 
