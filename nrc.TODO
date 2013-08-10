@@ -8,8 +8,12 @@ What this program needs to do:
  ☐ Make new functions for wave_vector and epsilon at 2w
  ☐ Make new list for epsilon at 2w
  ☐ Cycle over values as normal
+ ✔ fuck this shit @done (13-08-09 21:34)
 
 Current:
+ ✔ Add padding zeros for output of disorder @done (13-08-09 21:56)
+ ✔ fix spacing between columns of disorder output @done (13-08-09 21:49)
+ ☐ use header for savetxt output!!!! see documentation (numpy.savetxt)
  ✔ Complete output_stage to combine lists (energy and R) into final csv file @done (13-08-04 11:18)
  ✔ Optimize program, possibly add more definitions to clean up ton of variables @done (13-08-04 12:40)
  ✔ Troubleshoot lists with strings and floats @done (13-08-04 12:41)

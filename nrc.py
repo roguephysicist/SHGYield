@@ -10,8 +10,8 @@ from itertools import izip
 disorder_path = "./sample_data/disorder/si_h_14.xyz"
 l = 2.351 # bond length in angstrom for Si
 atoms = [2, 3, 4] # atoms you want to disorder
-disorder_amount = [0.0, 0.0, 0.0] # amount you want to disorder each atom
-repeat = 3 # number of times you want to repeat the disordering
+disorder_amount = [0.1, 0.1, 0.1] # amount you want to disorder each atom
+repeat = 100 # number of times you want to repeat the disordering
 
 #### Nonlinear reflection coefficient
 nrc_path = "./sample_data/res" # full path to 'res' folder for desired structure
@@ -37,22 +37,26 @@ def load_matrix(f):
 	return data
 
 def save_matrix(f, data):
-	save = column_stack(data)
-	savetxt(f, save)
+	savetxt(f, data, fmt=('%.14f'), delimiter='\t')
 
 def disorder(file):
-	atoms[:] = [x - 1 for x in atoms]
-	bl_bohr = l * constants.angstrom / constants.value("Bohr radius")
-	xyz = load_matrix(file)
-	data = xyz[atoms]
-	final = zip(data, disorder_amount)
-	for atom in range(0, len(final)):
-		polar = random.random() * constants.pi
-		azimuthal = random.random() * 2 * constants.pi
-		cx = final[atom][0][0] + (final[atom][1] * (bl_bohr / 2) * math.sin(polar) * math.cos(azimuthal))
-		cy = final[atom][0][1] + (final[atom][1] * (bl_bohr / 2) * math.sin(polar) * math.sin(azimuthal))
-		cz = final[atom][0][2] + (final[atom][1] * (bl_bohr / 2) * math.cos(polar))
-		print cx, cy, cz
+	count = 1
+	while count <= repeat:
+		out_file = "./sample_data/disorder/si_h_14_mod_" + str(count).zfill(3) + ".xyz"
+		selected = [x - 1 for x in atoms]
+		bl_bohr = l * constants.angstrom / constants.value("Bohr radius")
+		xyz = load_matrix(file)
+		data = xyz[selected]
+		new_xyz = xyz.copy()
+		final = zip(data, disorder_amount)
+		for atom in range(0, len(final)):
+			polar = random.random() * constants.pi
+			azimuthal = random.random() * 2 * constants.pi
+			new_xyz[selected[atom], 0] = final[atom][0][0] + (final[atom][1] * (bl_bohr / 2) * math.sin(polar) * math.cos(azimuthal))
+			new_xyz[selected[atom], 1] = final[atom][0][1] + (final[atom][1] * (bl_bohr / 2) * math.sin(polar) * math.sin(azimuthal))
+			new_xyz[selected[atom], 2] = final[atom][0][2] + (final[atom][1] * (bl_bohr / 2) * math.cos(polar))
+		save_matrix(out_file, new_xyz)
+		count += 1
 
 def nonlinear_reflection_coefficient(polar_in, polar_out):
 	energy = [row[0] for row in values("chi1")]
@@ -95,11 +99,11 @@ def fresnel(polarization, material, energy, chi1): # Remove plus ones!!!
 	if polarization == "s" and material == "vs":
 		t = (2 * math.cos(theta)) / (math.cos(theta) + wave_vector(energy, chi1))
 	elif polarization == "s" and material == "sb":
-		t = (2 * wave_vector(energy, chi1)) / (1 + wave_vector(energy, chi1) + wave_vector(energy, chi1))
+		t = (2 * wave_vector(energy, chi1)) / (wave_vector(energy, chi1) + wave_vector(energy, chi1))
 	elif polarization == "p" and material == "vs":
 		t = (2 * math.cos(theta)) / (epsilon(chi1) * math.cos(theta) + wave_vector(energy, chi1))
 	elif polarization == "p" and material == "sb":
-		t = (2 * wave_vector(energy, chi1)) / (1 + epsilon(chi1) * wave_vector(energy, chi1) + epsilon(chi1) * wave_vector(energy, chi1))
+		t = (2 * wave_vector(energy, chi1)) / (epsilon(chi1) * wave_vector(energy, chi1) + epsilon(chi1) * wave_vector(energy, chi1))
 	return t
 
 def r_factors(polar_in, polar_out, triperp, perpbipar, biparperp, tripar, energy, chi1):
