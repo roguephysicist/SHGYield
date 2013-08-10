@@ -1,18 +1,20 @@
 import math
 import random
 import csv
-import numpy as np
+from numpy import *
 from scipy import constants
 from itertools import izip
 
 ########### user input ###########
-# XYZ file disorder
+#### XYZ file disorder
+disorder_path = "./sample_data/disorder/si_h_14.xyz"
 l = 2.351 # bond length in angstrom for Si
-disorder_amount = 0.5 
+atoms = [2, 3, 4] # atoms you want to disorder
+disorder_amount = [0.0, 0.0, 0.0] # amount you want to disorder each atom
+repeat = 3 # number of times you want to repeat the disordering
 
-
-# Nonlinear reflection coefficient
-file_path = "./sample_data/" # full path to 'res' folder for desired structure
+#### Nonlinear reflection coefficient
+nrc_path = "./sample_data/res" # full path to 'res' folder for desired structure
 kpts = 1219 # kpoints of the case you want to use
 ecut = 15 # ecut of the case you want to use
 # Polarization
@@ -21,37 +23,36 @@ exit = "p" # 's' or 'p'
 # Angles
 theta_deg = 65 # angle of incidence in degrees
 phi_deg = 30 # azimuthal angle
+# Misc
+n_0 = 50 # electronic density
 ########### end user input ###########
 
 ## Housekeeping
-n_0 = 50 # electronic density
 theta = math.radians(theta_deg)
 phi = math.radians(phi_deg)
 
 ## Functions
-def load_matrix_from_file(f):
-	if type(f) == types.StringType:
-		fo = open(f, 'r')
-		matrix = load_matrix_from_file(fo)
-		fo.close()
-		return matrix
-	elif type(f) == types.FileType:
-		file_content = f.read().strip()
-		file_content = file_content.replace('\r\n', ';')
-		file_content = file_content.replace('\n', ';')
-		file_content = file_content.replace('\r', ';')
-	return numpy.matrix(file_content)
+def load_matrix(f):
+	data = loadtxt(f)
+	return data
 
-def disorder(file, f, l):
+def save_matrix(f, data):
+	save = column_stack(data)
+	savetxt(f, save)
+
+def disorder(file):
+	atoms[:] = [x - 1 for x in atoms]
 	bl_bohr = l * constants.angstrom / constants.value("Bohr radius")
-	matrix = load_matrix_from_file(file)
-	polar = random.random() * constants.pi
-	azimuthal = random.random() * 2 * constants.pi
-	rho = f * (bl_bohr / 2)
-	cx = ATOM[0] + rho * math.sin(polar) * math.cos(azimuthal)
-	cy = ATOM[1] + rho * math.sin(polar) * math.sin(azimuthal)
-	cz = ATOM[2] + rho * math.cos(polar)
-	DISATOM=`echo "$CX $CY $CZ"`
+	xyz = load_matrix(file)
+	data = xyz[atoms]
+	final = zip(data, disorder_amount)
+	for atom in range(0, len(final)):
+		polar = random.random() * constants.pi
+		azimuthal = random.random() * 2 * constants.pi
+		cx = final[atom][0][0] + (final[atom][1] * (bl_bohr / 2) * math.sin(polar) * math.cos(azimuthal))
+		cy = final[atom][0][1] + (final[atom][1] * (bl_bohr / 2) * math.sin(polar) * math.sin(azimuthal))
+		cz = final[atom][0][2] + (final[atom][1] * (bl_bohr / 2) * math.cos(polar))
+		print cx, cy, cz
 
 def nonlinear_reflection_coefficient(polar_in, polar_out):
 	energy = [row[0] for row in values("chi1")]
@@ -122,7 +123,7 @@ def output_stage():
  		output = csv.writer(csvfile, delimiter=' ')
  		output.writerows(nonlinear_reflection_coefficient(entry, exit))
 
-disorder(disorder_amount, l)
+disorder(disorder_path)
 #output_stage()
 #print type(matrix_tests())
 #print type(values("zzz")[0][0])
