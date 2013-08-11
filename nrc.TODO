@@ -1,15 +1,3 @@
-What this program needs to do:
- ✔ Read appropriate matrix element tensor files @done (13-07-31 13:17)
- ✔ Loop through values @done (13-07-31 13:17)
- ✔ Applies the different math functions on each necessary element @done (13-07-31 13:17)
- ✔ Returns formatted files that can be ploted @done (13-08-04 11:18)
-
- Quick and Dirty:
- ☐ Make new functions for wave_vector and epsilon at 2w
- ☐ Make new list for epsilon at 2w
- ☐ Cycle over values as normal
- ✔ fuck this shit @done (13-08-09 21:34)
-
 Current:
  ✔ Add padding zeros for output of disorder @done (13-08-09 21:56)
  ✔ fix spacing between columns of disorder output @done (13-08-09 21:49)
@@ -17,12 +5,11 @@ Current:
  ✔ Complete output_stage to combine lists (energy and R) into final csv file @done (13-08-04 11:18)
  ✔ Optimize program, possibly add more definitions to clean up ton of variables @done (13-08-04 12:40)
  ✔ Troubleshoot lists with strings and floats @done (13-08-04 12:41)
- ☐ Add in 2w dependencies ONLY for epsilon and wave_vector (see quick and dirty above)
- ☐ Energies go from 1.25 to 2.5 at 1w
- ☐ Use AWK to make singular file with all necessary data which we (maybe not)
- ☐ Should convert into a list of lists, or tuples, or matrices, so we can reference exact values for 1w or 2w
+ ✔ Add in 2w dependencies ONLY for epsilon and wave_vector @done (13-08-10 13:25)
+ ✔ cahnge output format to scientific notation because there are too many zeros!!! @done (13-08-10 19:44)
+ ✔ Energies go from 1.25 to 2.5 at 1w @done (13-08-10 19:44)
+ ✔ Should convert into a list of lists, or tuples, or matrices, so we can reference exact values for 1w or 2w @done (13-08-10 10:55)
  ✔ Add function to go from Chi1 to epsilon @done (13-08-06 16:15)
- ☐ write final output to same file (maybe not)
 
 Optional:
  ✔ Include all the rotation stuff into the script, even though that's done at a different stage in the calculation @done (13-08-09 19:57)
