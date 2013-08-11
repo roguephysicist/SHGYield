@@ -13,11 +13,11 @@ repeat = 1 # number of times you want to repeat the disordering
 
 #### Nonlinear reflection coefficient
 nrc_path = "./sample_data/res/" # full path to 'res' folder for desired structure
-kpts = 1219 # kpoints of the case you want to use
-ecut = 15 # ecut of the case you want to use
+kpts = 145 # kpoints of the case you want to use
+ecut = 10 # ecut of the case you want to use
 # Polarization
-entry = "p" # 's' or 'p'
-exit = "p" # 's' or 'p'
+entry = "s" # 's' or 'p'
+exit = "s" # 's' or 'p'
 # Angles
 theta_deg = 65 # angle of incidence in degrees
 phi_deg = 30 # azimuthal angle
@@ -76,11 +76,11 @@ def fresnel(polarization, material, energy, chi1):
 		t = (2 * wave_vector(energy, chi1)) / (epsilon(chi1) * wave_vector(energy, chi1) + epsilon(chi1) * wave_vector(energy, chi1))
 	return t
 
-def r_factors(polar_in, polar_out, triperp, perpbipar, biparperp, tripar, energy, twoenergy, chi1, chi1twoe):
+def r_factors(polar_in, polar_out, triperp, perpbipar, biparperp, tripar, energy, twoe, chi1, chi1twoe):
 	if polar_in == "p" and polar_out == "p":
-		r = math.sin(theta) * epsilon(chi1twoe) * (((math.sin(theta) ** 2) * (epsilon(chi1) ** 2) * triperp) + (wave_vector(energy, chi1) ** 2) * (epsilon(chi1) ** 2) * perpbipar) + epsilon(chi1) * epsilon(chi1twoe) * wave_vector(energy, chi1) * wave_vector(twoenergy, chi1twoe) * (-2 * math.sin(theta) * epsilon(chi1) * biparperp + wave_vector(energy, chi1) * epsilon(chi1) * tripar * math.cos(3 * phi))
+		r = math.sin(theta) * epsilon(chi1twoe) * (((math.sin(theta) ** 2) * (epsilon(chi1) ** 2) * triperp) + (wave_vector(energy, chi1) ** 2) * (epsilon(chi1) ** 2) * perpbipar) + epsilon(chi1) * epsilon(chi1twoe) * wave_vector(energy, chi1) * wave_vector(twoe, chi1twoe) * (-2 * math.sin(theta) * epsilon(chi1) * biparperp + wave_vector(energy, chi1) * epsilon(chi1) * tripar * math.cos(3 * phi))
 	elif polar_in == "s" and polar_out == "p":
-		r = math.sin(theta) * epsilon(chi1twoe) * perpbipar - wave_vector(twoenergy, chi1twoe) * epsilon(chi1twoe) * tripar * math.cos(3 * phi)
+		r = math.sin(theta) * epsilon(chi1twoe) * perpbipar - wave_vector(twoe, chi1twoe) * epsilon(chi1twoe) * tripar * math.cos(3 * phi)
 	elif polar_in == "p" and polar_out == "s":
 		r = -(wave_vector(energy, chi1) ** 2) * (epsilon(chi1) ** 2) * tripar * math.sin(3 * phi)
 	elif polar_in == "s" and polar_out == "s":
@@ -99,15 +99,15 @@ def load_matrix(comp):
 	if comp == "disorder":
 		data = loadtxt(disorder_in)
 	elif comp == "chi1":
-		f = nrc_path + "chi1.sm_xx_yy_zz_" + str(kpts) + "_" + str(ecut) + "-nospin_scissor_0_Nc_29"
-		data = genfromtxt(f, skip_footer=1000, unpack=True, usecols=[0, 1])
+		f = nrc_path + "chi1.kk_xx_yy_zz_" + str(kpts) + "_" + str(ecut) + "-nospin_scissor_0_Nc_29"
+		data = genfromtxt(f, skip_footer=1000, unpack=True, usecols=[0, 6])
 	elif comp == "twoe":
-		f = nrc_path + "chi1.sm_xx_yy_zz_" + str(kpts) + "_" + str(ecut) + "-nospin_scissor_0_Nc_29"
-		new = column_stack(loadtxt(f, unpack=True, usecols=[0, 2]))
+		f = nrc_path + "chi1.kk_xx_yy_zz_" + str(kpts) + "_" + str(ecut) + "-nospin_scissor_0_Nc_29"
+		new = column_stack(loadtxt(f, unpack=True, usecols=[0, 6]))
 		wanted = array(2 * new[:,0]).reshape(-1).tolist()
 		data = column_stack(new[logical_or.reduce([new[:,0] == x for x in wanted])])
 	elif comp == "zzz" or comp == "zxx" or comp == "xxz" or comp == "xxx":
-		f = nrc_path + "shgC.sm_" + comp + "_" + str(kpts) + "_half-slab_" + str(ecut) + "-nospin_scissor_0_Nc_29"
+		f = nrc_path + "shgC.kk_" + comp + "_" + str(kpts) + "_half-slab_" + str(ecut) + "-nospin_scissor_0_Nc_29"
 		data = genfromtxt(f, skip_footer=1000, unpack=True, usecols=[4])
 	return data
 
