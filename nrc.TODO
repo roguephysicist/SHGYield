@@ -10,6 +10,7 @@ Current:
  ✔ Energies go from 1.25 to 2.5 at 1w @done (13-08-10 19:44)
  ✔ Should convert into a list of lists, or tuples, or matrices, so we can reference exact values for 1w or 2w @done (13-08-10 10:55)
  ✔ Add function to go from Chi1 to epsilon @done (13-08-06 16:15)
+ ☐ run pylint on the stupid motherfucker to spruce it up
 
 Optional:
  ✔ Include all the rotation stuff into the script, even though that's done at a different stage in the calculation @done (13-08-09 19:57)
