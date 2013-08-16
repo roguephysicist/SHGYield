@@ -11,7 +11,8 @@ import math
 import random
 from scipy import constants
 from numpy import array, loadtxt, savetxt, genfromtxt, \
-                  column_stack, logical_or, fabs, sqrt
+                  column_stack, logical_or, fabs, sqrt, linspace
+import matplotlib.pyplot as plt
 
 ########### user input ###########
 #### XYZ file disorder
@@ -73,12 +74,16 @@ def nonlinear_reflection():
     which is written to file """
     energy, chi1 = load_matrix("chi1")
     twoe, chi1twoe = load_matrix("twoe")
+    e2 = linspace(0, 10, 1001)
     nrc = rif_constants(energy) * fabs(fresnel_vs(EXIT, twoe, chi1twoe) *
           fresnel_sb(EXIT, twoe, chi1twoe) * ((fresnel_vs(ENTRY, energy, chi1) *
           fresnel_sb(ENTRY, energy, chi1)) ** 2) *
           reflection_components(ENTRY, EXIT, energy, twoe, chi1, chi1twoe)) ** 2
-    nrc = column_stack((energy, nrc))
-    save_matrix(OUT_PATH, nrc)
+    #nrc = column_stack((energy, nrc))
+    #save_matrix(OUT_PATH, nrc)
+    #plt.plot(energy,nrc)
+    #plt.show()
+    print e2 == energy
 
 def rif_constants(energy):
     """ math for constant term """
