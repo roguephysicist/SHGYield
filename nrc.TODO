@@ -17,4 +17,4 @@ Optional:
  ✔ Include all the rotation stuff into the script, even though that's done at a different stage in the calculation @done (13-08-09 19:57)
  ☐ Make a graphical interface
  ☐ Integrate "splines" or some type of interpolation
- ☐ Actually create plots in addition to saving the data files.
+ ✔ Actually create plots in addition to saving the data files. @done (13-08-16 11:08)

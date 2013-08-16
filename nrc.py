@@ -30,8 +30,8 @@ ZXX_PATH = "./sample_data/shgC.kk_zxx_145_half-slab_10-nospin_scissor_0.5_Nc_29"
 XXZ_PATH = "./sample_data/shgC.kk_xxz_145_half-slab_10-nospin_scissor_0.5_Nc_29"
 XXX_PATH = "./sample_data/shgC.kk_xxx_145_half-slab_10-nospin_scissor_0.5_Nc_29"
 # Polarization
-ENTRY = "p" # 's' or 'p'
-EXIT = "p" # 's' or 'p'
+ENTRY = "s" # 's' or 'p'
+EXIT = "s" # 's' or 'p'
 # Angles
 THETA_DEG = 65 # angle of incidence in degrees
 PHI_DEG = 30 # azimuthal angle
@@ -72,9 +72,7 @@ def disorder():
 def nonlinear_reflection():
     """ calls the different math functions and returns matrix,
     which is written to file """
-    energy, chi1 = load_matrix("chi1")
-    twoe, chi1twoe = load_matrix("twoe")
-    e2 = linspace(0, 10, 1001)
+    energy = linspace(0, 20, 2001)
     nrc = rif_constants(energy) * fabs(fresnel_vs(EXIT, twoe, chi1twoe) *
           fresnel_sb(EXIT, twoe, chi1twoe) * ((fresnel_vs(ENTRY, energy, chi1) *
           fresnel_sb(ENTRY, energy, chi1)) ** 2) *
@@ -83,7 +81,18 @@ def nonlinear_reflection():
     #save_matrix(OUT_PATH, nrc)
     #plt.plot(energy,nrc)
     #plt.show()
-    print e2 == energy
+
+def epsilon(chi1):
+    """ math to convert from chi1 to epsilon """
+    chi1 = load_complex_matrix(CHI1_PATH)
+    linear = 1 + (4 * constants.pi * chi1)
+    return linear
+
+def wave_vector(energy, chi1):
+    """ math for wave vectors """
+    k = (energy / constants.c) * sqrt(epsilon(chi1) -
+        (math.sin(THETA_RAD) ** 2))
+    return k
 
 def rif_constants(energy):
     """ math for constant term """
@@ -113,11 +122,11 @@ def fresnel_sb(polarization, energy, chi1):
 
 def reflection_components(polar_in, polar_out, energy, twoe, chi1, chi1twoe):
     """ math for different r factors. loads in different component matrices """
-    xxx = load_comp_matrix(XXX_PATH)
+    xxx = load_complex_matrix(XXX_PATH)
     if polar_in == "p" and polar_out == "p":
-        zzz = load_comp_matrix(ZZZ_PATH)
-        zxx = load_comp_matrix(ZXX_PATH)
-        xxz = load_comp_matrix(XXZ_PATH)
+        zzz = load_complex_matrix(ZZZ_PATH)
+        zxx = load_complex_matrix(ZXX_PATH)
+        xxz = load_complex_matrix(XXZ_PATH)
         r_factor = math.sin(THETA_RAD) * epsilon(chi1twoe) * \
                 (((math.sin(THETA_RAD) ** 2) * (epsilon(chi1) ** 2) * zzz) +
                 (wave_vector(energy, chi1) ** 2) * (epsilon(chi1) ** 2) * zxx) \
@@ -127,7 +136,7 @@ def reflection_components(polar_in, polar_out, energy, twoe, chi1, chi1twoe):
                 wave_vector(energy, chi1) * epsilon(chi1) * xxx *
                 math.cos(3 * PHI_RAD))
     elif polar_in == "s" and polar_out == "p":
-        zxx = load_comp_matrix(ZXX_PATH)
+        zxx = load_complex_matrix(ZXX_PATH)
         r_factor = math.sin(THETA_RAD) * epsilon(chi1twoe) * zxx - \
                wave_vector(twoe, chi1twoe) * epsilon(chi1twoe) * \
                xxx * math.cos(3 * PHI_RAD)
@@ -138,32 +147,10 @@ def reflection_components(polar_in, polar_out, energy, twoe, chi1, chi1twoe):
         r_factor = xxx * math.sin(3 * PHI_RAD)
     return r_factor
 
-def epsilon(chi1):
-    """ math to convert from chi1 to epsilon """
-    linear = 1 + (4 * constants.pi * chi1)
-    return linear
-
-def wave_vector(energy, chi1):
-    """ math for wave vectors """
-    k = (energy / constants.c) * sqrt(epsilon(chi1) -
-        (math.sin(THETA_RAD) ** 2))
-    return k
-
-def load_matrix(comp):
+def load_complex_matrix(in_file):
     """ loads files into matrices and extracts columns """
-    if comp == "chi1":
-        data = genfromtxt(CHI1_PATH, skip_footer=1000,
-                          unpack=True, usecols=[0, 2])
-    elif comp == "twoe":
-        new = column_stack(loadtxt(CHI1_PATH, unpack=True, usecols=[0, 2]))
-        wanted = array(2 * new[:, 0]).reshape(-1).tolist()
-        data = column_stack(new[logical_or.reduce(
-                               [new[:, 0] == x for x in wanted])])
-    return data
-
-def load_comp_matrix(in_file):
-    """ loads column 4 from file into matrix and skips last 1000 lines """
-    data = genfromtxt(in_file, skip_footer=1000, unpack=True, usecols=[4])
+    real, imaginary = loadtxt(in_file, unpack=True, usecols=[3, 4])
+    data = real + 1j * imaginary
     return data
 
 def save_matrix(out_file, data):
@@ -171,4 +158,5 @@ def save_matrix(out_file, data):
     savetxt(out_file, data, fmt=('%5.14e'), delimiter='\t')
 
 #disorder()
-nonlinear_reflection()
+#nonlinear_reflection()
+#reflection_components("s", "s", 5, 5, 5, 5)
