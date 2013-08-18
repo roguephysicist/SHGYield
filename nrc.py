@@ -84,13 +84,25 @@ def nonlinear_reflection():
     #plt.plot(oneenergy,nrc)
     #plt.show()
 
-def epsilon(energy):
-    """ math to convert from chi1 to epsilon """
+def chi1_real(energy):
+    """ creates spline from real part of chi1 matrix"""
     energies = linspace(0, 20, 2001)
     chi1 = load_complex_matrix(CHI1_PATH)
-    linear = 1 + (4 * constants.pi * chi1)
-    interpolated = interpolate.InterpolatedUnivariateSpline(energies, linear)
+    interpolated = interpolate.InterpolatedUnivariateSpline(energies, chi1.real)
     return interpolated(energy)
+
+def chi1_imag(energy):
+    """ creates spline from imaginary part of chi1 matrix"""
+    energies = linspace(0, 20, 2001)
+    chi1 = load_complex_matrix(CHI1_PATH)
+    interpolated = interpolate.InterpolatedUnivariateSpline(energies, chi1.imag)
+    return interpolated(energy)
+
+def epsilon(energy):
+    """ combines splines for real and imaginary parts of chi1 """
+    chi1 = chi1_real(energy) + 1j * chi1_imag(energy)
+    linear = 1 + (4 * constants.pi * chi1)
+    return linear
 
 def wave_vector(energy):
     """ math for wave vectors """
@@ -162,7 +174,4 @@ def save_matrix(out_file, data):
     savetxt(out_file, data, fmt=('%5.14e'), delimiter='\t')
 
 #disorder()
-#nonlinear_reflection()
-ENERGY = linspace(0, 20, 2001)
-print len(epsilon(ENERGY))
-print type(epsilon(ENERGY))
+nonlinear_reflection()
