@@ -9,10 +9,9 @@ The work codified in this software can be found in Phys.Rev.B66,195329(2002).
 
 import math
 import random
-from scipy import constants
-from numpy import array, loadtxt, savetxt, genfromtxt, \
-                  column_stack, logical_or, fabs, sqrt, linspace
-import matplotlib.pyplot as plt
+from scipy import constants, interpolate
+from numpy import loadtxt, savetxt, column_stack, absolute, sqrt, linspace
+#import matplotlib.pyplot as plt
 
 ########### user input ###########
 #### XYZ file disorder
@@ -72,25 +71,30 @@ def disorder():
 def nonlinear_reflection():
     """ calls the different math functions and returns matrix,
     which is written to file """
-    energy = linspace(0, 20, 2001)
-    nrc = rif_constants(energy) * fabs(fresnel_vs(EXIT, twoe, chi1twoe) *
-          fresnel_sb(EXIT, twoe, chi1twoe) * ((fresnel_vs(ENTRY, energy, chi1) *
-          fresnel_sb(ENTRY, energy, chi1)) ** 2) *
-          reflection_components(ENTRY, EXIT, energy, twoe, chi1, chi1twoe)) ** 2
-    #nrc = column_stack((energy, nrc))
-    #save_matrix(OUT_PATH, nrc)
-    #plt.plot(energy,nrc)
+    oneenergy = linspace(0, 20, 2001)
+    twoenergy = 2 * oneenergy
+    nrc = rif_constants(oneenergy) * absolute(fresnel_vs(EXIT, twoenergy) *
+          fresnel_sb(EXIT, twoenergy) * ((fresnel_vs(ENTRY, oneenergy) *
+          fresnel_sb(ENTRY, oneenergy)) ** 2) *
+          reflection_components(ENTRY, EXIT, oneenergy, twoenergy)) ** 2
+    print len(nrc)
+    print nrc
+    nrc = column_stack((oneenergy, nrc))
+    save_matrix(OUT_PATH, nrc)
+    #plt.plot(oneenergy,nrc)
     #plt.show()
 
-def epsilon(chi1):
+def epsilon(energy):
     """ math to convert from chi1 to epsilon """
+    energies = linspace(0, 20, 2001)
     chi1 = load_complex_matrix(CHI1_PATH)
     linear = 1 + (4 * constants.pi * chi1)
-    return linear
+    interpolated = interpolate.InterpolatedUnivariateSpline(energies, linear)
+    return interpolated(energy)
 
-def wave_vector(energy, chi1):
+def wave_vector(energy):
     """ math for wave vectors """
-    k = (energy / constants.c) * sqrt(epsilon(chi1) -
+    k = (energy / constants.c) * sqrt(epsilon(energy) -
         (math.sin(THETA_RAD) ** 2))
     return k
 
@@ -100,48 +104,48 @@ def rif_constants(energy):
         constants.e ** 2) * (constants.c ** 3) * (math.cos(THETA_RAD) ** 2))
     return const
 
-def fresnel_vs(polarization, energy, chi1):
+def fresnel_vs(polarization, energy):
     """ math for fresnel factors from vacuum to surface """
     if polarization == "s":
         fresnel = (2 * math.cos(THETA_RAD)) / (math.cos(THETA_RAD) +
-                   wave_vector(energy, chi1))
+                   wave_vector(energy))
     elif polarization == "p":
-        fresnel = (2 * math.cos(THETA_RAD)) / (epsilon(chi1) *
-                   math.cos(THETA_RAD) + wave_vector(energy, chi1))
+        fresnel = (2 * math.cos(THETA_RAD)) / (epsilon(energy) *
+                   math.cos(THETA_RAD) + wave_vector(energy))
     return fresnel
 
-def fresnel_sb(polarization, energy, chi1):
+def fresnel_sb(polarization, energy):
     """ math for fresnel factors from surface to bulk """
     if polarization == "s":
-        fresnel = (2 * wave_vector(energy, chi1)) / (wave_vector(energy, chi1)
-                   + wave_vector(energy, chi1))
+        fresnel = (2 * wave_vector(energy)) / (wave_vector(energy)
+                   + wave_vector(energy))
     elif polarization == "p":
-        fresnel = (2 * wave_vector(energy, chi1)) / (epsilon(chi1) *
-        wave_vector(energy, chi1) + epsilon(chi1) * wave_vector(energy, chi1))
+        fresnel = (2 * wave_vector(energy)) / (epsilon(energy) *
+        wave_vector(energy) + epsilon(energy) * wave_vector(energy))
     return fresnel
 
-def reflection_components(polar_in, polar_out, energy, twoe, chi1, chi1twoe):
+def reflection_components(polar_in, polar_out, energy, twoenergy):
     """ math for different r factors. loads in different component matrices """
     xxx = load_complex_matrix(XXX_PATH)
     if polar_in == "p" and polar_out == "p":
         zzz = load_complex_matrix(ZZZ_PATH)
         zxx = load_complex_matrix(ZXX_PATH)
         xxz = load_complex_matrix(XXZ_PATH)
-        r_factor = math.sin(THETA_RAD) * epsilon(chi1twoe) * \
-                (((math.sin(THETA_RAD) ** 2) * (epsilon(chi1) ** 2) * zzz) +
-                (wave_vector(energy, chi1) ** 2) * (epsilon(chi1) ** 2) * zxx) \
-                 + epsilon(chi1) * epsilon(chi1twoe) * \
-                 wave_vector(energy, chi1) * wave_vector(twoe, chi1twoe) * \
-                 (-2 * math.sin(THETA_RAD) * epsilon(chi1) * xxz +
-                wave_vector(energy, chi1) * epsilon(chi1) * xxx *
+        r_factor = math.sin(THETA_RAD) * epsilon(twoenergy) * \
+                (((math.sin(THETA_RAD) ** 2) * (epsilon(energy) ** 2) * zzz) +
+                (wave_vector(energy) ** 2) * (epsilon(energy) ** 2) * zxx) \
+                 + epsilon(energy) * epsilon(twoenergy) * \
+                 wave_vector(energy) * wave_vector(twoenergy) * \
+                 (-2 * math.sin(THETA_RAD) * epsilon(energy) * xxz +
+                wave_vector(energy) * epsilon(energy) * xxx *
                 math.cos(3 * PHI_RAD))
     elif polar_in == "s" and polar_out == "p":
         zxx = load_complex_matrix(ZXX_PATH)
-        r_factor = math.sin(THETA_RAD) * epsilon(chi1twoe) * zxx - \
-               wave_vector(twoe, chi1twoe) * epsilon(chi1twoe) * \
+        r_factor = math.sin(THETA_RAD) * epsilon(twoenergy) * zxx - \
+               wave_vector(twoenergy) * epsilon(twoenergy) * \
                xxx * math.cos(3 * PHI_RAD)
     elif polar_in == "p" and polar_out == "s":
-        r_factor = -(wave_vector(energy, chi1) ** 2) * (epsilon(chi1) ** 2) * \
+        r_factor = -(wave_vector(energy) ** 2) * (epsilon(energy) ** 2) * \
                      xxx * math.sin(3 * PHI_RAD)
     elif polar_in == "s" and polar_out == "s":
         r_factor = xxx * math.sin(3 * PHI_RAD)
@@ -159,4 +163,6 @@ def save_matrix(out_file, data):
 
 #disorder()
 #nonlinear_reflection()
-#reflection_components("s", "s", 5, 5, 5, 5)
+ENERGY = linspace(0, 20, 2001)
+print len(epsilon(ENERGY))
+print type(epsilon(ENERGY))
