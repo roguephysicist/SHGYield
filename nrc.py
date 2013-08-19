@@ -14,11 +14,11 @@ from numpy import loadtxt, savetxt, column_stack, absolute,\
 
 ########### user input ###########
 OUT = "sample_data/nrc/"
-CHI1 = "sample_data/res/chi1.kk_xx_yy_zz_3107_25-nospin_scissor_0.5_Nc_8"
-ZZZ = "sample_data/res/shgC.kk_zzz_145_half-slab_10-nospin_scissor_0.5_Nc_29"
-ZXX = "sample_data/res/shgC.kk_zxx_145_half-slab_10-nospin_scissor_0.5_Nc_29"
-XXZ = "sample_data/res/shgC.kk_xxz_145_half-slab_10-nospin_scissor_0.5_Nc_29"
-XXX = "sample_data/res/shgC.kk_xxx_145_half-slab_10-nospin_scissor_0.5_Nc_29"
+CHI1 = "sample_data/res/chi1.sm_xx_yy_zz_3107_25-nospin_scissor_0.5_Nc_8"
+ZZZ = "sample_data/res/shgC.sm_zzz_145_half-slab_10-nospin_scissor_0.5_Nc_29"
+ZXX = "sample_data/res/shgC.sm_zxx_145_half-slab_10-nospin_scissor_0.5_Nc_29"
+XXZ = "sample_data/res/shgC.sm_xxz_145_half-slab_10-nospin_scissor_0.5_Nc_29"
+XXX = "sample_data/res/shgC.sm_xxx_145_half-slab_10-nospin_scissor_0.5_Nc_29"
 # Angles
 THETA_DEG = 65 # angle of incidence in degrees
 PHI_DEG = 30 # azimuthal angle
@@ -29,15 +29,13 @@ ELEC_DENS = 1.5e10 # electronic density
 ## Housekeeping
 THETA_RAD = radians(THETA_DEG)
 PHI_RAD = radians(PHI_DEG)
-ENERGIES = linspace(0, 20, 2001) / \
-           constants.value("Planck constant over 2 pi in eV s")
+ENERGIES = linspace(0, 20, 2001)
 
 ########### functions ###########
 def nonlinear_reflection():
     """ calls the different math functions and returns matrix,
     which is written to file """
-    onee = linspace(0, 20, 2001) / \
-           constants.value("Planck constant over 2 pi in eV s")
+    onee = linspace(0, 20, 2001)
     twoe = 2 * onee
     polarization = [["p", "p"], ["p", "s"], ["s", "p"], ["s", "s"]]
     for state in polarization:
@@ -69,8 +67,9 @@ def epsilon(energy):
 
 def wave_vector(energy):
     """ math for wave vectors """
-    k = (energy / constants.c) * sqrt(epsilon(energy) -
-        (sin(THETA_RAD) ** 2))
+    #k = (energy / constants.c) * sqrt(epsilon(energy) -
+    #    (sin(THETA_RAD) ** 2))
+    k = sqrt(epsilon(energy) - (sin(THETA_RAD) ** 2))
     return k
 
 def rif_constants(energy):
