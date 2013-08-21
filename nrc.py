@@ -14,11 +14,11 @@ from numpy import loadtxt, savetxt, column_stack, absolute,\
 
 ########### user input ###########
 OUT = "sample_data/nrc/"
-CHI1 = "sample_data/res/chi1.sm_xx_yy_zz_3107_25-nospin_scissor_0.5_Nc_8"
-ZZZ = "sample_data/res/shgC.sm_zzz_145_half-slab_10-nospin_scissor_0.5_Nc_29"
-ZXX = "sample_data/res/shgC.sm_zxx_145_half-slab_10-nospin_scissor_0.5_Nc_29"
-XXZ = "sample_data/res/shgC.sm_xxz_145_half-slab_10-nospin_scissor_0.5_Nc_29"
-XXX = "sample_data/res/shgC.sm_xxx_145_half-slab_10-nospin_scissor_0.5_Nc_29"
+CHI1 = "sample_data/res/chi1"
+ZZZ = "sample_data/res/zzz"
+ZXX = "sample_data/res/zxx"
+XXZ = "sample_data/res/xxz"
+XXX = "sample_data/res/xxx"
 # Angles
 THETA_DEG = 65 # angle of incidence in degrees
 PHI_DEG = 30 # azimuthal angle
@@ -29,13 +29,13 @@ ELEC_DENS = 1.5e10 # electronic density
 ## Housekeeping
 THETA_RAD = radians(THETA_DEG)
 PHI_RAD = radians(PHI_DEG)
-ENERGIES = linspace(0, 20, 2001)
+ENERGIES = linspace(0.01, 12.00, 1200)
 
 ########### functions ###########
 def nonlinear_reflection():
     """ calls the different math functions and returns matrix,
     which is written to file """
-    onee = linspace(0, 20, 2001)
+    onee = linspace(0.01, 12.00, 1200)
     twoe = 2 * onee
     polarization = [["p", "p"], ["p", "s"], ["s", "p"], ["s", "s"]]
     for state in polarization:
@@ -91,7 +91,7 @@ def fresnel_vs(polarization, energy):
 def fresnel_sb(polarization, energy):
     """ math for fresnel factors from surface to bulk. Fresnel model """
     if polarization == "s":
-        fresnel = ones(2001, dtype=complex128)
+        fresnel = ones(1200, dtype=complex128)
         #fresnel = (2 * wave_vector(energy)) / (wave_vector(energy)
         #           + wave_vector(energy))
     elif polarization == "p":
@@ -129,7 +129,7 @@ def reflection_components(polar_in, polar_out, energy, twoenergy):
 
 def load_matrix(in_file):
     """ loads files into matrices and extracts columns """
-    real, imaginary = loadtxt(in_file, unpack=True, usecols=[3, 4])
+    real, imaginary = loadtxt(in_file, unpack=True, usecols=[1, 2])
     data = real + 1j * imaginary
     return data
 
