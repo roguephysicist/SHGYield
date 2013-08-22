@@ -13,12 +13,12 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
                   sqrt, linspace, ones, complex128
 
 ########### user input ###########
-OUT = "sample_data/nrc/"
-CHI1 = "sample_data/res/chi1"
-ZZZ = "sample_data/res/zzz"
-ZXX = "sample_data/res/zxx"
-XXZ = "sample_data/res/xxz"
-XXX = "sample_data/res/xxx"
+OUT = "data/nrc/"
+CHI1 = "data/res/chi1"
+ZZZ = "data/res/zzz"
+ZXX = "data/res/zxx"
+XXZ = "data/res/xxz"
+XXX = "data/res/xxx"
 # Angles
 THETA_RAD = radians(65)
 PHI_RAD = radians(30)
