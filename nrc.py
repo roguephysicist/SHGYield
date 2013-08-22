@@ -9,7 +9,7 @@ The work codified in this software can be found in Phys.Rev.B66, 195329(2002).
 
 from math import sin, cos, radians
 from scipy import constants, interpolate
-from numpy import loadtxt, savetxt, column_stack, absolute,\
+from numpy import loadtxt, savetxt, column_stack, absolute, \
                   sqrt, linspace, ones, complex128
 
 ########### user input ###########
@@ -20,15 +20,13 @@ ZXX = "sample_data/res/zxx"
 XXZ = "sample_data/res/xxz"
 XXX = "sample_data/res/xxx"
 # Angles
-THETA_DEG = 65 # angle of incidence in degrees
-PHI_DEG = 30 # azimuthal angle
+THETA_RAD = radians(65)
+PHI_RAD = radians(30)
 # Misc
 ELEC_DENS = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
 ########### end user input ###########
 
-## Housekeeping
-THETA_RAD = radians(THETA_DEG)
-PHI_RAD = radians(PHI_DEG)
+# Constants
 ENERGIES = linspace(0.01, 12.00, 1200)
 
 ########### functions ###########
@@ -74,8 +72,21 @@ def wave_vector(energy):
 
 def rif_constants(energy):
     """ math for constant term """
-    const = (32 * (constants.pi ** 3) * (energy ** 2)) / (ELEC_DENS * ((constants.c * 100) ** 3) * (cos(THETA_RAD) ** 2) * (constants.value("Planck constant over 2 pi in eV s") ** 2))
+    const = (32 * (constants.pi ** 3) * (energy ** 2)) / (ELEC_DENS *
+              ((constants.c * 100) ** 3) * (cos(THETA_RAD) ** 2) *
+              (constants.value("Planck constant over 2 pi in eV s") ** 2))
     return const
+
+def electrostatic_units(energy):
+    """ coefficient to convert to appropriate electrostatic units """
+    complex_esu = 1j * \
+           ((2 * constants.value("Rydberg constant times hc in eV")) ** 5) * \
+           ((0.53e-8 / (constants.value("lattice parameter of silicon") * 100))
+        ** 5) / ((2 * sqrt(3)) / ((2 * sqrt(2)) ** 2))
+    factor = (complex_esu * 2.08e-15 *
+        (((constants.value("lattice parameter of silicon") * 100) /
+            1e-8) ** 3)) / (energy ** 3)
+    return factor
 
 def fresnel_vs(polarization, energy):
     """ math for fresnel factors from vacuum to surface """
@@ -101,11 +112,11 @@ def fresnel_sb(polarization, energy):
 
 def reflection_components(polar_in, polar_out, energy, twoenergy):
     """ math for different r factors. loads in different component matrices """
-    xxx = load_matrix(XXX)
+    zzz = electrostatic_units(energy) * load_matrix(ZZZ)
+    zxx = electrostatic_units(energy) * load_matrix(ZXX)
+    xxz = electrostatic_units(energy) * load_matrix(XXZ)
+    xxx = electrostatic_units(energy) * load_matrix(XXX)
     if polar_in == "p" and polar_out == "p":
-        zzz = load_matrix(ZZZ)
-        zxx = load_matrix(ZXX)
-        xxz = load_matrix(XXZ)
         r_factor = sin(THETA_RAD) * epsilon(twoenergy) * \
                 (((sin(THETA_RAD) ** 2) * (epsilon(energy) ** 2) * zzz) +
                 (wave_vector(energy) ** 2) * (epsilon(energy) ** 2) * zxx) \
@@ -115,7 +126,6 @@ def reflection_components(polar_in, polar_out, energy, twoenergy):
                 wave_vector(energy) * epsilon(energy) * xxx *
                 cos(3 * PHI_RAD))
     elif polar_in == "s" and polar_out == "p":
-        zxx = load_matrix(ZXX)
         r_factor = sin(THETA_RAD) * epsilon(twoenergy) * zxx - \
                wave_vector(twoenergy) * epsilon(twoenergy) * \
                xxx * cos(3 * PHI_RAD)

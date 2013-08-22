@@ -33,12 +33,12 @@ c *** reads angels
 c       write(*,*)'2-3layer=>1,2,teta,phi,f1,f2'
 c       read(*,*)layer,teta,phi,f1,f2
 c       write(*,*)'2-3layer=>1,2,teta,phi,TB=>1 PW=>2,bulk(1) vac(2) 3L(3)'
-	read(*,*)layer,teta,phi,itb,model
-c       layer = 1
-c       teta = 67.
-c       phi = 30.
-c       itb = 2
-c       model= 1
+c	read(*,*)layer,teta,phi,itb,model
+       layer = 1
+       teta = 67.
+       phi = 30.
+       itb = 2
+       model= 1
 c ** or vs teta
 c      write(*,*)'Maxt,phi'
 c      read(*,*)Maxt,phi
@@ -50,8 +50,8 @@ c    & ,form='formatted',status='old')
 	Emax = 12.95
 	end if
 c *** from X_{ijk} to \chi_{ijk}
-       cpf = -ci*(Ab/a0)**2/(2.*Area)
-       cpf = cpf * (2.*Ry)**2
+c       cpf = -ci*(Ab/a0)**2/(2.*Area)
+c       cpf = cpf * (2.*Ry)**2
 c      cpf = 6.933 * a0**3 * cpf  ![\chi] in 10^{-22} m^2 V^{-1}
 c        write(*,*)cpf
 c** prefactor
@@ -72,6 +72,7 @@ c *** in terms of \chi in esu.cm
 	 gammaesu = (32.*pi**3/(hbeV**2*sc**3))
 c *** from X_{ijk} to \chi_{ijk}
 	  cpf = ci * (2.*Ry)**5 * (ab/a0)**5/Area
+c       write(*,*)cpf
 c ***
 	   end if
 c **** reads eps(w) NOTICE that it must have the same broadening
@@ -113,7 +114,7 @@ c ** prefactor
       pf = gamma*sect2
       pfesu = gammaesu*sect2*1.e7
       pfesu = pfesu*1.e21 ! R in 10^{-21} cm^2/W
-      write(*,*)pfesu
+c      write(*,*)pfesu
 c ** cycle for radiation
 c ** since we need w and 2w we only go in X_{ijk} up to w/2
 	 maxi=Nint/2
