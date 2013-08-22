@@ -23,7 +23,7 @@ XXX = "sample_data/res/xxx"
 THETA_DEG = 65 # angle of incidence in degrees
 PHI_DEG = 30 # azimuthal angle
 # Misc
-ELEC_DENS = 1.5e10 # electronic density
+ELEC_DENS = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
 ########### end user input ###########
 
 ## Housekeeping
@@ -74,8 +74,7 @@ def wave_vector(energy):
 
 def rif_constants(energy):
     """ math for constant term """
-    const = (32 * (constants.pi ** 3) * (energy ** 2)) / ((ELEC_DENS *
-        constants.e ** 2) * (constants.c ** 3) * (cos(THETA_RAD) ** 2))
+    const = (32 * (constants.pi ** 3) * (energy ** 2)) / (ELEC_DENS * ((constants.c * 100) ** 3) * (cos(THETA_RAD) ** 2) * (constants.value("Planck constant over 2 pi in eV s") ** 2))
     return const
 
 def fresnel_vs(polarization, energy):

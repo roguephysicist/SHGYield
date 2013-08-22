@@ -22,18 +22,17 @@ gamma = fv1 * fv2
 gamma = (gamma * 32 * (constants.pi ** 3) / Area ** 2) # cm^2/Watt
 
 hbeV = 6.582e-16 # hbar in eV.s
-gammaesu = (32 * (constants.pi ** 3) / ((hbeV ** 2) * (sc ** 3)))
+gammaesu = 32 * (constants.pi ** 3) / ((hbeV ** 2) * (sc ** 3))
 cpf = 1j * (2 * Ry) ** 5 * (Ab / a0) ** 5 / Area # line 68
 qz = cos(theta)
 Q  = sin(theta)
 sect2 = 1 / (qz ** 2)
-pf = gamma * sect2
+#pf = gamma * sect2
 pfesu = gammaesu * sect2 * 1.e7
 pfesu = pfesu * 1e21 # R in 10^{-21} cm^2/W
+#esu = 2.08e-15 * (a0 / 1.e-8) ** 3
+#cesu = cpf * esu / w(iw)**3 # line 167
 
-#line 112
+pfesu_me = (32 * (constants.pi ** 3)) / (1e-7 * 1e-21 * ((constants.c * 100) ** 3) * (cos(theta) ** 2) * (constants.value("Planck constant over 2 pi in eV s") ** 2))
 
-print gamma, gammaesu
-print cpf
-print qz, Q
-print pf, pfesu
+print pfesu, pfesu_me

@@ -4,12 +4,9 @@ c *** info in fort.15
 c *** eps(w) bulk in fort.14 from KK
 c **** output fort.36 with Rpp, Rps, Rsp, Rss
       PROGRAM rad
-       implicit real (a-b)
-     &        , complex (c)
-     &        , real (d-h,p-z)
+       implicit real (a-b), complex (c), real (d-h,p-z)
        parameter(max=2000)
-       dimension w(max)
-     & ,radpp(max),radps(max),radsp(max),radss(max)
+       dimension w(max),radpp(max),radps(max),radsp(max),radss(max)
        complex cXzzz(max),cXzxx(max),cXxxz(max),cXxxx(max)
      & ,cE(2,3),cepsb(max),cepss(max)
      & ,RESULT,EPS1C,OMEGA
@@ -46,6 +43,12 @@ c ** or vs teta
 c      write(*,*)'Maxt,phi'
 c      read(*,*)Maxt,phi
 c *** reads from X'_{ijk} output
+	if(itb.eq.1) then
+c       open(unit=41,file='/u/bms/roma/shg/si111/1x1/fort.61'
+c    & ,form='formatted',status='old')
+	read(3,*)aaa,Dw,aaa
+	Emax = 12.95
+	end if
 c *** from X_{ijk} to \chi_{ijk}
        cpf = -ci*(Ab/a0)**2/(2.*Area)
        cpf = cpf * (2.*Ry)**2
@@ -53,6 +56,9 @@ c      cpf = 6.933 * a0**3 * cpf  ![\chi] in 10^{-22} m^2 V^{-1}
 c        write(*,*)cpf
 c** prefactor
 c **  1/A -> eta=#atoms/cell/A(cell) = 1/A_{1x1} for any reconstruction
+	   if(itb.eq.1) then
+	 gamma = (gamma/(Area)**2)*1.e21  !in 10^{-18} cm^2/Watt
+	   end if
 c ** For PW we need a factor of 1/(10.26)^{4} since R = 1/A^2
 c ** and a factor of 2Ry for each P => (2Ry)**3
 	   if(itb.eq.2) then
@@ -67,12 +73,12 @@ c *** in terms of \chi in esu.cm
 c *** from X_{ijk} to \chi_{ijk}
 	  cpf = ci * (2.*Ry)**5 * (ab/a0)**5/Area
 c ***
-	  write(*,*)gammaesu
 	   end if
 c **** reads eps(w) NOTICE that it must have the same broadening
 c **** in KK transform. Also eps(w)  .05 < w < 13 and w must be same
 c **** intervals as those of X_{ijk}
 	 if(itb.eq.2)Nint=1200
+	 if(itb.eq.1)Nint=Emax/Dw
 	 do i = 1,Nint
 c	  read(14,*)w(i),epsr,epsi
  	  read(14,*)xx,epsr,epsi
@@ -107,6 +113,7 @@ c ** prefactor
       pf = gamma*sect2
       pfesu = gammaesu*sect2*1.e7
       pfesu = pfesu*1.e21 ! R in 10^{-21} cm^2/W
+      write(*,*)pfesu
 c ** cycle for radiation
 c ** since we need w and 2w we only go in X_{ijk} up to w/2
 	 maxi=Nint/2
@@ -120,6 +127,16 @@ c** bulk definition
 	if(model.eq.1) then
        cepssw  = cepsbw
        cepss2w = cepsb2w
+	end if
+c** vacuum definition
+	if(model.eq.2) then
+       cepssw  = (1.,0.)
+       cepss2w = (1.,0.)
+	end if
+c** three-layer
+	if(model.eq.3) then
+       cepssw = cepss(iw)
+       cepss2w = cepss(2*iw)
 	end if
 c** k_z^s,b(w)
        ckzbw  = csqrt(cepsbw - Q**2)
