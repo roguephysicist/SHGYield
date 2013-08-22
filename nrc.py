@@ -24,9 +24,6 @@ THETA_RAD = radians(65)
 PHI_RAD = radians(30)
 # Misc
 ELEC_DENS = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
-########### end user input ###########
-
-# Constants
 ENERGIES = linspace(0.01, 12.00, 1200)
 
 ########### functions ###########
@@ -65,8 +62,6 @@ def epsilon(energy):
 
 def wave_vector(energy):
     """ math for wave vectors """
-    #k = (energy / constants.c) * sqrt(epsilon(energy) -
-    #    (sin(THETA_RAD) ** 2))
     k = sqrt(epsilon(energy) - (sin(THETA_RAD) ** 2))
     return k
 
@@ -82,7 +77,7 @@ def electrostatic_units(energy):
     complex_esu = 1j * \
            ((2 * constants.value("Rydberg constant times hc in eV")) ** 5) * \
            ((0.53e-8 / (constants.value("lattice parameter of silicon") * 100))
-        ** 5) / ((2 * sqrt(3)) / ((2 * sqrt(2)) ** 2))
+            ** 5) / ((2 * sqrt(3)) / ((2 * sqrt(2)) ** 2))
     factor = (complex_esu * 2.08e-15 *
         (((constants.value("lattice parameter of silicon") * 100) /
             1e-8) ** 3)) / (energy ** 3)

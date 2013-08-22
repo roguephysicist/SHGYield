@@ -13,7 +13,7 @@ Current:
  ✔ Use either interp1d or ExtrapolateUnivariateSpline @done (13-08-17 19:25)
  ✔ run pylint on the stupid motherfucker to spruce it up @done (13-08-14 22:44)
  ✔ you need to make a spline for real, complex parts of the matrix and then join them together later. remember that the spline is a function @done (13-08-17 20:03)
- ☐ EXPERIMENTAL GAP FOR BULK SI = 3.4
+ ☐ EXPERIMENTAL GAP FOR BULK SI = 3.4 according to Landolt-Boernstein
  ☐ remember that chi needs to multiplied by 4pi!!
 
 Optional:
