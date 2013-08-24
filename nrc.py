@@ -42,21 +42,16 @@ def nonlinear_reflection():
         out = OUT + "R" + state[0] + state[1]
         save_matrix(out, nrc)
 
-def chi1_real(energy):
+def chi_one(part, energy):
     """ creates spline from real part of chi1 matrix"""
     chi1 = load_matrix(CHI1)
-    interpolated = interpolate.InterpolatedUnivariateSpline(ENERGIES, chi1.real)
-    return interpolated(energy)
-
-def chi1_imag(energy):
-    """ creates spline from imaginary part of chi1 matrix"""
-    chi1 = load_matrix(CHI1)
-    interpolated = interpolate.InterpolatedUnivariateSpline(ENERGIES, chi1.imag)
+    interpolated = \
+    interpolate.InterpolatedUnivariateSpline(ENERGIES, getattr(chi1, part))
     return interpolated(energy)
 
 def epsilon(energy):
     """ combines splines for real and imaginary parts of chi1 """
-    chi1 = chi1_real(energy) + 1j * chi1_imag(energy)
+    chi1 = chi_one("real", energy) + 1j * chi_one("imag", energy)
     linear = 1 + (4 * constants.pi * chi1)
     return linear
 
