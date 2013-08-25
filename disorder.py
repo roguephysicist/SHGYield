@@ -10,7 +10,7 @@ from numpy import loadtxt, savetxt, genfromtxt, column_stack
 
 XYZ_CONVERT = "./data/disorder/si_h_14_xangst.xyz"
 XYZ_CONVERT_OUT = "data/disorder/si_h_14_xcart.xyz"
-XYZ_DISORDER = "./data/disorder/si_h_14.xyz"
+XYZ_DISORDER = "./data/disorder/si_h_14_xcart.xyz"
 BOND_LENGTH = 2.351
 ATOMS_DISORDERED = [2, 3, 4]
 DISORDER_AMOUNT = [0.1, 0.3, 0.9]
@@ -22,7 +22,7 @@ def convert():
     element, xx, yy, zz = genfromtxt(XYZ_CONVERT, unpack="True", skip_header=2)
     xyz = column_stack((xx, yy, zz))
     new_xyz = xyz * conversion_factor
-    savetxt(XYZ_CONVERT_OUT, new_xyz, fmt=('%3.15f'), delimiter='\t\t')
+    savetxt(XYZ_CONVERT_OUT, new_xyz, fmt=('%3.15f'), delimiter='\t')
 
 def disorder():
     """ extracts selected rows from input, converts to matrix,
