@@ -2,14 +2,14 @@
 This python script disorders an input XYX file (in bohrs) and lets you choose
 which atoms (rows) you want disordered and by how much.
 """
-
+import sys
 from random import random
 from math import sin, cos
 from scipy import constants
 from numpy import loadtxt, savetxt, genfromtxt, column_stack
 
-XYZ_CONVERT = "./data/disorder/si_h_14_xangst.xyz"
-XYZ_CONVERT_OUT = "data/disorder/si_h_14_xcart.xyz"
+XYZ_CONVERT = sys.argv[1]
+XYZ_CONVERT_OUT = XYZ_CONVERT + "_xcart"
 XYZ_DISORDER = "./data/disorder/si_h_14_xcart.xyz"
 BOND_LENGTH = 2.351
 ATOMS_DISORDERED = [2, 3, 4]
@@ -22,7 +22,7 @@ def convert():
     element, xx, yy, zz = genfromtxt(XYZ_CONVERT, unpack="True", skip_header=2)
     xyz = column_stack((xx, yy, zz))
     new_xyz = xyz * conversion_factor
-    savetxt(XYZ_CONVERT_OUT, new_xyz, fmt=('%3.15f'), delimiter='\t')
+    savetxt(XYZ_CONVERT_OUT, new_xyz, fmt=('%3.15f'), delimiter=' ')
 
 def disorder():
     """ extracts selected rows from input, converts to matrix,
