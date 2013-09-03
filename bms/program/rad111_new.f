@@ -23,8 +23,8 @@ c          timei = mclock()
 c *** units and prefactor
         hbar = 1.0545e-27 !erg s
         sc = 2.997925e10 !cm/s
-	Ab = 0.53e-8 ! Angstroms
-	a0 = 5.34e-8 !A for Si
+	Ab = 0.543e-8 ! Angstroms
+	a0 = 5.43e-8 !A for Si
         Ry = 13.606 !eV Rydberg
 	Area = (1./(2.*sqrt(2.))**2)*2.*sqrt(3.)
 	 gamma = (1.e-40)*(1.e7)*(1.6021e-12)/(hbar**2*sc**3)
@@ -124,11 +124,12 @@ c ** cycle for radiation
 c ** since we need w and 2w we only go in X_{ijk} up to w/2
 	 maxi=Nint/2
 c         write(*,*)maxi,Nint
-	do iw = 1,maxi          
+	do iw = 1,maxi
 c**   Fresnel factors and more ***
 c** eps_s,b(w) and eps_s,b(2w)
        cepsbw = cepsb(iw)
        cepsb2w = cepsb(2*iw)
+c       write(*,*) cepsb2w
 c** bulk definition
 	if(model.eq.1) then
        cepssw  = cepsbw
@@ -175,11 +176,11 @@ c**  for chi in esu.cm=cm^3/e
       if(itb.eq.2)then
       esu = 2.08e-15 * (a0/1.e-8)**3
       cesu = cpf * esu / w(iw)**3
-c      write(*,*) w(iw),cesu
       cXzzz(iw)= cesu * cXzzz(iw)
       cXzxx(iw)= cesu * cXzxx(iw)
       cXxxz(iw)= cesu * cXxxz(iw)
       cXxxx(iw)= cesu * cXxxx(iw)
+c      write(*,*)w(iw),cesu,cXzzz(iw)
       end if
 c** r_{ij}
       cradpp = Q*cepsb2w*(  Q**2 * cepsbw**2 * cXzzz(iw)
@@ -233,6 +234,7 @@ c **
 	ctpS = ctsvs2w*ctssb2w*(ctpvsw*ctpsbw)**2/(2.*ci)
 	ctsS = ctsvs2w*ctssb2w*(ctsvsw*ctssbw)**2/(2.*ci)
 c ** for chi in esu.cm
+      write(*,*)w(iw),cradps
 	radpP(iw) = pfesu*cabs(ctpP*cradpP)**2*w(iw)**2
 	radsP(iw) = pfesu*cabs(ctsP*cradsP)**2*w(iw)**2
 	radpS(iw) = pfesu*cabs(ctpS*cradpS)**2*w(iw)**2

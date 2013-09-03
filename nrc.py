@@ -38,9 +38,9 @@ def nonlinear_reflection():
     twoe = 2 * onee
     polarization = [["p", "p"], ["p", "s"], ["s", "p"], ["s", "s"]]
     for state in polarization:
-        nrc = rif_constants(onee) * absolute(fresnel_vs(state[1], twoe) *
+        nrc = rif_constants(onee) * absolute(((fresnel_vs(state[1], twoe) *
               fresnel_sb(state[1], twoe) * ((fresnel_vs(state[0], onee) *
-              fresnel_sb(state[0], onee)) ** 2) *
+              fresnel_sb(state[0], onee)) ** 2)) / 2j) *
               reflection_components(state[0], state[1], onee, twoe)) ** 2
         nrc = column_stack((onee, nrc))
         out = OUT + "R" + state[0] + state[1] + "_k" + str(KPOINTS).zfill(4) + "_e" + str(ECUT)
@@ -56,8 +56,8 @@ def chi_one(part, energy):
 def epsilon(energy):
     """ combines splines for real and imaginary parts of chi1 """
     chi1 = chi_one("real", energy) + 1j * chi_one("imag", energy)
-    linear = 1 + (4 * constants.pi * chi1)
-    return linear
+    #linear = 1 + (4 * constants.pi * chi1)
+    return chi1
 
 def wave_vector(energy):
     """ math for wave vectors """
@@ -73,13 +73,12 @@ def rif_constants(energy):
 
 def electrostatic_units(energy):
     """ coefficient to convert to appropriate electrostatic units """
-    complex_esu = 1j * \
-           ((2 * constants.value("Rydberg constant times hc in eV")) ** 5) * \
-           ((0.53e-8 / (constants.value("lattice parameter of silicon") * 100))
-            ** 5) / ((2 * sqrt(3)) / ((2 * sqrt(2)) ** 2))
-    factor = (complex_esu * 2.08e-15 *
-        (((constants.value("lattice parameter of silicon") * 100) /
-            1e-8) ** 3)) / (energy ** 3)
+    area = (1 / ((2 * sqrt(2)) ** 2)) * 2 * sqrt(3)
+    factor = (1j * ((2 *
+              constants.value("Rydberg constant times hc in eV")) ** 5) *
+              1e-5 * 2.08e-15 *
+            ((constants.value("lattice parameter of silicon") / 1e-10) ** 3))\
+              / (area * (energy ** 3))
     return factor
 
 def fresnel_vs(polarization, energy):
