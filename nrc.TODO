@@ -14,7 +14,8 @@ Current:
  ✔ run pylint on the stupid motherfucker to spruce it up @done (13-08-14 22:44)
  ✔ you need to make a spline for real, complex parts of the matrix and then join them together later. remember that the spline is a function @done (13-08-17 20:03)
  ☐ EXPERIMENTAL GAP FOR BULK SI = 3.4 according to Landolt-Boernstein
- ☐ remember that chi needs to multiplied by 4pi!!
+ ✔ remember that chi needs to multiplied by 4pi!! @done (13-09-02 22:37)
+ ☐ seems like kpoints converge at 260 for 12 layers
 
 Optional:
  ✔ Include all the rotation stuff into the script, even though that's done at a different stage in the calculation @done (13-08-09 19:57)

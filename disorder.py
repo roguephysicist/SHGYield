@@ -9,7 +9,7 @@ from scipy import constants
 from numpy import loadtxt, savetxt, genfromtxt, column_stack
 
 XYZ_CONVERT = sys.argv[1]
-XYZ_CONVERT_OUT = XYZ_CONVERT + "_xcart"
+XYZ_CONVERT_OUT = XYZ_CONVERT + "_angst"
 XYZ_DISORDER = "./data/disorder/si_h_14_xcart.xyz"
 BOND_LENGTH = 2.351
 ATOMS_DISORDERED = [2, 3, 4]
@@ -19,9 +19,9 @@ REPEAT = 1
 def convert():
     """ converts xyz file from angstroms to bohrs """
     conversion_factor = constants.angstrom / constants.value("Bohr radius")
-    element, xx, yy, zz = genfromtxt(XYZ_CONVERT, unpack="True", skip_header=2)
+    xx, yy, zz = genfromtxt(XYZ_CONVERT, unpack="True")
     xyz = column_stack((xx, yy, zz))
-    new_xyz = xyz * conversion_factor
+    new_xyz = xyz * 1/conversion_factor
     savetxt(XYZ_CONVERT_OUT, new_xyz, fmt=('%3.15f'), delimiter=' ')
 
 def disorder():

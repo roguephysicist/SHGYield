@@ -36,12 +36,12 @@ c *** reads angels
 c       write(*,*)'2-3layer=>1,2,teta,phi,f1,f2'
 c       read(*,*)layer,teta,phi,f1,f2
 c       write(*,*)'2-3layer=>1,2,teta,phi,TB=>1 PW=>2,bulk(1) vac(2) 3L(3)'
-	read(*,*)layer,teta,phi,itb,model
-c       layer = 1
-c       teta = 67.
-c       phi = 30.
-c       itb = 2
-c       model= 1
+c	read(*,*)layer,teta,phi,itb,model
+      layer = 1
+      teta = 65.
+      phi = 30.
+      itb = 2
+      model= 1
 c ** or vs teta
 c      write(*,*)'Maxt,phi'
 c      read(*,*)Maxt,phi
@@ -76,7 +76,7 @@ c *** in terms of \chi in esu.cm
 c *** from X_{ijk} to \chi_{ijk}
 	  cpf = ci * (2.*Ry)**5 * (ab/a0)**5/Area
 c ***
-	  write(*,*)gammaesu
+c	  write(*,*)gammaesu
 	   end if
 c **** reads eps(w) NOTICE that it must have the same broadening
 c **** in KK transform. Also eps(w)  .05 < w < 13 and w must be same
@@ -115,8 +115,11 @@ c ** wave vectors
 c ** prefactor
       sect2=1./qz**2
       pf = gamma*sect2
-      pfesu = gammaesu*sect2*1.e7
-      pfesu = pfesu*1.e21 ! R in 10^{-21} cm^2/W
+c      pfesu = gammaesu*sect2*1.e7
+c      pfesu = pfesu*1.e21 ! R in 10^{-21} cm^2/W
+      pfesu = (32.*(pi**3))
+      pfesu = pfesu/((hbeV**2)*(sc**3)*(cos(teta)**2)*1.e-7*1.e-21)
+c      write (*,*) pfesu
 c ** cycle for radiation
 c ** since we need w and 2w we only go in X_{ijk} up to w/2
 	 maxi=Nint/2
@@ -172,6 +175,7 @@ c**  for chi in esu.cm=cm^3/e
       if(itb.eq.2)then
       esu = 2.08e-15 * (a0/1.e-8)**3
       cesu = cpf * esu / w(iw)**3
+c      write(*,*) w(iw),cesu
       cXzzz(iw)= cesu * cXzzz(iw)
       cXzxx(iw)= cesu * cXzxx(iw)
       cXxxz(iw)= cesu * cXxxz(iw)

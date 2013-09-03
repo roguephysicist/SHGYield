@@ -14,27 +14,24 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
                   sqrt, linspace, ones, complex128
 
 ########### user input ###########
-KPOINTS = sys.argv[1]
-#ECUT = sys.argv[2]
-ECUT = 15
-OUT = "./results/"
-CHI1 = "./data/res/bulk_chi1/chi1_sm_0.83808_4pi"
-ZZZ = "./data/res/12_chi2/shgC.sm_zzz_" + str(KPOINTS) + "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
-ZXX = "./data/res/12_chi2/shgC.sm_zxx_" + str(KPOINTS) + "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
-XXZ = "./data/res/12_chi2/shgC.sm_xxz_" + str(KPOINTS) + "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
-XXX = "./data/res/12_chi2/shgC.sm_xxx_" + str(KPOINTS) + "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
+OUT = "./res/"
+CHI1 = "./res/chi1"
+ZZZ = "./res/zzz"
+ZXX = "./res/zxx"
+XXZ = "./res/xxz"
+XXX = "./res/xxx"
 # Angles
 THETA_RAD = radians(65)
 PHI_RAD = radians(30)
 # Misc
 ELEC_DENS = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
-ENERGIES = linspace(0.01, 20, 2000)
+ENERGIES = linspace(0.1, 12, 1200)
 
 ########### functions ###########
 def nonlinear_reflection():
     """ calls the different math functions and returns matrix,
     which is written to file """
-    onee = linspace(0.01, 20, 2000)
+    onee = linspace(0.1, 12, 1200)
     twoe = 2 * onee
     polarization = [["p", "p"], ["p", "s"], ["s", "p"], ["s", "s"]]
     for state in polarization:
@@ -43,7 +40,7 @@ def nonlinear_reflection():
               fresnel_sb(state[0], onee)) ** 2) *
               reflection_components(state[0], state[1], onee, twoe)) ** 2
         nrc = column_stack((onee, nrc))
-        out = OUT + "R" + state[0] + state[1] + "_k" + str(KPOINTS).zfill(4) + "_e" + str(ECUT)
+        out = OUT + "R" + state[0] + state[1]
         save_matrix(out, nrc)
 
 def chi_one(part, energy):
@@ -95,7 +92,7 @@ def fresnel_vs(polarization, energy):
 def fresnel_sb(polarization, energy):
     """ math for fresnel factors from surface to bulk. Fresnel model """
     if polarization == "s":
-        fresnel = ones(2000, dtype=complex128)
+        fresnel = ones(1200, dtype=complex128)
         #fresnel = (2 * wave_vector(energy)) / (wave_vector(energy)
         #           + wave_vector(energy))
     elif polarization == "p":
@@ -132,7 +129,7 @@ def reflection_components(polar_in, polar_out, energy, twoenergy):
 
 def load_matrix(in_file):
     """ loads files into matrices and extracts columns """
-    real, imaginary = loadtxt(in_file, unpack=True, usecols=[3, 4], skiprows=1)
+    real, imaginary = loadtxt(in_file, unpack=True, usecols=[1, 2])
     data = real + 1j * imaginary
     return data
 
