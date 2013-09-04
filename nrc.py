@@ -16,7 +16,7 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
 ########### user input ###########
 KPOINTS = sys.argv[1]
 #ECUT = sys.argv[2]
-ECUT = 15
+ECUT = 10
 OUT = "./results/"
 CHI1 = "./data/res/bulk_chi1/chi1_sm_0.83808_4pi"
 ZZZ = "./data/res/12_chi2/shgC.sm_zzz_" + str(KPOINTS) + "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
