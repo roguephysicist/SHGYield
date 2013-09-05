@@ -14,15 +14,20 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
                   sqrt, linspace, ones, complex128
 
 ########### user input ###########
-KPOINTS = sys.argv[1]
-#ECUT = sys.argv[2]
-ECUT = 10
+#KPOINTS = sys.argv[1]
+ECUT = sys.argv[1]
+KPOINTS = 166
+#ECUT = 10
 OUT = "./results/"
 CHI1 = "./data/res/bulk_chi1/chi1_sm_0.83808_4pi"
-ZZZ = "./data/res/12_chi2/shgC.sm_zzz_" + str(KPOINTS) + "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
-ZXX = "./data/res/12_chi2/shgC.sm_zxx_" + str(KPOINTS) + "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
-XXZ = "./data/res/12_chi2/shgC.sm_xxz_" + str(KPOINTS) + "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
-XXX = "./data/res/12_chi2/shgC.sm_xxx_" + str(KPOINTS) + "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
+ZZZ = "./data/res/12_chi2/shgC.sm_zzz_" + str(KPOINTS) + \
+       "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
+ZXX = "./data/res/12_chi2/shgC.sm_zxx_" + str(KPOINTS) + \
+       "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
+XXZ = "./data/res/12_chi2/shgC.sm_xxz_" + str(KPOINTS) + \
+       "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
+XXX = "./data/res/12_chi2/shgC.sm_xxx_" + str(KPOINTS) + \
+       "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
 # Angles
 THETA_RAD = radians(65)
 PHI_RAD = radians(30)
@@ -43,7 +48,8 @@ def nonlinear_reflection():
               fresnel_sb(state[0], onee)) ** 2)) / 2j) *
               reflection_components(state[0], state[1], onee, twoe)) ** 2
         nrc = column_stack((onee, nrc))
-        out = OUT + "R" + state[0] + state[1] + "_k" + str(KPOINTS).zfill(4) + "_e" + str(ECUT)
+        out = OUT + "R" + state[0] + state[1] + "_k" +\
+              str(KPOINTS).zfill(4) + "_e" + str(ECUT)
         save_matrix(out, nrc)
 
 def chi_one(part, energy):

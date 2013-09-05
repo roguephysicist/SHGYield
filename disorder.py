@@ -19,8 +19,8 @@ REPEAT = 1
 def convert():
     """ converts xyz file from angstroms to bohrs """
     conversion_factor = constants.angstrom / constants.value("Bohr radius")
-    xx, yy, zz = genfromtxt(XYZ_CONVERT, unpack="True")
-    xyz = column_stack((xx, yy, zz))
+    xx_coord, yy_coord, zz_coord = genfromtxt(XYZ_CONVERT, unpack="True")
+    xyz = column_stack((xx_coord, yy_coord, zz_coord))
     new_xyz = xyz * 1/conversion_factor
     savetxt(XYZ_CONVERT_OUT, new_xyz, fmt=('%3.15f'), delimiter=' ')
 
