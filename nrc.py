@@ -15,18 +15,18 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
 
 ########### user input ###########
 #KPOINTS = sys.argv[1]
-ECUT = sys.argv[1]
+#ECUT = sys.argv[1]
 KPOINTS = 166
-#ECUT = 10
-OUT = "./results/"
+ECUT = 15
+OUT = "./results/18layer/"
 CHI1 = "./data/res/bulk_chi1/chi1_sm_0.83808_4pi"
-ZZZ = "./data/res/12_chi2/shgC.sm_zzz_" + str(KPOINTS) + \
+ZZZ = "./data/res/18_chi2/shgC.sm_zzz_" + str(KPOINTS) + \
        "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
-ZXX = "./data/res/12_chi2/shgC.sm_zxx_" + str(KPOINTS) + \
+ZXX = "./data/res/18_chi2/shgC.sm_zxx_" + str(KPOINTS) + \
        "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
-XXZ = "./data/res/12_chi2/shgC.sm_xxz_" + str(KPOINTS) + \
+XXZ = "./data/res/18_chi2/shgC.sm_xxz_" + str(KPOINTS) + \
        "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
-XXX = "./data/res/12_chi2/shgC.sm_xxx_" + str(KPOINTS) + \
+XXX = "./data/res/18_chi2/shgC.sm_xxx_" + str(KPOINTS) + \
        "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
 # Angles
 THETA_RAD = radians(65)
