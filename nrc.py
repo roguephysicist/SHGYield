@@ -22,19 +22,30 @@ ECUT = 15
 OUT = "./results/" + str(LAYERS) + "layers/"
 CHI1 = "./data/res/bulk_chi1/chi1_sm_0.83808_4pi"
 ZZZ = "./data/res/" + str(LAYERS) + "_chi2/shgC.sm_zzz_" + str(KPOINTS) + \
-       "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
+       "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_" + str(COND)
 ZXX = "./data/res/" + str(LAYERS) + "_chi2/shgC.sm_zxx_" + str(KPOINTS) + \
-       "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
+       "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_" + str(COND)
 XXZ = "./data/res/" + str(LAYERS) + "_chi2/shgC.sm_xxz_" + str(KPOINTS) + \
-       "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
+       "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_" + str(COND)
 XXX = "./data/res/" + str(LAYERS) + "_chi2/shgC.sm_xxx_" + str(KPOINTS) + \
-       "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_29"
+       "_half-slab_" + str(ECUT) + "-nospin_scissor_0.83808_Nc_" + str(COND)
 # Angles
 THETA_RAD = radians(65)
 PHI_RAD = radians(30)
 # Misc
 ELEC_DENS = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
 ENERGIES = linspace(0.01, 20, 2000)
+
+if LAYERS == 12:
+    COND = 29
+elif LAYERS == 18:
+    COND = 39
+elif LAYERS == 24:
+    COND = 51
+elif LAYERS == 30:
+    COND = 63
+elif LAYERS == 36:
+    COND = 75
 
 ########### functions ###########
 def nonlinear_reflection():
