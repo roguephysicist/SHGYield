@@ -28,7 +28,7 @@ ELEC_DENS = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
 ENERGIES = linspace(0.01, 20, 2000)
 
 if LAYERS == 12:
-    COND = 29
+    COND = 27
 elif LAYERS == 18:
     COND = 39
 elif LAYERS == 24:
