@@ -19,7 +19,7 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
 LAYERS = 12
 KPOINTS = 950
 ECUT = 15
-OUT = "./results/" + str(LAYERS) + "layers/"
+OUT = "./results/" + str(LAYERS) + "_"
 # Angles
 THETA_RAD = radians(65)
 PHI_RAD = radians(30)
@@ -35,12 +35,16 @@ elif LAYERS == 18:
     SCIS = 1.91908
 elif LAYERS == 24:
     COND = 51
+    SCIS = 1.94138
 elif LAYERS == 30:
     COND = 63
 elif LAYERS == 36:
     COND = 75
+    SCIS = 1.96003
 
-CHI1 = "./data/res/bulk_chi1/chi1_sm_0.83808_4pi"
+#CHI1 = "./data/res/bulk_chi1/chi1_sm_0.83808_4pi"
+CHI1 = "./data/res/" + str(LAYERS) + "layers/chi1.sm_xx_yy_zz_" + str(KPOINTS) + \
+       "_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
 ZZZ = "./data/res/" + str(LAYERS) + "layers/shgC.sm_zzz_" + str(KPOINTS) + \
        "_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
 ZXX = "./data/res/" + str(LAYERS) + "layers/shgC.sm_zxx_" + str(KPOINTS) + \
@@ -77,8 +81,8 @@ def chi_one(part, energy):
 def epsilon(energy):
     """ combines splines for real and imaginary parts of chi1 """
     chi1 = chi_one("real", energy) + 1j * chi_one("imag", energy)
-    #linear = 1 + (4 * constants.pi * chi1)
-    return chi1
+    linear = 4 * constants.pi * chi1
+    return linear
 
 def wave_vector(energy):
     """ math for wave vectors """
