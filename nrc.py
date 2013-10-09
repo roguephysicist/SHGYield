@@ -104,7 +104,7 @@ def electrostatic_units(energy):
               constants.value("Rydberg constant times hc in eV")) ** 5) *
               1e-5 * 2.08e-15 *
             ((constants.value("lattice parameter of silicon") / 1e-10) ** 3))\
-              / (area * (energy ** 3))
+              / (area * ((energy) ** 3))
     return factor
 
 def fresnel_vs(polarization, energy):
