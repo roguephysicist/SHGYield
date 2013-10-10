@@ -105,7 +105,6 @@ def electrostatic_units(energy):
               1e-5 * 2.08e-15 *
             ((constants.value("lattice parameter of silicon") / 1e-10) ** 3))\
               / (area * ((energy) ** 3))
-    factor = 1
     return factor
 
 def fresnel_vs(polarization, energy):
@@ -132,10 +131,10 @@ def fresnel_sb(polarization, energy):
 
 def reflection_components(polar_in, polar_out, energy, twoenergy):
     """ math for different r factors. loads in different component matrices """
-    zzz = electrostatic_units(energy) * load_matrix(ZZZ)
-    zxx = electrostatic_units(energy) * load_matrix(ZXX)
-    xxz = electrostatic_units(energy) * load_matrix(XXZ)
-    xxx = electrostatic_units(energy) * load_matrix(XXX)
+    zzz = load_matrix(ZZZ)
+    zxx = load_matrix(ZXX)
+    xxz = load_matrix(XXZ)
+    xxx = load_matrix(XXX)
     if polar_in == "p" and polar_out == "p":
         r_factor = sin(THETA_RAD) * epsilon(twoenergy) * \
                 (((sin(THETA_RAD) ** 2) * (epsilon(energy) ** 2) * zzz) +
