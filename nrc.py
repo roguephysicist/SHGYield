@@ -16,7 +16,7 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
 ########### user input ###########
 #KPOINTS = sys.argv[1]
 #ECUT = sys.argv[1]
-LAYERS = 12
+LAYERS = 30
 KPOINTS = 950
 ECUT = 15
 OUT = "./results/" + str(LAYERS) + "_"
@@ -105,6 +105,7 @@ def electrostatic_units(energy):
               1e-5 * 2.08e-15 *
             ((constants.value("lattice parameter of silicon") / 1e-10) ** 3))\
               / (area * ((energy) ** 3))
+    factor = 1
     return factor
 
 def fresnel_vs(polarization, energy):
