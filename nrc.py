@@ -16,7 +16,7 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
 ########### user input ###########
 #KPOINTS = sys.argv[1]
 #ECUT = sys.argv[1]
-LAYERS = 30
+LAYERS = 18
 KPOINTS = 950
 ECUT = 15
 OUT = "./results/" + str(LAYERS) + "_"
@@ -29,9 +29,11 @@ ENERGIES = linspace(0.01, 20, 2000)
 
 if LAYERS == 12:
     COND = 27
+    #COND = 13
     SCIS = 1.8679
 elif LAYERS == 18:
     COND = 39
+    #COND = 19
     SCIS = 1.91908
 elif LAYERS == 24:
     COND = 51
@@ -69,7 +71,7 @@ def nonlinear_reflection():
               reflection_components(state[0], state[1], onee, twoe)) ** 2
         nrc = column_stack((onee, nrc))
         out = OUT + "R" + state[0] + state[1] + "_k" +\
-              str(KPOINTS).zfill(4) + "_e" + str(ECUT)
+              str(KPOINTS).zfill(4) + "_e" + str(ECUT) + "_" + str(COND)
         save_matrix(out, nrc)
 
 def chi_one(part, energy):
