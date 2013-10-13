@@ -16,7 +16,7 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
 ########### user input ###########
 #KPOINTS = sys.argv[1]
 #ECUT = sys.argv[1]
-LAYERS = 18
+LAYERS = 12
 KPOINTS = 950
 ECUT = 15
 OUT = "./results/" + str(LAYERS) + "_"
@@ -28,7 +28,8 @@ ELEC_DENS = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
 ENERGIES = linspace(0.01, 20, 2000)
 
 if LAYERS == 12:
-    COND = 27
+    COND = 75
+    #COND = 27
     #COND = 13
     SCIS = 1.8679
 elif LAYERS == 18:
