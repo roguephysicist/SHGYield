@@ -47,16 +47,16 @@ elif LAYERS == 36:
     COND = 75
     SCIS = 1.96003
 
-#CHI1 = "./data/res/bulk_chi1/chi1_sm_0.83808_4pi"
-CHI1 = "./data/res/" + str(LAYERS) + "layers/chi1.sm_xx_yy_zz_" + str(KPOINTS) + \
+#CHI1 = "./responses/bulk_chi1/chi1_sm_0.83808_4pi"
+CHI1 = "./responses/" + str(LAYERS) + "layers/chi1.sm_xx_yy_zz_" + str(KPOINTS) + \
        "_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
-ZZZ = "./data/res/" + str(LAYERS) + "layers/shgC.sm_zzz_" + str(KPOINTS) + \
+ZZZ = "./responses/" + str(LAYERS) + "layers/shgC.sm_zzz_" + str(KPOINTS) + \
        "_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
-ZXX = "./data/res/" + str(LAYERS) + "layers/shgC.sm_zxx_" + str(KPOINTS) + \
+ZXX = "./responses/" + str(LAYERS) + "layers/shgC.sm_zxx_" + str(KPOINTS) + \
        "_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
-XXZ = "./data/res/" + str(LAYERS) + "layers/shgC.sm_xxz_" + str(KPOINTS) + \
+XXZ = "./responses/" + str(LAYERS) + "layers/shgC.sm_xxz_" + str(KPOINTS) + \
        "_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
-XXX = "./data/res/" + str(LAYERS) + "layers/shgC.sm_xxx_" + str(KPOINTS) + \
+XXX = "./responses/" + str(LAYERS) + "layers/shgC.sm_xxx_" + str(KPOINTS) + \
        "_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
 
 ########### functions ###########
