@@ -17,7 +17,7 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
 #KPOINTS = sys.argv[1]
 #ECUT = sys.argv[1]
 COND = sys.argv[1]
-LAYERS = 12
+LAYERS = 18
 KPOINTS = 950
 ECUT = 15
 OUT = "./results/" + str(LAYERS) + "_"
@@ -34,7 +34,7 @@ if LAYERS == 12:
     #COND = 13
     SCIS = 1.8679
 elif LAYERS == 18:
-    COND = 39
+    #COND = 39
     #COND = 19
     SCIS = 1.91908
 elif LAYERS == 24:
