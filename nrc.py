@@ -29,9 +29,7 @@ ELEC_DENS = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
 ENERGIES = linspace(0.01, 20, 2000)
 
 if LAYERS == 12:
-    #COND = 75
     #COND = 27
-    #COND = 13
     SCIS = 1.8679
 elif LAYERS == 18:
     #COND = 39
@@ -47,17 +45,18 @@ elif LAYERS == 36:
     #COND = 75
     SCIS = 1.96003
 
+""" these are the paths to the appropriate response files """
 #CHI1 = "./responses/bulk_chi1/chi1_sm_0.83808_4pi"
-CHI1 = "./responses/" + str(LAYERS) + "layers/chi1.sm_xx_yy_zz_" + str(KPOINTS) + \
-       "_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
+CHI1 = "./responses/" + str(LAYERS) + "layers/chi1.sm_xx_yy_zz_" + str(KPOINTS)\
+        + "_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
 ZZZ = "./responses/" + str(LAYERS) + "layers/shgC.sm_zzz_" + str(KPOINTS) + \
-       "_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
+"_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
 ZXX = "./responses/" + str(LAYERS) + "layers/shgC.sm_zxx_" + str(KPOINTS) + \
-       "_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
+"_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
 XXZ = "./responses/" + str(LAYERS) + "layers/shgC.sm_xxz_" + str(KPOINTS) + \
-       "_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
+"_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
 XXX = "./responses/" + str(LAYERS) + "layers/shgC.sm_xxx_" + str(KPOINTS) + \
-       "_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
+"_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
 
 ########### functions ###########
 def nonlinear_reflection():
@@ -134,7 +133,7 @@ def fresnel_sb(polarization, energy):
     return fresnel
 
 def reflection_components(polar_in, polar_out, energy, twoenergy):
-    """ math for different r factors. loads in different component matrices. 
+    """ math for different r factors. loads in different component matrices.
         the bms program had electrostatic units multiplying each - caution"""
     zzz = load_matrix(ZZZ)
     zxx = load_matrix(ZXX)
