@@ -14,9 +14,9 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
                   sqrt, linspace, ones, complex128
 
 ########### user input ###########
-#KPOINTS = sys.argv[1]
-#ECUT = sys.argv[1]
-COND = sys.argv[1]
+#KPOINTS = sys.argv[1] # reads kpoints from command line
+#ECUT = sys.argv[1] # reads ecut from command line
+COND = sys.argv[1] # reads N_c from command line
 LAYERS = 30
 KPOINTS = 950
 ECUT = 15
@@ -44,7 +44,7 @@ elif LAYERS == 30:
     #COND = 63
     SCIS = 1.95309
 elif LAYERS == 36:
-    COND = 75
+    #COND = 75
     SCIS = 1.96003
 
 #CHI1 = "./responses/bulk_chi1/chi1_sm_0.83808_4pi"
@@ -134,7 +134,8 @@ def fresnel_sb(polarization, energy):
     return fresnel
 
 def reflection_components(polar_in, polar_out, energy, twoenergy):
-    """ math for different r factors. loads in different component matrices """
+    """ math for different r factors. loads in different component matrices. 
+        the bms program had electrostatic units multiplying each - caution"""
     zzz = load_matrix(ZZZ)
     zxx = load_matrix(ZXX)
     xxz = load_matrix(XXZ)
