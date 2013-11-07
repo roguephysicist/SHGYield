@@ -33,7 +33,6 @@ if LAYERS == 12:
     SCIS = 1.8679
 elif LAYERS == 18:
     #COND = 39
-    #COND = 19
     SCIS = 1.91908
 elif LAYERS == 24:
     #COND = 51
