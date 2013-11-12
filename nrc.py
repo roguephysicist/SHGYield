@@ -17,7 +17,7 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
 #KPOINTS = sys.argv[1] # reads kpoints from command line
 #ECUT = sys.argv[1] # reads ecut from command line
 #COND = sys.argv[1] # reads N_c from command line
-LAYERS = 12
+LAYERS = 36
 KPOINTS = 950
 ECUT = 15
 COND = 50
@@ -41,9 +41,9 @@ elif LAYERS == 36:
     SCIS = 1.96003
 
 """ these are the paths to the appropriate response files """
-#CHI1 = "./responses/bulk_chi1/chi1_sm_0.83808_4pi"
-CHI1 = "./responses/" + str(LAYERS) + "layers/chi1.sm_xx_yy_zz_" + str(KPOINTS)\
-        + "_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
+CHI1 = "./responses/bulk_chi1/chi1.sm_xx_yy_zz_3107_25-nospin_scissor_0.83808_Nc_29"
+#CHI1 = "./responses/" + str(LAYERS) + "layers/chi1.sm_xx_yy_zz_" + str(KPOINTS)\
+#        + "_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
 ZZZ = "./responses/" + str(LAYERS) + "layers/shgC.sm_zzz_" + str(KPOINTS) + \
 "_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
 ZXX = "./responses/" + str(LAYERS) + "layers/shgC.sm_zxx_" + str(KPOINTS) + \
@@ -72,7 +72,7 @@ def nonlinear_reflection():
 
 def chi_one(part, energy):
     """ creates spline from real part of chi1 matrix"""
-    chi1 = load_matrix(CHI1)
+    chi1 = load_matrix_linear(CHI1)
     interpolated = \
     interpolate.InterpolatedUnivariateSpline(ENERGIES, getattr(chi1, part))
     return interpolated(energy)
@@ -159,6 +159,12 @@ def load_matrix(in_file):
     real1w, imaginary1w, real2w, imaginary2w = loadtxt(in_file, unpack=True, usecols=[1, 2, 3, 4], skiprows=1)
     real = real1w + real2w
     imaginary = imaginary1w + imaginary2w
+    data = real + 1j * imaginary
+    return data
+
+def load_matrix_linear(in_file):
+    """ loads files into matrices and extracts columns """
+    real, imaginary = loadtxt(in_file, unpack=True, usecols=[1, 2], skiprows=1)
     data = real + 1j * imaginary
     return data
 
