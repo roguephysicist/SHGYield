@@ -16,10 +16,11 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
 ########### user input ###########
 #KPOINTS = sys.argv[1] # reads kpoints from command line
 #ECUT = sys.argv[1] # reads ecut from command line
-COND = sys.argv[1] # reads N_c from command line
+#COND = sys.argv[1] # reads N_c from command line
 LAYERS = 12
 KPOINTS = 950
 ECUT = 15
+COND = 50
 OUT = "./results/" + str(LAYERS) + "_"
 # Angles
 THETA_RAD = radians(65)
@@ -29,19 +30,14 @@ ELEC_DENS = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
 ENERGIES = linspace(0.01, 20, 2000)
 
 if LAYERS == 12:
-    #COND = 27
     SCIS = 1.8679
 elif LAYERS == 18:
-    #COND = 39
     SCIS = 1.91908
 elif LAYERS == 24:
-    #COND = 51
     SCIS = 1.94138
 elif LAYERS == 30:
-    #COND = 63
     SCIS = 1.95309
 elif LAYERS == 36:
-    #COND = 75
     SCIS = 1.96003
 
 """ these are the paths to the appropriate response files """
@@ -160,7 +156,9 @@ def reflection_components(polar_in, polar_out, energy, twoenergy):
 
 def load_matrix(in_file):
     """ loads files into matrices and extracts columns """
-    real, imaginary = loadtxt(in_file, unpack=True, usecols=[3, 4], skiprows=1)
+    real1w, imaginary1w, real2w, imaginary2w = loadtxt(in_file, unpack=True, usecols=[1, 2, 3, 4], skiprows=1)
+    real = real1w + real2w
+    imaginary = imaginary1w + imaginary2w
     data = real + 1j * imaginary
     return data
 
