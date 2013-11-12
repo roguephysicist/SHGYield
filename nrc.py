@@ -14,14 +14,15 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
                   sqrt, linspace, ones, complex128
 
 ########### user input ###########
+LAYERS = sys.argv[1] # reads layers from command line
 #KPOINTS = sys.argv[1] # reads kpoints from command line
 #ECUT = sys.argv[1] # reads ecut from command line
 #COND = sys.argv[1] # reads N_c from command line
-LAYERS = 36
+#LAYERS = 12
 KPOINTS = 950
 ECUT = 15
 COND = 50
-OUT = "./results/" + str(LAYERS) + "_"
+OUT = "./results/"
 # Angles
 THETA_RAD = radians(65)
 PHI_RAD = radians(30)
@@ -29,15 +30,15 @@ PHI_RAD = radians(30)
 ELEC_DENS = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
 ENERGIES = linspace(0.01, 20, 2000)
 
-if LAYERS == 12:
+if LAYERS == "12":
     SCIS = 1.8679
-elif LAYERS == 18:
+elif LAYERS == "18":
     SCIS = 1.91908
-elif LAYERS == 24:
+elif LAYERS == "24":
     SCIS = 1.94138
-elif LAYERS == 30:
+elif LAYERS == "30":
     SCIS = 1.95309
-elif LAYERS == 36:
+elif LAYERS == "36":
     SCIS = 1.96003
 
 """ these are the paths to the appropriate response files """
@@ -66,7 +67,7 @@ def nonlinear_reflection():
               fresnel_sb(state[0], onee)) ** 2)) / 2j) *
               reflection_components(state[0], state[1], onee, twoe)) ** 2
         nrc = column_stack((onee, nrc))
-        out = OUT + "R" + state[0] + state[1] + "_k" +\
+        out = OUT + str(LAYERS) + "/" + "R" + state[0] + state[1] + "_k" +\
               str(KPOINTS).zfill(4) + "_e" + str(ECUT) + "_" + str(COND)
         save_matrix(out, nrc)
 
