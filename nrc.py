@@ -42,7 +42,7 @@ elif LAYERS == "36":
     SCIS = 1.96003
 
 """ these are the paths to the appropriate response files """
-CHI1 = "./responses/bulk_chi1/chi1.sm_xx_yy_zz_3107_25-nospin_scissor_0.83808_Nc_29"
+CHI1 = "./responses/bulk_chi1/chi1.sm_xx_yy_zz_3107_25-nospin_scissor_0.83808_Nc_26"
 #CHI1 = "./responses/" + str(LAYERS) + "layers/chi1.sm_xx_yy_zz_" + str(KPOINTS)\
 #        + "_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
 ZZZ = "./responses/" + str(LAYERS) + "layers/shgC.sm_zzz_" + str(KPOINTS) + \
