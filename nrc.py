@@ -22,6 +22,7 @@ LAYERS = sys.argv[1] # reads layers from command line
 KPOINTS = 950
 ECUT = 15
 COND = 50
+SCIS = 0.83808
 OUT = "./results/"
 # Angles
 THETA_RAD = radians(65)
@@ -30,16 +31,16 @@ PHI_RAD = radians(30)
 ELEC_DENS = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
 ENERGIES = linspace(0.01, 20, 2000)
 
-if LAYERS == "12":
-    SCIS = 1.8679
-elif LAYERS == "18":
-    SCIS = 1.91908
-elif LAYERS == "24":
-    SCIS = 1.94138
-elif LAYERS == "30":
-    SCIS = 1.95309
-elif LAYERS == "36":
-    SCIS = 1.96003
+#if LAYERS == "12":
+#    SCIS = 1.8679
+#elif LAYERS == "18":
+#    SCIS = 1.91908
+#elif LAYERS == "24":
+#    SCIS = 1.94138
+#elif LAYERS == "30":
+#    SCIS = 1.95309
+#elif LAYERS == "36":
+#    SCIS = 1.96003
 
 """ these are the paths to the appropriate response files """
 CHI1 = "./responses/bulk_chi1/chi1.sm_xx_yy_zz_3107_25-nospin_scissor_0.83808_Nc_26"
@@ -67,8 +68,9 @@ def nonlinear_reflection():
               fresnel_sb(state[0], onee)) ** 2)) / 2j) *
               reflection_components(state[0], state[1], onee, twoe)) ** 2
         nrc = column_stack((onee, nrc))
-        out = OUT + str(LAYERS) + "/" + "R" + state[0] + state[1] + "_k" +\
-              str(KPOINTS).zfill(4) + "_e" + str(ECUT) + "_" + str(COND)
+        out = OUT + str(LAYERS) + "_" + "R" + state[0] + state[1] + "_k" +\
+              str(KPOINTS).zfill(4) + "_e" + str(ECUT) + "_" + str(SCIS) +\
+              "_" + str(COND)
         save_matrix(out, nrc)
 
 def chi_one(part, energy):
