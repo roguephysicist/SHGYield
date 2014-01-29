@@ -2,7 +2,7 @@
 nrc.py is a python program designed to calculate the Nonlinear reflection
 coefficient for silicon surfaces. It works in conjunction with the matrix
 elements calculated using ABINIT, and open source ab initio software,
-and TINIBA, our in-house optical calculation software.1
+and TINIBA, our in-house optical calculation software.
 
 The work codified in this software can be found in Phys.Rev.B66, 195329(2002).
 """
