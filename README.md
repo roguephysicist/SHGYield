@@ -1,4 +1,4 @@
-nrc.py
+Nonlinear Reflection Coefficient for Silicon Surfaces
 ===========================
 This repo houses the source code for my research project on the nonlinear
 reflection coefficient for silicon surfaces.
