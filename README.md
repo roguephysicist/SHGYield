@@ -3,7 +3,7 @@ Nonlinear Reflection Coefficient for Silicon Surfaces
 This repo houses the source code for my research project on the nonlinear
 reflection coefficient for silicon surfaces.
 
-![](https://raw2.github.com/roguephysicist/nrc/master/article/figure.png)
+![](https://raw2.github.com/roguephysicist/nonrefco/master/article/figure.png)
 
 The major work are python scripts that calculate the nonlinear reflection
 coeffecient from data calculated with TINIBA and the ABINIT code. TINIBA is
