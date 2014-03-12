@@ -17,13 +17,13 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
 LAYERS = sys.argv[1] # reads layers from command line
 #KPOINTS = sys.argv[1] # reads kpoints from command line
 #ECUT = sys.argv[1] # reads ecut from command line
-#COND = sys.argv[1] # reads N_c from command line
+COND = sys.argv[2] # reads N_c from command line
 #LAYERS = 12
-KPOINTS = 950
+KPOINTS = 514
 ECUT = 15
-COND = 50
+#COND = 75
 SCIS = 0.83808
-OUT = "./results/"
+OUT = "../calculated/nrc/"
 # Angles
 THETA_RAD = radians(65)
 PHI_RAD = radians(30)
@@ -43,16 +43,16 @@ ENERGIES = linspace(0.01, 20, 2000)
 #    SCIS = 1.96003
 
 """ these are the paths to the appropriate response files """
-CHI1 = "./responses/bulk_chi1/chi1.sm_xx_yy_zz_3107_25-nospin_scissor_0.83808_Nc_26"
-#CHI1 = "./responses/" + str(LAYERS) + "layers/chi1.sm_xx_yy_zz_" + str(KPOINTS)\
+CHI1 = "../calculated/bulk_chi1/chi1.sm_xx_yy_zz_3107_25-nospin_scissor_0.83808_Nc_26"
+#CHI1 = "../calculated/" + str(LAYERS) + "/chi1.sm_xx_yy_zz_" + str(KPOINTS)\
 #        + "_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
-ZZZ = "./responses/" + str(LAYERS) + "layers/shgC.sm_zzz_" + str(KPOINTS) + \
+ZZZ = "../calculated/shg/" + str(LAYERS) + "/shgC.sm_zzz_" + str(KPOINTS) + \
 "_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
-ZXX = "./responses/" + str(LAYERS) + "layers/shgC.sm_zxx_" + str(KPOINTS) + \
+ZXX = "../calculated/shg/" + str(LAYERS) + "/shgC.sm_zxx_" + str(KPOINTS) + \
 "_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
-XXZ = "./responses/" + str(LAYERS) + "layers/shgC.sm_xxz_" + str(KPOINTS) + \
+XXZ = "../calculated/shg/" + str(LAYERS) + "/shgC.sm_xxz_" + str(KPOINTS) + \
 "_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
-XXX = "./responses/" + str(LAYERS) + "layers/shgC.sm_xxx_" + str(KPOINTS) + \
+XXX = "../calculated/shg/" + str(LAYERS) + "/shgC.sm_xxx_" + str(KPOINTS) + \
 "_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
 
 ########### functions ###########
