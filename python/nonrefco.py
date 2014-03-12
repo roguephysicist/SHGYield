@@ -7,6 +7,12 @@ and TINIBA, our in-house optical calculation software.
 The work codified in this software can be found in Phys.Rev.B66, 195329(2002).
 """
 
+"""
+TO-DO
+- Rpp, Rps, Rsp, and Rss should be written to the same file, one per column.
+- read files for batch processing from an input file.
+"""
+
 import sys
 from math import sin, cos, radians
 from scipy import constants, interpolate
