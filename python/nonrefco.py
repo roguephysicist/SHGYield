@@ -5,9 +5,7 @@ elements calculated using ABINIT, and open source ab initio software,
 and TINIBA, our in-house optical calculation software.
 
 The work codified in this software can be found in Phys.Rev.B66, 195329(2002).
-"""
 
-"""
 TO-DO
 - Rpp, Rps, Rsp, and Rss should be written to the same file, one per column.
 - read files for batch processing from an input file.
@@ -48,9 +46,9 @@ ENERGIES = linspace(0.01, 20, 2000)
 #elif LAYERS == "36":
 #    SCIS = 1.96003
 
-""" these are the paths to the appropriate response files """
+###### these are the paths to the appropriate response files
 CHI1 = "../calculated/bulk_chi1/chi1.sm_xx_yy_zz_3107_25-nospin_scissor_0.83808_Nc_26"
-#CHI1 = "../calculated/" + str(LAYERS) + "/chi1.sm_xx_yy_zz_" + str(KPOINTS)\
+# CHI1 = "../calculated/" + str(LAYERS) + "/chi1.sm_xx_yy_zz_" + str(KPOINTS)\
 #        + "_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
 ZZZ = "../calculated/shg/" + str(LAYERS) + "/shgC.sm_zzz_" + str(KPOINTS) + \
 "_half-slab_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
@@ -128,12 +126,12 @@ def fresnel_sb(polarization, energy):
     """ math for fresnel factors from surface to bulk. Fresnel model """
     if polarization == "s":
         fresnel = ones(2000, dtype=complex128)
-        #fresnel = (2 * wave_vector(energy)) / (wave_vector(energy)
+        # fresnel = (2 * wave_vector(energy)) / (wave_vector(energy)
         #           + wave_vector(energy))
     elif polarization == "p":
         fresnel = 1 / epsilon(energy)
-        #fresnel = (2 * wave_vector(energy)) / (epsilon(energy) *
-        #wave_vector(energy) + epsilon(energy) * wave_vector(energy))
+        # fresnel = (2 * wave_vector(energy)) / (epsilon(energy) *
+        # wave_vector(energy) + epsilon(energy) * wave_vector(energy))
     return fresnel
 
 def reflection_components(polar_in, polar_out, energy, twoenergy):
@@ -143,6 +141,10 @@ def reflection_components(polar_in, polar_out, energy, twoenergy):
     zxx = load_matrix(ZXX)
     xxz = load_matrix(XXZ)
     xxx = load_matrix(XXX)
+    # zzz = electrostatic_units(energy) * load_matrix(ZZZ)
+    # zxx = electrostatic_units(energy) * load_matrix(ZXX)
+    # xxz = electrostatic_units(energy) * load_matrix(XXZ)
+    # xxx = electrostatic_units(energy) * load_matrix(XXX)
     if polar_in == "p" and polar_out == "p":
         r_factor = sin(THETA_RAD) * epsilon(twoenergy) * \
                 (((sin(THETA_RAD) ** 2) * (epsilon(energy) ** 2) * zzz) +
