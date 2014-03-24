@@ -6,6 +6,8 @@ and TINIBA, our in-house optical calculation software.
 
 The work codified in this software can be found in Phys.Rev.B66, 195329(2002).
 
+Experimental gap for bulk Si = 3.4 according to Landolt-Boernstein
+
 TO-DO
 - Rpp, Rps, Rsp, and Rss should be written to the same file, one per column.
 - read files for batch processing from an input file.
