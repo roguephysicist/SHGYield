@@ -28,7 +28,8 @@ COND = sys.argv[2] # reads N_c from command line
 KPOINTS = 514
 ECUT = 15
 #COND = 75
-SCIS = 0.83808
+#SCIS = 0.83808
+SCIS = 0.41904
 OUT = "../calculated/nrc/"
 # Angles
 THETA_RAD = radians(65)
