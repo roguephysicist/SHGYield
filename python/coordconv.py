@@ -9,9 +9,9 @@ def conversion():
     """ Does the actual conversion """
     target = sys.argv[1]
     in_file = sys.argv[2]
-    if target == "b":
+    if target == "b": # converts to bohrs
         factor = constants.angstrom / constants.value("Bohr radius")
-    elif target == "a":
+    elif target == "a": # converts to angstroms
         factor = constants.value("Bohr radius") / constants.angstrom
     else:
         print "Fuck you! You done fucked up!"
