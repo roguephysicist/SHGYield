@@ -30,7 +30,6 @@ KPOINTS = 514
 ECUT = 15
 COND = 75
 #SCIS = 0.83808
-#SCIS = 0.41904
 OUT = "../calculated/nrc/"
 # Angles
 THETA_RAD = radians(65)
@@ -39,19 +38,8 @@ PHI_RAD = radians(30)
 ELEC_DENS = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
 ENERGIES = linspace(0.01, 20, 2000)
 
-#if LAYERS == "12":
-#    SCIS = 1.8679
-#elif LAYERS == "18":
-#    SCIS = 1.91908
-#elif LAYERS == "24":
-#    SCIS = 1.94138
-#elif LAYERS == "30":
-#    SCIS = 1.95309
-#elif LAYERS == "36":
-#    SCIS = 1.96003
-
 ###### these are the paths to the appropriate response files
-CHI1 = "../calculated/bulk_chi1/chi1.sm_xx_yy_zz_3107_25-nospin_scissor_0.83808_Nc_26"
+CHI1 = "../calculated/bulk_chi1/chi1.sm_xx_yy_zz_3107_25-nospin_scissor_0_Nc_26"
 # CHI1 = "../calculated/" + str(LAYERS) + "/chi1.sm_xx_yy_zz_" + str(KPOINTS)\
 #        + "_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
 ZZZ = "../calculated/shg/" + str(LAYERS) + "/shgC.sm_zzz_" + str(KPOINTS) + \
