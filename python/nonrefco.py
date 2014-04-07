@@ -24,12 +24,12 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
 #KPOINTS = sys.argv[1] # reads kpoints from command line
 #ECUT = sys.argv[1] # reads ecut from command line
 #COND = sys.argv[2] # reads N_c from command line
-SCIS = sys.argv[1] # reads scissor correction from command line
-LAYERS = 12
+#SCIS = sys.argv[1] # reads scissor correction from command line
+LAYERS = 40
 KPOINTS = 514
 ECUT = 15
-COND = 75
-#SCIS = 0.83808
+COND = 69
+SCIS = 0.83808
 OUT = "../calculated/nrc/"
 # Angles
 THETA_RAD = radians(65)
@@ -39,7 +39,7 @@ ELEC_DENS = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
 ENERGIES = linspace(0.01, 20, 2000)
 
 ###### these are the paths to the appropriate response files
-CHI1 = "../calculated/bulk_chi1/chi1.sm_xx_yy_zz_3107_25-nospin_scissor_0_Nc_26"
+CHI1 = "../calculated/bulk_chi1/chi1.sm_xx_yy_zz_3107_25-nospin_scissor_0.83808_Nc_26"
 # CHI1 = "../calculated/" + str(LAYERS) + "/chi1.sm_xx_yy_zz_" + str(KPOINTS)\
 #        + "_" + str(ECUT) + "-nospin_scissor_" + str(SCIS) + "_Nc_" + str(COND)
 ZZZ = "../calculated/shg/" + str(LAYERS) + "/shgC.sm_zzz_" + str(KPOINTS) + \
