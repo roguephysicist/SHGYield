@@ -20,15 +20,15 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
                   sqrt, linspace, ones, complex128
 
 ########### user input ###########
-#LAYERS = sys.argv[1] # reads layers from command line
+LAYERS = sys.argv[1] # reads layers from command line
 #KPOINTS = sys.argv[1] # reads kpoints from command line
 #ECUT = sys.argv[1] # reads ecut from command line
-#COND = sys.argv[2] # reads N_c from command line
+COND = sys.argv[2] # reads N_c from command line
 #SCIS = sys.argv[1] # reads scissor correction from command line
-LAYERS = 40
+#LAYERS = 40
 KPOINTS = 514
 ECUT = 15
-COND = 69
+#COND = 69
 SCIS = 0.83808
 OUT = "../calculated/nrc/"
 # Angles
