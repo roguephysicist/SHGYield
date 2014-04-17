@@ -1,0 +1,286 @@
+\documentclass[floatfix,prb,aps,superscriptaddress,11pt]{revtex4}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{graphicx}
+%\usepackage{showkeys}
+\usepackage{ulem}
+\usepackage{bm}
+\setcounter{MaxMatrixCols}{10}
+\input{/Users/bms/util/definitions}
+\begin{document}
+\begin{eqnarray}
+\mbox{Im}\lbrack \chi _{\mathrm{v}}^{abc}(-2\omega;\omega,\omega)] &=&\frac{\pi
+|e|^{3}}{2\hbar ^{2}}\int \frac{d^{3}k}{8\pi ^{3}}\Big[\sum_{vc}\frac{16}{(
+\omega_{cv}^{S})^{3}}\Big(\sum_{c^{\prime }}\frac{\mbox{Im}\lbrack
+v_{vc}^{\Sigma ,a}\{v_{cc^{\prime }}^{\Sigma ,b}v_{c^{\prime }v}^{\Sigma
+,c}\}]}{\omega_{cv}^{S}-2\omega_{c^{\prime }v}^{S}}  \notag  \label{imchicf} \\
+&-&\sum_{v^{\prime }}\frac{\mbox{Im}\lbrack v_{vc}^{\Sigma
+,a}\{v_{cv^{\prime }}^{\Sigma ,b}v_{v^{\prime }v}^{\Sigma ,c}\}]}{\omega
+_{cv}^{S}-2\omega_{cv^{\prime }}^{S}}\Big)\delta(\omega_{cv}^{S}-2\omega)  \notag \\
+&+&\sum_{(vc)\neq\ell }
+\frac{1}{(\omega_{cv}^{S})^{3}}\Big(\frac{\mbox{Im}\lbrack
+v_{\ell c}^{\Sigma ,a}\{v_{cv}^{\Sigma ,b}v_{v\ell }^{\Sigma ,c}\}]}{\omega
+_{c\ell }^{S}-2\omega_{cv}^{S}}-
+\frac{\mbox{Im}\lbrack v_{v\ell }^{\Sigma
+,a}\{v_{\ell c}^{\Sigma ,b}v_{cv}^{\Sigma ,c}\}]}{\omega_{\ell v}^{S}-2\omega
+_{cv}^{S}}\Big)\delta(\omega_{cv}^{S}-\omega)  \notag \\
+&-&\sum_{vc}\frac{1}{(\omega_{cv}^{S})^{3}}\Big(4\mbox{Re}\lbrack \
+v_{vc}^{\Sigma ,a}\{\mathcal{F}_{cv}^{bc}\}]\delta(\omega_{cv}^{S}-2\omega)+\mbox{Re}
+\lbrack \{\mathcal{F}_{vc}^{ab}v_{cv}^{\Sigma ,c}\}]\delta(\omega_{cv}^{S}-\omega)
+\Big)\Big].
+\end{eqnarray}
+Let's take $\go_n\to\go_n+\gD_n$ that implies
+$\go^S_n\to\go^S_n+\gD_n$, with $\gD_n$  
+the energy difference of two calculations.
+Then, $\go_{nm}\to\go_{nm}+\gD_{nm}$ and
+$\go^S_{nm}\to\go^S_{nm}+\gD_{nm}$, with $\gD_{nm}=\gD_n-\gD_m$.
+Then,  
+$\go^S_{nm}\to\go^S_{nm}(1+\gD_{nm}/\go^S_{nm})=\go^S_{nm}(1+\gd^S_{nm})$,  
+with $\gd^S_{nm}=\gD_{nm}/\go^S_{nm}$.  
+Likewise
+$\go_{nm}\to\go_{nm}(1+\gd_{nm})$, 
+with $\gd_{nm}=\gD_{nm}/\go_{nm}$. 
+Also, $\gd(\go_{cv}-\go)
+\to \gd(\go_{cv}+\gD_{cv}-\go)\sim \gd(\go_{cv}-\go)$, since the
+difference $\gD_{cv}$ is very small.
+
+We expand to first order in $\gd_{nm}$. The $\go$ terms are
+\begin{eqnarray}\label{t1}
+\frac{1}{(\omega_{cv}^{S})^{3}}\frac{
+1
+}{\omega
+_{c\ell }^{S}-2\omega_{cv}^{S}}
+&\to&
+\frac{1}{(\omega_{cv}^{S}(1+\gd^S_{cv}))^{3}}\frac{
+1
+}{\go_{c\ell }^{S}(1+\gd^S_{c\ell})-2\omega_{cv}^{S}(1+\gd^S_{cv})}
+\nonumber\\
+&=&
+\frac{1}{(\omega_{cv}^{S})^3}(1+\gd^S_{cv})^{-3}\frac{1}
+{\go_{c\ell }^{S}-2\go_{cv}^S+\gD_{c\ell}-2\gD_{cv}}
+\nonumber\\
+&=&
+\frac{1}{(\omega_{cv}^{S})^3}(1-3\gd^S_{cv})
+\frac{(1+(\gD_{c\ell}-2\gD_{cv})/(\go_{c\ell }^{S}-2\go_{cv}^S))^{-1}}
+{\go_{c\ell }^{S}-2\go_{cv}^S}
+\nonumber\\
+&=&
+\frac{1}{(\omega_{cv}^{S})^3}
+\frac{1}{\go_{c\ell }^{S}-2\go_{cv}^S}
+(1-3\gd^S_{cv})
+(1-\frac{\gD_{c\ell}-2\gD_{cv}}{\go_{c\ell }^{S}-2\go_{cv}^S})
+\nonumber\\
+&=&
+\frac{1}{(\omega_{cv}^{S})^3}
+\frac{1}{\go_{c\ell }^{S}-2\go_{cv}^S}
+\Big(1-3\gd^S_{cv}
+-\frac{\gD_{c\ell}-2\gD_{cv}}{\go_{c\ell }^{S}-2\go_{cv}^S}\Big)
+,
+\end{eqnarray} 
+and
+\begin{eqnarray}\label{t1}
+\frac{1}{(\omega_{cv}^{S})^{3}}\frac{
+1
+}{\omega
+_{\ell v }^{S}-2\omega_{cv}^{S}}
+&\to&
+\frac{1}{(\omega_{cv}^{S})^3}
+\frac{1}{\go_{\ell v }^{S}-2\go_{cv}^S}
+\Big(1-3\frac{\gD_{cv}}{\go_{cv}^S}
+-\frac{\gD_{\ell v}-2\gD_{cv}}{\go_{\ell v }^{S}-2\go_{cv}^S}\Big)
+.
+\end{eqnarray}
+\begin{eqnarray}\label{t5}
+\bfv^\gS_{nm}
+&=&\frac{\go_{nm}^S}{\go_{nm}}\bfv_{nm}
+\nonumber\\
+&\to&
+\frac{\go_{nm}^S(1+\gd^S_{nm})}{\go_{nm}(1+\gd_{nm})}\bfv_{nm}
+\nonumber\\
+&=&
+\frac{\go_{nm}^S}
+{\go_{nm}}\bfv_{nm}
+(1+\gd^S_{nm})(1-\gd_{nm})
+\nonumber\\
+&=&
+\frac{\go_{nm}^S}
+{\go_{nm}}\bfv_{nm}
+(1+\gd^S_{nm}-\gd_{nm})
+\nonumber \\
+\bfv^\gS_{nm}
+&\to&
+\bfv^\gS_{nm}
+(1+\gd^S_{nm}-\gd_{nm})
+%=
+%\frac{\go_{nm}^S}
+%{\go_{nm}}\bfv_{nm}
+%(1+\frac{\gD_{nm}}{\go_{nm}^S}-\frac{\gD_{nm}}{\go_{nm}})
+,
+\end{eqnarray}
+then
+\begin{eqnarray}\label{t.01}
+v_{\ell \rmc}^{\Sigma ,\rma}\{v_{cv}^{\Sigma ,\rmb}v_{v\ell }^{\Sigma ,c}\}
+&\to&
+v_{\ell \rmc}^{\Sigma ,\rma}\{v_{cv}^{\Sigma ,\rmb}v_{v\ell }^{\Sigma ,c}\}
+(1+\gd^S_{\ell c}-\gd_{\ell c})
+(1+\gd^S_{cv}-\gd_{cv})
+(1+\gd^S_{v\ell}-\gd_{v\ell})
+\nonumber\\
+&\to&
+v_{\ell \rmc}^{\Sigma ,\rma}\{v_{cv}^{\Sigma ,\rmb}v_{v\ell }^{\Sigma ,c}\}
+(1+\gd^S_{\ell c}+\gd^S_{cv}+\gd^S_{v\ell}
+-\gd_{\ell c}-\gd_{cv}-\gd_{v\ell})
+.
+\end{eqnarray}
+Then,
+\begin{eqnarray}\label{t02}
+\frac{1}{(\omega_{cv}^{S})^{3}}
+\frac{\mbox{Im}\lbrack 
+v_{\ell c}^{\Sigma ,\rma}\{v_{cv}^{\Sigma ,\rmb}v_{v\ell }^{\Sigma ,\rmc}\}]}
+{\omega_{c\ell }^{S}-2\omega_{cv}^{S}}
+&\to&
+\frac{1}{(\omega_{cv}^{S})^3}
+\frac{\mbox{Im}\lbrack 
+v_{\ell c}^{\Sigma ,\rma}\{v_{cv}^{\Sigma ,\rmb}v_{v\ell }^{\Sigma ,\rmc}\}]}
+{\go_{c\ell }^{S}-2\go_{cv}^S}
+\Big(1-3\gd^S_{cv}
+-\frac{\gD_{c\ell}-2\gD_{cv}}{\go_{c\ell }^{S}-2\go_{cv}^S}\Big)
+\nonumber\\
+&\times&
+(1+\gd^S_{\ell c}+\gd^S_{cv}+\gd^S_{v\ell}
+-\gd_{\ell c}-\gd_{cv}-\gd_{v\ell})
+\nonumber\\
+&\to&
+\frac{1}{(\omega_{cv}^{S})^3}
+\frac{\mbox{Im}\lbrack 
+v_{\ell c}^{\Sigma ,\rma}\{v_{cv}^{\Sigma ,\rmb}v_{v\ell }^{\Sigma ,\rmc}\}]}
+{\go_{c\ell }^{S}-2\go_{cv}^S}
+\Big(1-3\gd^S_{cv}
+-\frac{\gD_{c\ell}-2\gD_{cv}}{\go_{c\ell }^{S}-2\go_{cv}^S}
+\nonumber\\
+&+&
+\gd^S_{\ell c}+\gd^S_{cv}+\gd^S_{v\ell}
+-\gd_{\ell c}-\gd_{cv}-\gd_{v\ell}\Big)
+,
+\end{eqnarray} 
+and
+\begin{eqnarray}\label{t02}
+\frac{1}{(\omega_{cv}^{S})^{3}}
+\frac{\mbox{Im}\lbrack
+v_{v\ell}^{\Sigma ,\rma}\{v_{\ell c}^{\Sigma ,\rmb}v_{cv}^{\Sigma ,\rmc}\}]}
+{\omega_{\ell v }^{S}-2\omega_{cv}^{S}}
+&\to&
+\frac{1}{(\omega_{cv}^{S})^3}
+\frac{\mbox{Im}\lbrack
+v_{v\ell}^{\Sigma ,\rma}\{v_{\ell c}^{\Sigma ,\rmb}v_{cv}^{\Sigma ,\rmc}\}]}
+{\go_{\ell v }^{S}-2\go_{cv}^S}
+\Big(1-3\gd^S_{cv}
+-\frac{\gD_{\ell v}-2\gD_{cv}}{\go_{\ell v}^{S}-2\go_{cv}^S}
+\nonumber\\
+&+&
+\gd^S_{v\ell}+\gd^S_{\ell c}+\gd^S_{cv}
+-\gd_{v\ell}-\gd_{\ell c}-\gd_{cv}\Big)
+,
+\end{eqnarray}
+
+For the matrix elements of the position operator we have that
+\begin{eqnarray}\label{rnmenm}
+\bfr_{nm}
+&=&
+\frac{\bfp_{nm}}{im_e\go_{nm}}
+\to
+\frac{\bfp_{nm}}{im_e\go_{nm}(1+\gd_{nm})}
+=
+\bfr_{nm}(1-\gd_{nm})
+\nonumber \\
+\bfr_{nm}
+&\to&
+\bfr_{nm}(1-\gd_{nm})
+.
+\end{eqnarray} 
+where we recall that $\bfr_{nm}^S=\bfr_{nm}$, and $\go_{nm}\bfr_{nm}$
+is invariant under the energy differences.
+
+\begin{eqnarray}\label{rgen}
+r_{nm;k^{a}}^{b}&=&
+\frac{r_{nm}^{a}{\cal V}_{mn}^{b}+r_{nm}^{b}{\cal V}_{mn}^{a}}{\omega
+_{nm}}+\frac{i}{\omega_{nm}}\sum_{\ell }\big(\omega_{\ell m}r_{n\ell }^{a}r_{\ell
+m}^{b}-\omega_{n\ell }r_{n\ell }^{b}r_{\ell m}^{a}\big)
+\nonumber\\
+&\to&
+\frac{r_{nm}^{a}{\cal V}_{mn}^{b}+r_{nm}^{b}{\cal V}_{mn}^{a}}{\omega
+_{nm}(1+\gd_{nm})}(1-\gd_{nm})
+\nonumber\\
+&+&\frac{i}{\omega_{nm}(1+\gd_{nm})}\sum_{\ell }
+\big(
+\omega_{\ell m}
+r_{\ell m}^{b}
+ r_{n\ell }^{a}(1-\gd_{n\ell})
+-\omega_{n\ell }
+r_{n\ell }^{b}r_{\ell m}^{a}(1-\gd_{\ell m})\big)
+\nonumber\\
+r_{nm;k^{a}}^{b}
+\to
+\tilde r_{nm;k^{a}}^{b}
+&=&
+\Big[\frac{r_{nm}^{a}{\cal V}_{mn}^{b}+r_{nm}^{b}{\cal V}_{mn}^{a}}{\omega
+_{nm}}(1-\gd_{nm})
+\nonumber\\
+&+&\frac{i}{\omega_{nm}}\sum_{\ell }
+\big(
+\omega_{\ell m}
+r_{\ell m}^{b}
+ r_{n\ell }^{a}(1-\gd_{n\ell})
+-\omega_{n\ell }
+r_{n\ell }^{b}r_{\ell m}^{a}(1-\gd_{\ell m})\big)
+\Big]
+(1-\gd_{nm})
+\nonumber\\
+\tilde r_{nm;k^{a}}^{b}
+&=&
+\tilde{\tilde{r}}_{nm;k^{a}}^{b}
+ (1-\gd_{nm})
+.
+\end{eqnarray}
+Then,
+${\cal F}^{\rma\rmb}_{vc}$ is given by
+\begin{eqnarray}  \label{calfnmab}
+\mathcal{F}_{vc}^{\rma\rmb}
+&=&
+-i\Delta\sum_{\ell\neq(vc)}\Big(r_{v\ell }^{\rma}r_{\ell
+c}^{\rmb}-r_{v\ell }^{\rmb}r_{\ell c}^{\rma}\Big)
+(1-\gd_{v\ell} -\gd_{\ell c})
++
+\Delta \tilde{\tilde{r}}_{vc;k^{\rma}}^{\rmb}
+ (1-\gd_{vc})
+\nonumber\\
+&=&
+\Big[
+-i\Delta\sum_{\ell\neq(vc)}\Big(r_{v\ell }^{\rma}r_{\ell
+c}^{\rmb}-r_{v\ell }^{\rmb}r_{\ell c}^{\rma}\Big)
+(1-\gd_{v\ell} -\gd_{\ell c}+\gd_{vc})
++
+\Delta \tilde{\tilde{r}}_{vc;k^{\rma}}^{\rmb}
+\Big] 
+(1-\gd_{vc})
+\nonumber\\
+&=&
+\tilde{\mathcal{F}}_{vc}^{\rma\rmb} (1-\gd_{vc})
+,
+\end{eqnarray}
+and
+\begin{equation}\label{v11}
+\frac{1}{(\go^S_{cv})^3}
+\mathcal{F}_{vc}^{\rma\rmb}v_{cv}^{\gS,\rmc}
+\to
+\frac{1}{(\go^S_{cv})^3}(1-3\gd^S_{cv})
+\tilde{\mathcal{F}}_{vc}^{\rma\rmb} v_{cv}^{\gS,\rmc} (1+\gd_{cv}^S)
+=
+\frac{1}{(\go^S_{cv})^3}
+\tilde{\mathcal{F}}_{vc}^{\rma\rmb} v_{cv}^{\gS,\rmc} (1-2\gd_{cv}^S)
+,
+\end{equation}
+since $\gd_{cv}-\gd_{vc}=\gD_{cv}/\go_{cv} -\gD_{vc}/\go_{vc}
+=\gD_{cv}/\go_{cv} -(-\gD_{cv})/(-\go_{cv})= 0$.
+%%%%%%%%%%
+\end{document}

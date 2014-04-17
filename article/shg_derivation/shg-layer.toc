@@ -1,0 +1,18 @@
+\tocdepth@munge 
+\contentsline {section}{\numberline {}Contents}{1}{section*.1}
+\tocdepth@restore 
+\contentsline {section}{\numberline {I}Introduction}{2}{section*.2}
+\contentsline {section}{\numberline {II}Longitudinal Gauge}{2}{section*.3}
+\contentsline {section}{\numberline {III}Time-dependent Perturbation Theory}{6}{section*.4}
+\contentsline {section}{\numberline {IV}Layered Current Density}{10}{section*.5}
+\contentsline {section}{\numberline {V}Non-linear Surface Susceptibility}{14}{section*.6}
+\contentsline {section}{\numberline {VI}Divergence-free $\chi ^s$}{17}{section*.7}
+\contentsline {section}{\numberline {VII}Conclusions}{19}{section*.8}
+\appendix 
+\contentsline {section}{\numberline {A}Expressions for $\chi ^s_{\mathrm {a}\mathrm {b}\mathrm {c}}$}{19}{section*.9}
+\contentsline {section}{\numberline {B}Some results of Dirac's notation}{24}{section*.10}
+\contentsline {section}{\numberline {C}Basic relationships}{26}{section*.11}
+\contentsline {section}{\numberline {D}Generalized derivative $(\omega _n(\mathbf {k}))_{;\mathbf {k}}$}{27}{section*.12}
+\contentsline {section}{\numberline {E}Generalized derivative $(\mathbf {r}_{nm}(\mathbf {k}))_{;\mathbf {k}}$}{28}{section*.13}
+\contentsline {section}{\numberline {F}${\setbox \z@ \hbox {\frozen@everymath \@emptytoks \mathsurround \z@ $\nulldelimiterspace \z@ \left (\vcenter to1.5\big@size {}\right .$}\box \z@ }{\cal R}^\mathrm {a}_{nm}{\setbox \z@ \hbox {\frozen@everymath \@emptytoks \mathsurround \z@ $\nulldelimiterspace \z@ \left )\vcenter to1.5\big@size {}\right .$}\box \z@ }_{;k^\mathrm {b}}$}{30}{section*.14}
+\contentsline {section}{\numberline {}References}{31}{section*.15}

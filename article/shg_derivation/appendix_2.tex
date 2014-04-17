@@ -1,0 +1,644 @@
+\section{Some results of Dirac's notation}\label{ap_dirac}
+
+We derive a series of results that follow from Dirac's notation and
+that are  useful in the various derivations.
+
+Let's start with the Fourier transform of the wave function written in
+the \sch~ representation, i.e.
+\begin{equation}\label{ap_ft}
+\psi(\bfr) = \frac{1}{(2\pi\hbar)^{3/2}}\int d\bfp \psi(\bfp)e^{i\bfp\cdot\bfr/\hbar}
+,
+\end{equation}  
+and inversely 
+\begin{equation}\label{ap_tf}
+\psi(\bfp) = \frac{1}{(2\pi\hbar)^{3/2}}\int d\bfr \psi(\bfr)
+e^{-i\bfp\cdot\bfr/\hbar}
+.
+\end{equation}  
+Now,
+\begin{equation}\label{rpsi}
+\braket{\bfr}{\psi}=\psi(\bfr)=\int d\bfp \braket{\bfr}{\bfp}\braket{\bfp}{\psi}=
+\int d\bfp \braket{\bfr}{\bfp}\psi(\bfp)
+,
+\end{equation}
+that when compared with Eq.~\eqref{ap_ft} allow us to identify,
+\begin{equation}\label{rp2}
+\braket{\bfr}{\bfp}=\frac{1}{(2\pi\hbar)^{3/2}}e^{i\bfp\cdot\bfr/\hbar}
+.
+\end{equation}
+By the same token,
+\begin{equation}\label{rpsi2}
+\braket{\bfp}{\psi}=\psi(\bfp)=\int d\bfr \braket{\bfp}{\bfr}\braket{\bfr}{\psi}=
+\int d\bfr \braket{\bfp}{\bfr}\psi(\bfr)
+,
+\end{equation}
+that when compared with Eq.~\eqref{ap_tf} allow us to identify,
+\begin{equation}\label{rp}
+\braket{\bfp}{\bfr}=\frac{1}{(2\pi\hbar)^{3/2}}e^{-i\bfp\cdot\bfr/\hbar}
+,
+\end{equation}
+where
+\begin{equation}\label{ap_good}
+\braket{\bfr}{\bfp}=(\braket{\bfp}{\bfr})^*
+,
+\end{equation}
+is succinctly verified.
+ 
+We calculate the matrix elements of $\bfp$ in the $\bfr$
+representation,
+\begin{eqnarray}\label{ap_matp}
+\bra{\bfr}\hat{p}_x\ket{\bfr'}&=&
+\int d\bfp
+\bra{\bfr}\hat{p}_x\ket{\bfp}\braket{\bfp}{\bfr'} \\ \nonumber
+&=&
+\int d\bfp
+p_x\braket{\bfr}{\bfp}\braket{\bfp}{\bfr'} \\ \nonumber
+&=&
+\frac{1}{(2\pi\hbar)^3}
+\int d\bfp
+p_x
+e^{i\bfp\cdot(\bfr-\bfr')/\hbar}
+\\ \nonumber
+&=&
+\frac{1}{(2\pi\hbar)^3}
+\int dp_x
+p_x
+e^{ip_x(x-x')/\hbar}
+\int dp_y
+e^{ip_y(y-y')/\hbar}
+\int dp_z
+e^{ip_z(z-z')/\hbar}
+\\ \nonumber
+&=&
+\frac{1}{2\pi\hbar}
+\int dp_x
+p_x
+e^{ip_x(x-x')/\hbar}
+\gd(y-y')
+\gd(z-z')
+,
+\end{eqnarray}
+where we used the fact that
+\begin{equation}\label{ap_otra}
+\hat\bfp\ket{\bfp}=\bfp\ket{\bfp}
+,
+\end{equation}
+and that
+\begin{equation}\label{ap_delta}
+\gd(q-q')=\frac{1}{2\pi\hbar}
+\int dp
+e^{ip(q-q')/\hbar}
+.
+\end{equation}
+Now,
+\begin{equation}\label{ap_mas}
+\frac{1}{2\pi\hbar}
+\int dp_x
+p_x
+e^{ip_x(x-x')/\hbar}
+=
+-i\hbar\frac{\partial}{\partial x}
+\int
+\frac{dp_x}{2\pi\hbar}
+e^{ip_x(x-x')/\hbar}
+=-i\hbar\frac{\partial}{\partial x}\gd(x-x')
+,
+\end{equation}
+from where we finally get 
+\begin{equation}\label{ap_fin}
+\bra{\bfr}\hat{p}_x\ket{\bfr'}=
+(-i\hbar\frac{\partial}{\partial x}\gd(x-x'))
+\gd(y-y')
+\gd(z-z')
+,
+\end{equation}
+with similar results for $\hat{p}_y$ and $\hat{p}_z$.
+Now we can calculate
+\begin{eqnarray}\label{ap_psi}
+\bra{\bfr}\hat{p}_x\ket{\psi}&=&
+\int d\bfr' \bra{\bfr}\hat{p}_x\ket{\bfr'}\braket{\bfr'}{\psi}
+\\ \nonumber
+&=&
+\int dx' (-i\hbar\frac{\partial}{\partial x}\gd(x-x'))
+\int dy' \gd(y-y')
+\int dz' \gd(z-z')
+\psi(x',y',z')
+\\ \nonumber
+&=&
+-i\hbar
+\int dx' (\frac{\partial}{\partial x}\gd(x-x'))
+\psi(x',y,z)
+\\ \nonumber
+&=&
+-i\hbar
+\frac{\partial}{\partial x}
+\psi(x,y,z)
+,
+\end{eqnarray}
+where an integration by parts leads from the previous to last 
+to the last result, which confirms that in the $\bfr$ representation,
+the $\hat\bfp$ operator is replaced with the differential operator
+$-i\hbar\bfgnabla$. 
+
+\section{Basic relationships}\label{ap_basic}
+
+We present some basic results needed in the derivation of the main
+results. 
+ The normalization of the
+states $\psi_{n\mathbf{q}}(\mathbf{r})$ are chosen such that
+\begin{equation}\label{a_uno}
+\psi_{m\mathbf{q}}(\mathbf{r})=\left(\frac{\Omega}{8\pi^{3}}\right)^{\frac{1}{2}}u_{m\mathbf{q}}(\mathbf{r})e^{i\mathbf{q}\cdot\mathbf{r}}
+,
+\end{equation}
+and
+\begin{equation}\label{a_dos}
+\int_{\Omega}d^{3}r\,
+u_{n\mathbf{k}}^{*}(\mathbf{r})u_{m\mathbf{q}}(\mathbf{r})=\delta_{nm}\delta_{\mathbf{\mathbf{k},q}}
+,
+\end{equation}
+where $\Omega$ is the volume is the unit cell and $\gd_{a,b}$ is the
+Kronecker delta that gives one if $a=b$ and zero otherwise.
+For box normalization,
+where we have $N$ unit cells in some volume $V=N\gO$, this gives
+\begin{equation}\label{a_tres}
+\int_{V}d^{3}r\,\psi_{n\mathbf{k}}^{*}(\mathbf{r})\psi_{m\mathbf{q}}(\mathbf{r})=\frac{V}{8\pi^{3}}\delta_{nm}\delta_{\mathbf{\mathbf{k},q}},
+\end{equation}
+which lets us have in the limit of $N\rightarrow\infty$
+\begin{equation}\label{a_4}
+\int
+d^{3}r\,\psi_{n\mathbf{k}}^{*}(\mathbf{r})\psi_{m\mathbf{q}}(\mathbf{r})
+=\delta_{nm}\delta(\mathbf{k}-\mathbf{q})
+,
+\end{equation}
+for which the Kornecker-$\gd$ is replaced by
+\begin{equation}\label{a_5}
+\gd_{\bfk,\bfq}\rightarrow\frac{8\pi^3}{V}\gd(\bfk-\bfq)
+,
+\end{equation}
+and we recall that $\gd(x)=\gd(-x)$. Now, for any periodic function
+$f(\bfr)=f(\bfr+\bfR)$ we have
+\begin{eqnarray}\label{a_6}
+\int d^{3}r\, e^{i(\mathbf{q}-\mathbf{k})\cdot\mathbf{r}}f(\mathbf{r})
+& = &
+\sum_{j}^{\mbox{unit cells}}\int_{\Omega}d^{3}r\,
+e^{i(\mathbf{q}-\mathbf{k})\cdot(\mathbf{r}+\mathbf{R}_{j})}f(\mathbf{r}+\mathbf{R}_{j}),
+\nonumber
+\\
+ & =&\sum_{j}^{\mbox{unit cells}}\int_{\Omega}d^{3}r\,
+ e^{i(\mathbf{q}-\mathbf{k})\cdot(\mathbf{r}+\mathbf{R}_{j})}f(\mathbf{r}),
+\nonumber
+\\
+ & =&\int_{\Omega}d^{3}r\, e^{i(\mathbf{q}-\mathbf{k})\cdot\mathbf{r}}f(\mathbf{r})\sum_{j}^{\mbox{unit cells}}e^{i(\mathbf{q}-\mathbf{k})\cdot\mathbf{R}_{j}},\nonumber
+\\
+ & =&\int_{\Omega}d^{3}r\, e^{i(\mathbf{q}-\mathbf{k})\cdot\mathbf{r}}f(\mathbf{r})N\sum_{\mathbf{K}}\delta_{\mathbf{K},\mathbf{q}-\mathbf{k}},\nonumber
+\\
+ & =&N\int_{\Omega}d^{3}r\, e^{i(\mathbf{q}-\mathbf{k})\cdot\mathbf{r}}f(\mathbf{r})\delta_{\mathbf{0},\mathbf{q}-\mathbf{k}},\nonumber
+\\
+ & =&N\delta_{\mathbf{q},\mathbf{k}}\int_{\Omega}d^{3}r\, f(\mathbf{r}),\nonumber
+\\
+ &
+ =&\frac{8\pi^{3}}{\Omega}\delta(\mathbf{q}-\mathbf{k})\int_{\Omega}d^{3}r\,
+ f(\mathbf{r})
+,
+\end{eqnarray}
+where we have assumed that $\bfk$ and $\bfq$ are restricted to the
+first Brillouin zone, and thus the reciprocal lattice vector $\bfK=0$.
+
+\section{Generalized derivative $(\go_n(\bfk))_{;\bfk}$}\label{ap_gendevomega}
+
+We obtain the
+generalized derivative $(\go_n(\bfk))_{;\bfk}$.
+We start from
+\begin{equation}\label{a_conH0}
+\bra{n\bfk}\hat{H}_0\ket{m\bfk'}=\gd_{nm}\gd(\bfk-\bfk')\hbar\go_m(\bfk)
+,
+\end{equation}
+then Eq.~\eqref{gendev} gives
+\begin{eqnarray}\label{a_genderH0}
+(H_{0,nm})_{;\bfk}&=&
+\nabla_\bfk
+H_{0,n m}(\bfk)
+-
+i
+H_{0,nm}(\bfk)
+\left(
+\bfgxi_{nn}(\bfk)
+-
+\bfgxi_{mm}(\bfk)
+\right)
+\nonumber\\
+&=&\gd_{nm}\hbar\nabla_\bfk\go_m(\bfk)
+,
+\end{eqnarray}
+where from Eq.~\eqref{conmri3}, 
+\begin{eqnarray}\label{a_rih0}
+\bra{n\bfk}[\hat\bfr_i,\hat{H}_0]\ket{m\bfk}&=&
+i\gd_{nm}\hbar(\go_m(\bfk))_{;\bfk}
+=
+i\gd_{nm}\hbar\nabla_\bfk\go_m(\bfk)
+,
+\end{eqnarray}
+then
+\begin{equation}\label{a_wgendev}
+(\go_n(\bfk))_{;\bfk}=
+\nabla_\bfk\go_n(\bfk)
+.
+\end{equation}
+
+Now, from Eq.~\eqref{conhrnm} 
+\begin{equation}\label{a_hre}
+\bra{n\bfk}[\hat\bfr_e,\hat{H}_0]\ket{m\bfk}=
+i\hbar\frac{\bfp_{nm}(\bfk)}{m}
+\quad\quad n\ne m 
+,
+\end{equation}
+and from Eq.~\eqref{conhr} 
+\begin{equation}\label{a_hr}
+\bra{n\bfk}[\hat\bfr,\hat{H}_0]\ket{m\bfk}=
+i\hbar\frac{\bfp_{nm}(\bfk)}{m}
+,
+\end{equation}
+therefore, substituting above into
+
+\begin{equation}\label{a_hrt}
+\bra{n\bfk}[\hat\bfr,\hat{H}_0]\ket{m\bfk}=
+\bra{n\bfk}[\hat\bfr_i,\hat{H}_0]\ket{m\bfk}+
+\bra{n\bfk}[\hat\bfr_e,\hat{H}_0]\ket{m\bfk}
+,
+\end{equation}
+we get
+\begin{equation}\label{a_hrt2}
+i\hbar\frac{\bfp_{nm}(\bfk)}{m}=
+i\gd_{nm}\hbar\nabla_\bfk\go_m(\bfk)
++
+i\hbar(1-\gd_{nm})\frac{\bfp_{nm}(\bfk)}{m}
+,
+\end{equation}
+from where
+\begin{equation}\label{a_gradw}
+\frac{\bfp_{nn}(\bfk)}{m}=
+\nabla_\bfk\go_n(\bfk)
+,
+\end{equation}
+so from Eq.~\eqref{a_wgendev}
+\begin{equation}\label{a_gradw2}
+(\go_n(\bfk))_{;k^a}=
+\frac{p^a_{nn}(\bfk)}{m}
+.
+\end{equation}
+
+\section{Generalized derivative $(\bfr_{nm}(\bfk))_{;\bfk}$}\label{ap_genderr}
+
+We obtain the generalized derivative $(\bfr_{nm}(\bfk))_{;\bfk}$.
+We start with the basic result
+\begin{equation}\label{a_hrdab}
+[r^a,p^b]=i\hbar\gd_{ab}
+,
+\end{equation}
+then
+\begin{equation}\label{a_hrdab2}
+\bra{n\bfk}[r^a,p^b]\ket{m\bfk'}=i\hbar\gd_{ab}\gd_{nm}\gd(\bfk-\bfk')
+,
+\end{equation}
+so
+\begin{equation}\label{a_hrdab3}
+\bra{n\bfk}[r^a_i,p^b]\ket{m\bfk'}
++
+\bra{n\bfk}[r^a_e,p^b]\ket{m\bfk'}
+=i\hbar\gd_{ab}\gd_{nm}\gd(\bfk-\bfk')
+.
+\end{equation}
+From Eq.~\eqref{conmri3} and ~\eqref{gendev}
+\begin{equation}\label{a_rip}
+\bra{n\bfk}[r^a_i,p^b]\ket{m\bfk'}
+=i\gd(\bfk-\bfk')(p^b_{nm})_{;k^a}
+\end{equation}
+\begin{equation}\label{a_ripn}
+(p^b_{nm})_{;k^a}=
+\nabla_{k^a}
+p^b_{n m}(\bfk)
+-
+i
+p^b_{nm}(\bfk)
+\left(
+\xi^a_{nn}(\bfk)
+-
+\xi^a_{mm}(\bfk)
+\right)
+,
+\end{equation}
+and
+\begin{eqnarray}\label{a_rep}
+\bra{n\bfk}[r^a_e,p^b]\ket{m\bfk'}&=&
+\sum_{\ell\bfk''}
+\bigg(
+\bra{n\bfk}r^a_e\ket{\ell\bfk''}\bra{\ell\bfk''}p^b\ket{m\bfk'}
+\nonumber \\
+&&
+-
+\bra{n\bfk}p^b\ket{\ell\bfk''}\bra{\ell\bfk''}r^a_e\ket{m\bfk'}
+\bigg)
+\nonumber \\
+&=&
+\sum_{\ell\bfk''}
+\bigg(
+(1-\gd_{n\ell})\gd(\bfk-\bfk'')\xi^a_{n\ell}
+\gd(\bfk''-\bfk')p^b_{\ell m}
+\nonumber \\
+&&-
+\gd(\bfk-\bfk'')p^b_{n\ell}
+(1-\gd_{\ell m})\gd(\bfk''-\bfk')\xi^a_{\ell m}
+\bigg)
+\nonumber \\
+&=&
+\gd(\bfk-\bfk')
+\sum_{\ell}
+\bigg(
+(1-\gd_{n\ell})
+\xi^a_{n\ell}
+p^b_{\ell m}
+\nonumber \\
+&&-
+(1-\gd_{\ell m})
+p^b_{n\ell}
+\xi^a_{\ell m}
+\bigg)
+\nonumber \\
+&=&
+\gd(\bfk-\bfk')
+\bigg(
+\sum_{\ell}
+\bigg(
+\xi^a_{n\ell}
+p^b_{\ell m}
+-
+p^b_{n\ell}
+\xi^a_{\ell m}
+\bigg)
+\nonumber \\
+&&+
+p^b_{nm}(\xi^a_{mm}
+-
+\xi^a_{nn}
+)
+\bigg)
+.
+\end{eqnarray}
+Using Eqs.~\eqref{a_rip} and ~\eqref{a_rep}
+into Eq.~\eqref{a_hrdab3} gives
+\begin{eqnarray}\label{a_rapb}
+i\gd(\bfk-\bfk')
+\bigg(
+(p^b_{nm})_{;k^a}
+&&
+-i
+\sum_{\ell}
+\bigg(
+\xi^a_{n\ell}
+p^b_{\ell m}
+-
+p^b_{n\ell}
+\xi^a_{\ell m}
+\bigg)
+\nonumber \\
+&&
+-i
+p^b_{nm}(\xi^a_{mm}
+-
+\xi^a_{nn}
+)
+\bigg)
+=
+i\hbar\gd_{ab}\gd_{nm}\gd(\bfk-\bfk')
+,
+\end{eqnarray}
+then
+\begin{eqnarray}\label{a_rapb2}
+(p^b_{nm})_{;k^a}&=&
+\hbar\gd_{ab}\gd_{nm}
++i
+\sum_{\ell}
+\bigg(
+\xi^a_{n\ell}
+p^b_{\ell m}
+-
+p^b_{n\ell}
+\xi^a_{\ell m}
+\bigg)
+\nonumber \\
+&&+i
+p^b_{nm}(\xi^a_{mm}
+-
+\xi^a_{nn}
+)
+,
+\end{eqnarray}
+and from Eq.~\eqref{a_ripn},
+\begin{eqnarray}\label{cogno}
+\nabla_{k^a}p^b_{nm}=
+\hbar\gd_{ab}\gd_{nm}
++i
+\sum_{\ell}
+\bigg(
+\xi^a_{n\ell}
+p^b_{\ell m}
+-
+p^b_{n\ell}
+\xi^a_{\ell m}
+\bigg)
+.
+\end{eqnarray}
+Now, there are two cases. We use Eqs.~\eqref{xir} and ~\eqref{rnmenm}.
+
+\noindent {\it Case} $n=m$
+\begin{eqnarray}\label{tita}
+\frac{1}{\hbar}\nabla_{k^a}p^b_{nn}=
+\gd_{ab}
+-\frac{m}{\hbar}
+\sum_{\ell}
+\go_{\ell n}
+\bigg(
+r^a_{n\ell}
+r^b_{\ell n}
++
+r^b_{n\ell}
+r^a_{\ell n}
+\bigg)
+,
+\end{eqnarray}
+that gives the familiar expansion for the inverse effective mass
+tensor $(m_n^{-1})_{ab}$.\cite{aschcroft}
+
+\noindent {\it Case} $n\ne m$
+\begin{eqnarray}\label{mes}
+(p^b_{nm})_{;k^a}&=&
+\hbar\gd_{ab}\gd_{nm}
++i
+\sum_{\ell\ne m\ne n}
+\bigg(
+\xi^a_{n\ell}
+p^b_{\ell m}
+-
+p^b_{n\ell}
+\xi^a_{\ell m}
+\bigg)
+\nonumber\\
+&&+
+i
+\bigg(
+\xi^a_{nm}
+p^b_{mm}
+-
+p^b_{nm}
+\xi^a_{mm}
+\bigg)
+\nonumber\\
+&&+
+i
+\bigg(
+\xi^a_{nn}
+p^b_{nm}
+-
+p^b_{nn}
+\xi^a_{nm}
+\bigg)
++i
+p^b_{nm}(\xi^a_{mm}
+-
+\xi^a_{nn}
+)
+\nonumber \\
+&=&
+-m
+\sum_{\ell}
+\bigg(
+\go_{\ell m}
+r^a_{n\ell}
+r^b_{\ell m}
+-
+\go_{n\ell}
+r^b_{n\ell}
+r^a_{\ell m}
+\bigg)
++i
+\xi^a_{nm}
+(p^b_{mm}
+-
+p^b_{nn}
+)
+\nonumber \\
+&=&
+-m
+\sum_{\ell}
+\bigg(
+\go_{\ell m}
+r^a_{n\ell}
+r^b_{\ell m}
+-
+\go_{n\ell}
+r^b_{n\ell}
+r^a_{\ell m}
+\bigg)
++i
+mr^a_{nm}
+\Delta^b_{mn}
+,
+\end{eqnarray}
+where
+\begin{equation}\label{a_delta}
+\Delta^b_{mn}=\frac{p^b_{mm}-p^b_{nn}}{m}
+.
+\end{equation}
+
+Now, for $n \ne m$, Eqs.~\eqref{rnmenm},
+~\eqref{a_gradw2} and 
+~\eqref{mes} and the chain rule, give
+\begin{eqnarray}\label{a_rgendevn}
+(r^b_{nm})_{;k^a}&=&\left(\frac{p^b_{nm}}{im\go_{nm}}\right)_{;k^a}
+=
+\frac{1}
+{im\go_{nm}}
+\left(
+p^b_{nm}
+\right)_{;k^a}
+-
+\frac{p^b_{nm}}
+{im\go^2_{nm}}
+\left(
+\go_{nm}
+\right)_{;k^a}
+\nonumber \\
+&=&
+\frac{i}{\go_{nm}}
+\sum_{\ell}
+\bigg(
+\go_{\ell m}
+r^a_{n\ell}
+r^b_{\ell m}
+-
+\go_{n\ell}
+r^b_{n\ell}
+r^a_{\ell m}
+\bigg)
++
+\frac{r^a_{nm}
+\Delta^b_{mn}}
+{\go_{nm}}
+\nonumber \\
+&&
+-
+\frac{r^b_{nm}}
+{\go_{nm}}
+\left(
+\go_{nm}
+\right)_{;k^a}
+\nonumber \\
+&=&
+\frac{i}{\go_{nm}}
+\sum_{\ell}
+\bigg(
+\go_{\ell m}
+r^a_{n\ell}
+r^b_{\ell m}
+-
+\go_{n\ell}
+r^b_{n\ell}
+r^a_{\ell m}
+\bigg)
++
+\frac{r^a_{nm}
+\Delta^b_{mn}}
+{\go_{nm}}
+\nonumber \\
+&&
+-
+\frac{r^b_{nm}}
+{\go_{nm}}
+\frac{p^a_{nn}-p^a_{mm}}{m}
+\nonumber \\
+&=&
+\frac{
+r^a_{nm}
+\Delta^b_{mn}
++r^b_{nm}
+\Delta^a_{mn}
+}
+{\go_{nm}}
+\nonumber \\
+&&+
+\frac{i}{\go_{nm}}
+\sum_{\ell}
+\bigg(
+\go_{\ell m}
+r^a_{n\ell}
+r^b_{\ell m}
+-
+\go_{n\ell}
+r^b_{n\ell}
+r^a_{\ell m}
+\bigg)
+\end{eqnarray}
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
