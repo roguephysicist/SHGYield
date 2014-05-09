@@ -1,14 +1,15 @@
-\documentclass[floatfix,prb,aps,superscriptaddress,11pt]{revtex4}
+\documentclass[draft,floatfix,prb,aps,superscriptaddress,11pt]{revtex4}
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{graphicx}
-%\usepackage{showkeys}
+\usepackage{showkeys}
 \usepackage{ulem}
 \usepackage{subfigure}
-\input{/Users/bms/util/definitions}
+%\input{/Users/bms/util/definitions}
+\input{definitions}
 \usepackage{bm}
 %%%%*****************%%%% fine hyperef 
-\usepackage[backref,pdffitwindow,colorlinks,linkcolor={blue}]{hyperref}
+\usepackage[backref,pdffitwindow,colorlinks,linkcolor={blue},citecolor={red}]{hyperref}
 %%%%*****************%%%% \input{/Users/bms/util/definitions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,10 +89,8 @@ the  surface or bulk character of the states among which the transitions
 take place.
 To complement above results, on this article we review the calculation of
 the nonlinear susceptibility using the longitudinal gauge, and show that
-both gauges give, as they should, the same result. We discuss a possible
-numerical check up on this equivalency. Also, the so called
-three-layer-model for the calculation of the surface radiated SH efficiency
-is presented.
+it is posible to clearly obtain the ``layer-by-layer'' contribution
+for a slab scheme, used for a surface calculation.
 
 \section{Longitudinal Gauge}\label{longi}
 
@@ -99,7 +98,7 @@ To calculate the optical properties of a given system
 within the longitudinal gauge, we follow the article by
 Aversa and Sipe.\cite{aversa95} A more recent derivation can also be
 found in
-Ref. \cite{sipe00} and \cite{lambrecht00}.
+Ref. \onlinecite{sipe00} and \onlinecite{lambrecht00}.
  Assuming the long-wavelength approximation,
 which implies a position independent electric field, 
 the hamiltonian in the so called length gauge approximation
@@ -107,9 +106,10 @@ is given by
 \begin{equation}\label{ache}
 \hat{H}=\hat{H}_0-e \hat\bfr \cdot \bfE,
 \end{equation}
-where $H_0=p^2/2m + V(\bfr)$, where $V(\bfr)=V(\bfr + \bfR)$ is the periodic
+where $H_0=p^2/2m + V(\bfr) + V^\nl(\bfr,\bfp)$, where $V(\bfr)=V(\bfr
++ \bfR)$ is the periodic 
 crystal potential,
-with $\bfR$ the real-space lattice vector.
+with $\bfR$ the real-space lattice vector, and $\hat V^\nl$ a nonlocal potential.
  The
 electric field $\bfE = -\dot\bfA/c$, with $\bfA$ the vector potential. $H_0$
 has eigenvalues
@@ -124,7 +124,7 @@ e^{i\bfk \cdot \bfr}u_{n\bfk}(\bfr)
 where
 $u_{n\bfk}(\bfr)=u_{n\bfk}(\bfr+\bfR)$ is cell periodic, and
 \begin{equation}\label{normal}
-\int_{\Omega}d^{3}r\, u_{n\mathbf{k}}^{*}(\mathbf{r})u_{m\mathbf{q}}(\mathbf{r})=\delta_{nm}\delta_{\mathbf{\mathbf{k},q}}
+\int_{\Omega}d^{3}r\, u_{n\mathbf{k}}^{*}(\mathbf{r})u_{m\mathbf{k}'}(\mathbf{r})=\delta_{nm}\delta_{\mathbf{\mathbf{k},\bfk'}}
 ,
 \end{equation}
 with $\gO$ the volume of the unit cell.
@@ -196,7 +196,7 @@ u_{m\mbf{k}'}(\mbf{r})
 \bra{n\mbf{k}}\hat\bfr\ket{m\mbf{k}'}.
 \end{eqnarray}
 Restricting $\bfk$ and $\bfk'$ to the first Brillouin zone,
-we use the following valid result for any periodic
+we use the following result valid for any periodic
 function $f(\bfr)=f(\bfr+\bfR)$,
 \begin{equation}\label{periodic}
 \int d^{3}r\, e^{i(\mathbf{q}-\mathbf{k})\cdot\mathbf{r}}f(\mathbf{r})=\frac{8\pi^{3}}{\Omega}\delta(\mathbf{q}-\mathbf{k})\int_{\Omega}d^{3}r\, f(\mathbf{r})
@@ -258,28 +258,70 @@ momentum operator as follows. We start from the basic relation,
 \hat\bfv=\frac{1}{i\hbar}[\hat\bfr,\hat{H}_0]
 ,
 \end{equation}
-with $\hat\bfv$ the velocity operator. Neglecting nonlocal potentials
-in $\hat{H}_0$ we obtain, on one hand
+with $\hat\bfv$ the velocity operator, and $H_0$ could contain a
+nonlocal potential, then   
 \begin{equation}\label{conhr}
-[\hat\bfr,\hat{H}_0]=i\hbar\frac{\hat\bfp}{m_e}
+\hat \bfv^S=
+\frac{\hat\bfp}{m_e}
++\frac{1}{i\hbar}[\hat\bfr,\hat V^\nl]
+=
+\bfv^\lda
++\bfv^\nl
+\end{equation} 
+with $\hat\bfp=-i\hbar\bfgnabla$ the momentum operator, with $m_e$ the
+mass of the 
+electron. Considering that $\hat V^\nl\to \hat S$ where $\hat S$ is
+the scissors operator, 
+\begin{equation}\label{chon.0}
+S(\bfr,\bfp)=\hbar\gD\sum_n\int d^3k'(1-f_n) \ket{n\bfk'}\bra{n\bfk'}
 ,
 \end{equation}
-with $\hat\bfp$ the momentum operator, with $m_e$ the mass of the
-electron. On the other hand,
+we have that
+\begin{equation}\label{chon.1}  
+H_0\ket{n\bfk}
+=\hbar\go^S_n(\bfk)
+\ket{n\bfk}
+,
+\end{equation} 
+with $\go^S_n(\bfk)=\go^\lda_n(\bfk)+\gD(1-f_n)$ is the scissored
+energy, and $\gD=E_g-E_g^\lda$, where $E_g$ could be the experimental
+or GW gap. From Eq.~\eqref{conhr}, we obtain that
+\begin{equation}\label{chon.2} 
+\bfv^\nl_{nm}=i\gD f_{mn}\bfr_{nm}
+=\frac{\gD f_{mn}}{\go^\lda_{nm}}\bfv^\lda_{nm}
+\end{equation}
+
+On the other hand,
 \begin{equation}\label{conhrnm}
 \bra{n\bfk}
 [\hat\bfr,\hat{H}_0]
 \ket{m\bfk}=\bra{n\bfk}\hat\bfr\hat{H}_0-\hat{H}_0\hat\bfr\ket{m\bfk}
-=(\hbar\go_m(\bfk)-\hbar\go_n(\bfk))\bra{n\bfk}\hat\bfr\ket{m\bfk}
+=(\hbar\go^S_m(\bfk)-\hbar\go^S_n(\bfk))\bra{n\bfk}\hat\bfr\ket{m\bfk}
 ,
 \end{equation}
-thus defining $\go_{nm\bfk}=\go_n(\bfk)-\go_m(\bfk)$ we get
-\begin{equation}\label{pmnrmn}
-\bfr_{nm}(\bfk)=\frac{\bfp_{nm}(\bfk)}{im_e\go_{nm}(\bfk)}
-=\frac{\bfv_{nm}(\bfk)}{i\go_{nm}(\bfk)}
+thus defining $\go^S_{nm\bfk}=\go^S_n(\bfk)-\go^S_m(\bfk)$ we get
+\begin{eqnarray}\label{pmnrmn}
+\bfr_{nm}(\bfk)
+&=&
+\frac{\bfv^S_{nm}(\bfk)}{i\go^S_{nm}(\bfk)}
+=
+\frac{\bfv^\lda_{nm}+ \frac{\gD f_{mn}}{\go^\lda_{nm}}\bfv^\lda_{nm}}{i\go^S_{nm}(\bfk)}
+\nonumber\\
+&=&
+\frac{\bfv^\lda}
+{i\go^\lda_{nm}}
+\frac{\go^\lda_{nm}+\gD f_{mn}}{\go^S_{nm}}
+\nonumber\\
+&=&
+\frac{\bfv^\lda}
+{i\go^\lda_{nm}}
 \quad\quad n\ne m
-.
-\end{equation}
+,
+\end{eqnarray}
+since
+$\go^\lda_{nm}+\gD f_{mn}=\go^S_{nm}$. Therefore, the matrix elements
+of $\bfr_{nm}$ are the same wether we use the LDA or the scissored Hamiltonian.
+
 Comparing above result with Eq.~\eqref{rnme}, 
 we can identify 
 \begin{equation}\label{xir}
@@ -449,10 +491,9 @@ We use, in the independent particle approximation, the electron density
 operator $\hat\gr$ to obtain, the expectation value of any observable
 $\calo$ as
 \begin{equation}\label{traza}
-  \calo=Tr(\hat\calo\hat\rho)=Tr(\hat\rho\hat\calo),
+  \calo=\mathrm{Tr}(\hat\calo\hat\rho)=\mathrm{Tr}(\hat\rho\hat\calo),
 \end{equation}
-where $Tr$ is the trace, that as we have shown has the property of
-being 
+where $\mathrm{Tr}$ is the trace, that is
 invariant under cyclic permutations.
 The dynamical equation of motion for $\gr$ is given by
 \begin{equation}\label{eqrho}
@@ -528,7 +569,7 @@ Then, Eq.~\eqref{intrho2} reads
 ]
 ,
 \end{equation}
-where by equating equal orders in the perturbation, we find
+where, by equating equal orders in the perturbation, we find
 \begin{equation}\label{rho0}
 \hat\gr_I^{(0)}\equiv\hat\gr_0
 ,
@@ -577,12 +618,12 @@ e^{i\go_{nm\bfk}t}
 \ket{m\bfk}
 \right)
 \nonumber
-,
+.
 \end{eqnarray}
-where the time dependence of operator's interaction picture is
-explicitly shown by the exponential factor, and the implicit
-dependence of $\hat\rho^{(N)}$ inherited from Eq.~\eqref{eqrho} is
-shown by its $t$ argument.
+% where the time dependence of operator's interaction picture is
+% explicitly shown by the exponential factor, and the implicit
+% dependence of $\hat\rho^{(N)}$ inherited from Eq.~\eqref{eqrho} is
+% shown by its $t$ argument.
 We calculate the interband term first, so using Eq.~\eqref{rnmenm} we obtain
 \begin{eqnarray}\label{conmu2}
 \bra{n\bfk}
@@ -721,8 +762,15 @@ i.e. $\bfE(t)=\bfE_{\go_\ga} e^{-i\got_\ga t}$, then
 with
 \begin{equation}\label{rho1}
 B^{\rmb}_{nm}(\bfk,\go_\ga)=\frac{e}{\hbar}\frac{f_{mn\bfk}r^{\rmb}_{nm}(\bfk)}{\go_{nm\bfk}-\got_\ga}
-.
+,
 \end{equation}
+that for the scissored hamiltonian would be
+\begin{equation}\label{rho1}
+B^{\rmb}_{nm}(\bfk,\go_\ga)=\frac{e}{\hbar}\frac{f_{mn\bfk}r^{\rmb}_{nm}(\bfk)}{\go^S_{nm\bfk}-\got_\ga}
+,
+\end{equation}
+since as we saw, the $\bfr_{nm}$ are the same as in LDA, and thus they
+do not need to be scissored.
 
 Now, we calculate the second-order response. Then, from Eq.~\eqref{conmu2}
 \begin{eqnarray}\label{R1e}
@@ -814,12 +862,25 @@ with
 &&
 +i\sum_\ell\Big(r_{n\ell}^{\rmb}B_{\ell m}^{\rmc}(\bfk,\go_\gb) - B_{n\ell}^{\rmc}(\bfk,\go_\gb)
   r_{\ell m}^{\rmb}\Big)
-\bigg]
+\bigg] 
 E^{\rmb}_{\go_\ga}E_{\go_\gb}^{\rmc}
-\end{eqnarray}
+\end{eqnarray} 
 where $\got_3=\got_\ga+\got_\gb$ and $\bfE_{\go_i}$ is the amplitude of the perturbing
 field with $\go_i$ for $i=\ga,\gb$. We use Eq.
-~\eqref{rho2} in section \ref{nonchi}.
+~\eqref{rho2} in section \ref{nonchi}. For the scissored hamiltonian,
+\begin{eqnarray}\label{rho2n}
+\gr_{nm}^{(2)}(\bfk;\go_3)&=&\frac{e}{i\hbar}\frac{1}{\go^s_{nm\bfk}-\got_3}
+\bigg[-(B_{nm}^{\rmc}(\bfk,\go_\gb)_{;k^{\rmb}}
+\nonumber \\
+&&
++i\sum_\ell\Big(r_{n\ell}^{\rmb}B_{\ell m}^{\rmc}(\bfk,\go_\gb) - B_{n\ell}^{\rmc}(\bfk,\go_\gb)
+  r_{\ell m}^{\rmb}\Big)
+\bigg]
+E^{\rmb}_{\go_\ga}E_{\go_\gb}^{\rmc}
+,
+\end{eqnarray}
+where we now determine how to write
+$(B_{nm}^{\rmc}(\bfk,\go_\gb)_{;k^{\rmb}}$ within the scissored hamiltonian.
 
 
 \section{Layered Current Density}\label{cd}
@@ -877,7 +938,8 @@ $\Delta_\ell^f+\Delta_\ell^b$ is the thickness of layer $\ell$
 (see Fig.~\ref{fslab}).
 \begin{figure}[b]
 \centering
-\includegraphics[height=5cm,width=7cm]{slab}
+%\includegraphics[height=5cm,width=7cm]{slab}
+\includegraphics[scale=.7]{slab}
 \caption{
 We show a sketch of the slab, where the small
 circles represent the atoms. See the text for the details.
@@ -896,8 +958,7 @@ where the operator for the electron's current is
 \hat\bfj(\bfr)=\frac{e}{2}\left(\hat\bfv\ket{\bfr}\bra{\bfr}+\ket{\bfr}\bra{\bfr}\hat\bfv\right),
 \end{equation}
 where $\hat{\mbf{v}}$ is the electron's velocity operator to be dealt
-with below,
-and $\mathrm{Tr}$ denotes the trace. We define
+with below. We define
 $\hat\mu\equiv\ket{\bfr}\bra{\bfr}$ and use the cyclic invariance of
 the trace to write
 \begin{eqnarray}\label{jmic2}
@@ -982,7 +1043,7 @@ We proceed to give an explicit expression for
 $\mathcal{V}^{a(\ell)}_{mn}(\mathbf{k})$,
 for which we should work with  
 the velocity operator, that is given by
-\begin{eqnarray}\label{vop2}
+\begin{eqnarray}\label{vop2} 
 i\hbar\hat{\mbf{v}}&=&[\hat{\mbf{r}},\hat{H}_0]
 \nonumber\\
 &=&
@@ -990,7 +1051,7 @@ i\hbar\hat{\mbf{v}}&=&[\hat{\mbf{r}},\hat{H}_0]
 \hat{V}(\mbf{r})+\hat{v}(\mbf{r},\hat{\mbf{p}})]
 \approx
 [\hat{\mbf{r}},\frac{\hat{\mbf{p}}^2}{2m}]=i\hbar\frac{\hat{\mbf{p}}}{m},
-\end{eqnarray}
+\end{eqnarray} 
 where the possible contribution of 
 the non-local pseudopotential $\hat{v}(\mbf{r},\hat{\mbf{p}})$
 is neglected. Now, from above equation,
@@ -1004,7 +1065,7 @@ From Eq.~\eqref{jmic3}, we need
 =\int d^3 r' \bra{\mbf{r}}\hat{\mbf{v}}\ket{\mbf{r}'}
 \braket{\mbf{r}'}{n\mbf{k}}
 \approx\frac{1}{m}\hat{\mbf{p}}\psi_{n\mathbf{k}}(\mathbf{r}),
-\end{equation}
+\end{equation} 
 where we used 
 \begin{equation}\label{rvnk}
 \bra{\bfr}\hat{v^x}\ket{\bfr'}
@@ -1026,7 +1087,7 @@ Eqs.~\eqref{vcal} and \eqref{jmic3} we obtain
 \langle m\mathbf{k} | \mathbf{r}\rangle
 \langle \mathbf{r} | \mathbf{v} | n \mathbf k \rangle\bigg],
 \label{intj}
-\end{equation}
+\end{equation}  
 and using Eq.~\eqref{vnm},
 we can write, for any  function $S(z)$ used
 to identify the response from a region of the slab, that
@@ -1041,11 +1102,13 @@ S(z)
 \psi^*_{m\mathbf{k}}(\mathbf{r})\hat\bfp
 \psi_{n\mathbf{k}}(\mathbf{r})
 \bigg], \label{pofs1}  \\
-&=&\frac{1}{m}\int d^3 r
+&=&
+\frac{1}{m}\int d^3 r
 \psi^*_{m\mathbf{k}}(\mathbf{r})
 \left[\frac{S(z) \mathbf{p} +
 \mathbf{p} S(z)}{2}\right]
-\psi_{n\mathbf{k}}(\mathbf{r}),\label{pofs2} \\
+\psi_{n\mathbf{k}}(\mathbf{r})
+,\label{pofs2} \\
 &=&\frac{1}{m}\int d^3 r
 \psi^*_{m\mathbf{k}}(\mathbf{r})\hat{\boldsymbol{\mathcal{P}}}
 \psi_{n\mathbf{k}}(\mathbf{r})\equiv \frac{1}{m}{\boldsymbol{\mathcal{P}}}_{mn}(\mathbf{k}).
@@ -1277,25 +1340,25 @@ which upon using Eqs.~\eqref{rho2} and ~\eqref{sshgp2} leads to
 which gives the surface susceptibility of layer $\ell$-th.
 As can be seen
 from Eq. (\ref{rho2}), $\chi^{s(\ell)}_{\rma\rmb\rmc}$ can be split into
-two terms, one coming from the first term of Eq. (\ref{rho2}) and the other
-from the second term of the same equation. Then we have, after
+two terms, one coming from the first term and the other
+from the second term of Eq . (\ref{rho2}). Then we have, after
 substituting  Eq.~\eqref{rho1}, that
 \begin{equation}\label{chii}
 \chi_{i,\rma\rmb\rmc}^{s(\ell)}=-\frac{e^3}{m_e\gO\hbar^2\go_3}\sum_{mn\bfk}
 \frac{\calp_{mn}^{\rma(\ell)}}{\go_{nm}-\go_3}
 \left(\frac{f_{mn}r_{nm}^{\rmb}}{\go_{nm}-\go_\gb}\right)_{;k^{\rmc}},
-\end{equation}
+\end{equation} 
 and
 \begin{equation}\label{chie}
 \chi_{e,\rma\rmb\rmc}^{s(\ell)}=\frac{ie^3}{m_e\gO\hbar^2\go_3}\sum_{\ell mn\bfk}
 \frac{\calp_{mn}^{\rma(\ell)}}{\go_{nm}-\go_3}
 \left(
-\frac{r_{n\ell}^{\rmc} r_{\ell m}^{\rmb}
+\frac{r_{n\ell}^{\rmc} r_{\ell m}^{\rmb} 
 f_{m\ell}}{\go_{\ell m}-\go_\gb}
--\frac{r_{n\ell}^{\rmb} r_{\ell m}^{\rmc}
+-\frac{r_{n\ell}^{\rmb} r_{\ell m}^{\rmc} 
 f_{\ell n}}{\go_{n \ell}-\go_\gb}
 \right),
-\end{equation}
+\end{equation} 
 where $\boldsymbol{\chi}^{s(\ell)}_i$
  is related to intraband transitions and
 $\boldsymbol{\chi}^{s(\ell)}_e$
@@ -1304,7 +1367,9 @@ We mention that
 Eq. (\ref{chii}) and Eq. (\ref{chie}) need to be symmetrized for intrinsic
 permutation symmetry, i.e.
 $\chi^{\rma\rmb\rmc}(-\go_3;\go_1,\go_2)=\chi^{\rma\rmc\rmb}(-\go_3;\go_2,\go_1)$,\cite{rashkeev98}
-and that for SHG $\go_1=\go_2=\go$ and $\go_3=2\go$.
+(for SHG $\go_1=\go_2=\go$ and $\go_3=2\go$). We mention that above
+equations diverge as $\go_3\to 0$. This apparent divergence is removed
+in the following section.
 
 The generalized derivative
 in Eq. (\ref{chii}) is obtained from the chain rule as
@@ -1357,7 +1422,7 @@ not universal, and $\ell_b$ should be found according to Eq.~\eqref{chiijkbul}.
 To obtain divergence free expressions for SHG that are manageable for
 programing, we take Eqs.~\eqref{chii} and \eqref{chie} and perform
 a partial fraction  expansion in $\go$ to get the following terms for
-the {\it interband} term
+the {\it intErband} term
 \begin{eqnarray}\label{pfe}  
 E&=&  
 A
@@ -1380,7 +1445,7 @@ where
 $A=f_{ml}{\cal P}^{\rma}_{mn}r^{\rmc}_{nl}r^{\rmb}_{lm}$   
 and
 $B=f_{ln}{\cal P}^{\rma}_{mn}r^{\rmb}_{nl}r^{\rmc}_{lm}$,  
-and the following terms for the {\it intraband} terms
+and the following terms for the {\it Intraband} terms
  (using Eq.~\eqref{gene})
 \begin{eqnarray}\label{pfi} 
 I&=& 
@@ -1582,24 +1647,181 @@ $(1/\gO)\sum_{\bfk}\to\int d^3\bfk/(8\pi^3)$, and with the help of
 Eq.~\eqref{wk}, \eqref{rgk}, \eqref{rgkcal} and \eqref{cald}, 
 Eqs.~\eqref{imchiewn}-\eqref{imchi2wn} could be
 readily evaluated.
+
+Also, since we are working in the length-gauge, it is trivial to
+incorporate the scissors operator in above expressions for $\bfgchi^{s(\ell)}$
+by simple taking
+$\go_n\to\go_n^S$, where $\go_n^S=\go_n+(1-f_n)\Delta$ with $\gD$ the
+rigid scissor correction.\cite{nastosPRB05,cabellosPRB09}
+
+\section{Contribution of a non-local potential}
+We go back to Eq.~\eqref{vop2} and keep the contribution coming form
+the non-local potential, i.e.
+\begin{eqnarray}\label{nl.1}
+\hat{\mbf{v}}
+&=&
+\frac{\hat{\mbf{p}}}{m}
++
+\hat\bfv^\nl
+\nonumber\\
+\hat\bfv^\nl
+&=&
+\frac{1}{i\hbar}[\hat{\mbf{r}},\hat{v}(\mbf{r},\hat{\mbf{p}})]
+.
+\end{eqnarray}
+We get that
+\begin{equation}\label{nl.2}
+\langle \mathbf{r} | \hat\bfv^\nl | n\mathbf{k} \rangle
+=\int d^3 r' \bra{\mbf{r}}\hat\bfv^\nl\ket{\mbf{r}'}
+\braket{\mbf{r}'}{n\mbf{k}}
+=\hat\bfv^\nl
+\int d^3 r' \braket{\mbf{r}}{\mbf{r}'}
+\braket{\mbf{r}'}{n\mbf{k}}
+=\hat\bfv^\nl
+\psi_{n\mathbf{k}}(\mathbf{r}),
+\end{equation}
+and Eq.~\eqref{intj} is now
+\begin{eqnarray}\label{nl.3}
+{\boldsymbol{\mathcal{V}}}^{(\ell)}_{mn}({\mathbf k})
+&=&
+\frac{1}{2}
+\int \mathrm{d}^3 r\,
+ S_{\ell}(z)
+\bigg[
+\langle m\mathbf{k}|\frac{\bfp}{m_e}+\bfv^\nl | \mathbf{r}\rangle
+\langle \mathbf{r} | n \mathbf k \rangle +
+\langle m\mathbf{k} | \mathbf{r}\rangle
+\langle \mathbf{r} | \frac{\bfp}{m_e} +\bfv^\nl| n \mathbf k \rangle\bigg],
+\nonumber\\
+&=&
+\frac{1}{2}
+\int \mathrm{d}^3 r\,
+ S_{\ell}(z)
+\bigg[
+\langle m\mathbf{k}|\frac{\bfp}{m_e}| \mathbf{r}\rangle
+\langle \mathbf{r} | n \mathbf k \rangle +
+\langle m\mathbf{k} | \mathbf{r}\rangle
+\langle \mathbf{r} | \frac{\bfp}{m_e} | n \mathbf k \rangle\bigg],
+\nonumber\\
+&+&
+\frac{1}{2}
+\int \mathrm{d}^3 r\,
+ S_{\ell}(z)
+\bigg[
+\langle m\mathbf{k}|\bfv^\nl | \mathbf{r}\rangle
+\langle \mathbf{r} | n \mathbf k \rangle +
+\langle m\mathbf{k} | \mathbf{r}\rangle
+\langle \mathbf{r} | \bfv^\nl| n \mathbf k \rangle\bigg],
+\nonumber\\
+&=&
+\frac{1}{2m_e}
+\int \mathrm{d}^3 r\,
+S(z)
+ \bigg[
+\psi_{n\mathbf{k}}(\mathbf{r})
+\hat\bfp^*\psi^*_{m\mathbf{k}}(\mathbf{r})
++ 
+\psi^*_{m\mathbf{k}}(\mathbf{r})\hat\bfp
+\psi_{n\mathbf{k}}(\mathbf{r})
+\bigg]
+\nonumber\\
+&+&
+\frac{1}{2}
+\int \mathrm{d}^3 r\,
+ S_{\ell}(z)
+ \bigg[
+\psi_{n\mathbf{k}}(\mathbf{r})
+\hat\bfv^{\nl *}\psi^*_{m\mathbf{k}}(\mathbf{r})
++ 
+\psi^*_{m\mathbf{k}}(\mathbf{r})\hat\bfv^\nl
+\psi_{n\mathbf{k}}(\mathbf{r})
+\bigg]
+\nonumber\\
+&=&
+\frac{1}{m_e}
+\int \mathrm{d}^3 r\,
+\psi^*_{m\mathbf{k}}(\mathbf{r})
+\left[\frac{S(z) \mathbf{p} +
+\mathbf{p} S(z)}{2}\right]
+\psi_{n\mathbf{k}}(\mathbf{r})
+\nonumber\\
+&+&
+\int \mathrm{d}^3 r\,
+\psi^*_{m\mathbf{k}}(\mathbf{r})
+\left[\frac{S(z) \bfv^\nl +
+\bfv^\nl S(z)}{2}\right]
+\psi_{n\mathbf{k}}(\mathbf{r})
+\nonumber\\
+&=&
+\frac{1}{m_e}
+\int \mathrm{d}^3 r\,
+\psi^*_{m\mathbf{k}}(\mathbf{r})
+\calbp^{(\ell)}
+\psi_{n\mathbf{k}}(\mathbf{r})
++
+\int \mathrm{d}^3 r\,
+\psi^*_{m\mathbf{k}}(\mathbf{r})
+\calbv^{\nl(\ell)}
+\psi_{n\mathbf{k}}(\mathbf{r})
+\nonumber\\
+&=&
+\frac{1}{m_e}
+\calbp^{(\ell)}_{mn}(\bfk)
++
+\calbv^{\nl(\ell)}_{mn}(\bfk)
+,
+\end{eqnarray}
+where we used the hermitian property of $\bfp$ and $\bfv^\nl$ and  defined
+\begin{eqnarray}\label{nl.4}
+\calbv^{\nl(\ell)}
+=
+\frac{S(z) \bfv^\nl +
+\bfv^\nl S(z)}{2}
+,
+\end{eqnarray}
+and the superscript $\ell$ is inherited from $S(z)$. We would obtain,
+instead of Eq.~\eqref{chii} and \eqref{chie}
+\begin{equation}\label{chiinl}
+\chi_{i,\rma\rmb\rmc}^{s(\ell)}=-\frac{e^3}{m_e\gO\hbar^2\go_3}\sum_{mn\bfk}
+\frac{m_e{\cal V}_{mn}^{\rma(\ell)}}{\go_{nm}-\go_3}
+\left(\frac{f_{mn}r_{nm}^{\rmb}}{\go_{nm}-\go_\gb}\right)_{;k^{\rmc}},
+\end{equation}
+and
+\begin{equation}\label{chienl}
+\chi_{e,\rma\rmb\rmc}^{s(\ell)}=\frac{ie^3}{m_e\gO\hbar^2\go_3}\sum_{\ell mn\bfk}
+\frac{m_e{\cal V}_{mn}^{\rma(\ell)}}{\go_{nm}-\go_3}
+\left(
+\frac{r_{n\ell}^{\rmc} r_{\ell m}^{\rmb}
+f_{m\ell}}{\go_{\ell m}-\go_\gb}
+-\frac{r_{n\ell}^{\rmb} r_{\ell m}^{\rmc}
+f_{\ell n}}{\go_{n \ell}-\go_\gb}
+\right),
+\end{equation}
+where
+\begin{eqnarray}\label{nl.5}
+m_e{\cal V}_{mn}^{\rma(\ell)}(\bfk)=
+{\cal P}^{\rma(\ell)}_{mn}(\bfk)
++
+m_e{\cal V}^{\nl,\rma(\ell)}_{mn}(\bfk)
+,
+\end{eqnarray}
+
 \section{Conclusions}\label{con}
 
 We have presented a complete derivation of the required elements to
-calculate the surface SHG radiated from a semiconductor within the dipole
-approximation, and showed how to calculate the layer-by-layer
-contribution to the optical signal.
-We derived the nonlinear surface susceptibility
-tensor $\boldsymbol{\chi}$ within the longitudinal gauge and thus we
-decomposed $\boldsymbol{\chi}$ 
-into intraband and interband one-electron transitions. 
+calculate the surface SHG susceptibility tensor $\bfgchi^s(2\go)$ 
+using the ``layer-by-layer'' approach. We have done so for a
+semiconductor using the 
+length gauge for the coupling of the external electric field to the electron. 
 %Also,
 %we calculated the radiated efficiency $R$ within the three layer
 %model. 
 %The combination of $\boldsymbol{\chi}$ and $R$ allow us
 %to study this fascinating surface optical phenomena.
 
+
 \appendix
-\section{Expressions for $\chi^s_{\rma\rmb\rmc}$}
+\section{Divergence Free Expressions for $\chi^s_{\rma\rmb\rmc}$}
 We add the $\bfk$ and $-\bfk$ terms of expressions \eqref{pfe} and
 \eqref{pfi} to obtain:
 \begin{eqnarray}\label{chi1}
@@ -2019,7 +2241,7 @@ then, using $\go_{vc}=-\go_{vc}$ we obtain
 \right]
 .
 \end{eqnarray}  
-Finally, following Ref.~\onlinecite{nastosPRB05} we simply change
+Finally, following Ref.~\onlinecite{nastosPRB05,cabellosPRB09} we simply change
 $\go_{nm}\to\go_{nm}^S$ to obtain the scissored expresion of
 \begin{eqnarray}\label{imchies}
 \mathrm{Im}[\chi_{e,\rma\rmb\rmc}^{s(\ell)}]
@@ -2396,8 +2618,8 @@ $\chi_{i,\rma\rmb\rmc}^{s(\ell)}=\chi_{i,\rma\rmb\rmc,\go}^{s(\ell)}+\chi_{i,\rm
 In the continuous limit of $\bfk$ 
 $(1/\gO)\sum_{\bfk}\to\int d^3\bfk/(8\pi^3)$ and the real part is 
 obtained with a Kramers-Kronig transformation. 
-We should check if these results are equivalent to Eqs. 40 and 41 of
-Cabellos et. al. \cite{cabellosPRB09} for a bulk system for which we
+We have checked that these results are equivalent to Eqs. 40 and 41 of
+Cabellos et. al., Ref. \onlinecite{cabellosPRB09}, for a bulk system for which we
 simply take ${\cal R}^{\rma(\ell)}_{nm}\to r^{\rma}_{nm}$.
 
 In summary we have
@@ -2596,6 +2818,12 @@ Now we can calculate
 -i\hbar
 \int dx' (\frac{\partial}{\partial x}\gd(x-x'))
 \psi(x',y,z)
+=
+-i\hbar
+\frac{\partial}{\partial x}
+\int dx' 
+\gd(x-x')
+\psi(x',y,z)
 \\ \nonumber
 &=&
 -i\hbar
@@ -2603,8 +2831,7 @@ Now we can calculate
 \psi(x,y,z)
 ,
 \end{eqnarray}
-where an integration by parts leads from the previous to last 
-to the last result, which confirms that in the $\bfr$ representation,
+which confirms that in the $\bfr$ representation,
 the $\hat\bfp$ operator is replaced with the differential operator
 $-i\hbar\bfgnabla$. 
 
