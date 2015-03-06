@@ -2,7 +2,7 @@
 """
 nrc.py is a python program designed to calculate the Nonlinear reflection
 coefficient for silicon surfaces. It works in conjunction with the matrix
-elements calculated using ABINIT, and open source ab initio software,
+elements calculated umath.sing ABINIT, and open source ab initio software,
 and TINIBA, our in-house optical calculation software.
 
 The work codified in this software can be found in Phys.Rev.B66, 195329(2002).
@@ -16,10 +16,13 @@ TO-DO
 """
 
 import sys
-from math import sin, cos, radians
-from scipy import constants, interpolate
-from numpy import loadtxt, savetxt, column_stack, absolute, \
-                  sqrt, linspace, ones, complex128
+import math
+import scipy as sp
+import numpy as np
+#from math import math.sin, math.cos, math.radians
+#from scipy import sp.constants, sp.interpolate
+#from numpy import np.loadtxt, np.savetxt, np.column_stack, np.absolute, \
+#                  np.sqrt, np.linspace, np.ones, np.complex128
 
 ########### User Input ###########
 
@@ -31,14 +34,14 @@ from numpy import loadtxt, savetxt, column_stack, absolute, \
 ##OUT = "../calculated/nrc/"
 
 # Angles
-THETA_RAD = radians(65)
-PHI_RAD = radians(30)
-# Misc
-ENERGY = linspace(0.01, 20, 2000) # for debugging only, don't need this motherfucking shit
+THETA_RAD = math.radians(65)
+PHI_RAD = math.radians(30)
+# for debugging only, don't need this motherfucking shit
+ENERGY = np.linspace(0.01, 20, 2000) 
 
 ########### Functions ###########
 
-### Equations 
+### Equations
 ###
 def nonlinear_reflection(state, energy):
     """
@@ -50,7 +53,7 @@ def nonlinear_reflection(state, energy):
     """
     onee = energy
     twoe = 2 * onee
-    nrc = rif_constants(onee) * absolute(((fresnel_vl(state[1], twoe) *
+    nrc = rif_constants(onee) * np.absolute(((fresnel_vl(state[1], twoe) *
           fresnel_lb(state[1], twoe) * ((fresnel_vl(state[0], onee) *
           fresnel_lb(state[0], onee)) ** 2)) / 2j) *
           reflection_components(state[0], state[1], onee, twoe)) ** 2
@@ -64,8 +67,9 @@ def rif_constants(energy):
     children: none
     Multiplies constants. "electrondensity" merits revision.
     """
-    electrondensity = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
-    const = (32 * (constants.pi ** 3) * ((energy / constants.value("Planck constant over 2 pi in eV s")) ** 2)) / (electrondensity * ((constants.c * 100) ** 3) * (cos(THETA_RAD) ** 2))
+    # electronic density and scaling factor (1e-7 * 1e-21)
+    electrondensity = 1e-28
+    const = (32 * (sp.constants.pi ** 3) * ((energy / sp.constants.value("Planck constant over 2 pi in eV s")) ** 2)) / (electrondensity * ((sp.constants.c * 100) ** 3) * (math.cos(THETA_RAD) ** 2))
     return const
 
 def fresnel_vl(polarization, energy):
@@ -77,11 +81,11 @@ def fresnel_vl(polarization, energy):
     Calculates fresnel factors for vacuum to surface
     """
     if polarization == "s":
-        fresnel = (2 * cos(THETA_RAD)) / (cos(THETA_RAD) +
+        fresnel = (2 * math.cos(THETA_RAD)) / (math.cos(THETA_RAD) +
                    wave_vector(energy))
     elif polarization == "p":
-        fresnel = (2 * cos(THETA_RAD)) / (epsilon(energy) *
-                   cos(THETA_RAD) + wave_vector(energy))
+        fresnel = (2 * math.cos(THETA_RAD)) / (epsilon(energy) *
+                   math.cos(THETA_RAD) + wave_vector(energy))
     return fresnel
 
 def fresnel_lb(polarization, energy):
@@ -93,7 +97,7 @@ def fresnel_lb(polarization, energy):
     Calculates fresnel factors for surface to bulk
     """
     if polarization == "s":
-        fresnel = ones(2000, dtype=complex128)
+        fresnel = np.ones(2000, dtype=np.complex128)
         # fresnel = (2 * wave_vector(energy)) / (wave_vector(energy)
         #              + wave_vector(energy))
     elif polarization == "p":
@@ -121,23 +125,23 @@ def reflection_components(polar_in, polar_out, energy, twoenergy):
     xxz = load_shg(XXZ)
     xxx = load_shg(XXX)
     if polar_in == "p" and polar_out == "p":
-        r_factor = sin(THETA_RAD) * epsilon(twoenergy) * \
-                (((sin(THETA_RAD) ** 2) * (epsilon(energy) ** 2) * zzz) +
+        r_factor = math.sin(THETA_RAD) * epsilon(twoenergy) * \
+                (((math.sin(THETA_RAD) ** 2) * (epsilon(energy) ** 2) * zzz) +
                 (wave_vector(energy) ** 2) * (epsilon(energy) ** 2) * zxx) \
                  + epsilon(energy) * epsilon(twoenergy) * \
                  wave_vector(energy) * wave_vector(twoenergy) * \
-                 (-2 * sin(THETA_RAD) * epsilon(energy) * xxz +
+                 (-2 * math.sin(THETA_RAD) * epsilon(energy) * xxz +
                 wave_vector(energy) * epsilon(energy) * xxx *
-                cos(3 * PHI_RAD))
+                math.cos(3 * PHI_RAD))
     elif polar_in == "s" and polar_out == "p":
-        r_factor = sin(THETA_RAD) * epsilon(twoenergy) * zxx - \
+        r_factor = math.sin(THETA_RAD) * epsilon(twoenergy) * zxx - \
                wave_vector(twoenergy) * epsilon(twoenergy) * \
-               xxx * cos(3 * PHI_RAD)
+               xxx * math.cos(3 * PHI_RAD)
     elif polar_in == "p" and polar_out == "s":
         r_factor = -(wave_vector(energy) ** 2) * (epsilon(energy) ** 2) * \
-                     xxx * sin(3 * PHI_RAD)
+                     xxx * math.sin(3 * PHI_RAD)
     elif polar_in == "s" and polar_out == "s":
-        r_factor = xxx * sin(3 * PHI_RAD)
+        r_factor = xxx * math.sin(3 * PHI_RAD)
     return r_factor
 
 def epsilon(energy):
@@ -149,7 +153,7 @@ def epsilon(energy):
     Combines splines for real and imaginary parts of Chi^(1)
     """
     chi1 = chi_spline("real", energy) + 1j * chi_spline("imag", energy)
-    linear = 4 * constants.pi * chi1
+    linear = 4 * sp.constants.pi * chi1
     return linear
 
 def wave_vector(energy):
@@ -160,7 +164,7 @@ def wave_vector(energy):
     children: epsilon
     Calculates wave vector k
     """
-    k = sqrt(epsilon(energy) - (sin(THETA_RAD) ** 2))
+    k = np.sqrt(epsilon(energy) - (math.sin(THETA_RAD) ** 2))
     return k
 
 def electrostatic_units(energy):
@@ -168,11 +172,11 @@ def electrostatic_units(energy):
     coefficient to convert to appropriate electrostatic units
     possibly deprecated?
     """
-    area = (1 / ((2 * sqrt(2)) ** 2)) * 2 * sqrt(3)
+    area = (1 / ((2 * np.sqrt(2)) ** 2)) * 2 * np.sqrt(3)
     factor = (1j * ((2 *
-              constants.value("Rydberg constant times hc in eV")) ** 5) *
+              sp.constants.value("Rydberg constant times hc in eV")) ** 5) *
               1e-5 * 2.08e-15 *
-            ((constants.value("lattice parameter of silicon") / 1e-10) ** 3))\
+            ((sp.constants.value("lattice parameter of silicon") / 1e-10) ** 3))\
               / (area * ((energy) ** 3))
     return factor
 
@@ -185,8 +189,8 @@ def control():
     children: nonlinear_reflection, save_matrix
     Creates final matrix and writes to file.
     """
-    onee = linspace(0.01, 20, 2000)
-    nrc = column_stack((onee, nonlinear_reflection(["p", "p"], onee),
+    onee = np.linspace(0.01, 20, 2000)
+    nrc = np.column_stack((onee, nonlinear_reflection(["p", "p"], onee),
                               nonlinear_reflection(["p", "s"], onee),
                               nonlinear_reflection(["s", "p"], onee),
                               nonlinear_reflection(["s", "s"], onee)))
@@ -200,7 +204,7 @@ def load_chi(in_file):
     children: none
     Loads Chi^(1) file, unpacks columns, and combines into complex numpy array.
     """
-    real, imaginary = loadtxt(in_file, unpack=True, usecols=[1, 2], skiprows=1)
+    real, imaginary = np.loadtxt(in_file, unpack=True, usecols=[1, 2], skiprows=1)
     data = real + 1j * imaginary
     return data
 
@@ -209,10 +213,10 @@ def load_shg(in_file):
     dependencies: input file
     parents: reflection_components
     children: none
-    Loads shg Chi^(2) files, unpacks columns, sums 1w and 2w for real and 
+    Loads shg Chi^(2) files, unpacks columns, sums 1w and 2w for real and
     imag, and combines into complex numpy array.
     """
-    real1w, imaginary1w, real2w, imaginary2w = loadtxt(in_file, unpack=True, usecols=[1, 2, 3, 4], skiprows=1)
+    real1w, imaginary1w, real2w, imaginary2w = np.loadtxt(in_file, unpack=True, usecols=[1, 2, 3, 4], skiprows=1)
     real = real1w + real2w
     imaginary = imaginary1w + imaginary2w
     data = real + 1j * imaginary
@@ -227,7 +231,7 @@ def save_matrix(out_file, data):
     Saves final numpy array to output file, and writes fancy header to file. 
     FMT value for energy column differs from reflection components. 
     """
-    savetxt(out_file, data, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
+    np.savetxt(out_file, data, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
                             delimiter='    ', 
                             header='w(eV)  Rpp                     Rps                     Rsp                     Rss')
 
@@ -240,7 +244,7 @@ def chi_spline(part, energy):
     """
     chi1 = load_chi(CHI)
     interpolated = \
-    interpolate.InterpolatedUnivariateSpline(energy, getattr(chi1, part))
+    sp.interpolate.InterpolatedUnivariateSpline(energy, getattr(chi1, part))
     return interpolated(energy)
 
 control()
