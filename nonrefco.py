@@ -17,27 +17,23 @@ TO-DO
 
 import sys
 import math
-import scipy as sp
 import numpy as np
-#from math import math.sin, math.cos, math.radians
-#from scipy import sp.constants, sp.interpolate
-#from numpy import np.loadtxt, np.savetxt, np.column_stack, np.absolute, \
-#                  np.sqrt, np.linspace, np.ones, np.complex128
+from scipy import constants, interpolate
 
 ########### User Input ###########
 
-#CHI = sys.argv[1] # reads layers from command line
-#XXX = sys.argv[2] # reads kpoints from command line
-#XXZ = sys.argv[3] # reads ecut from command line
-#ZXX = sys.argv[4] # reads N_c from command line
-#ZZZ = sys.argv[5] # reads scissor correction from command line
+CHI = sys.argv[1] # reads chi1 from command line
+XXX = sys.argv[2] # reads chi2 xxx from command line
+XXZ = sys.argv[3] # reads chi2 xxz from command line
+ZXX = sys.argv[4] # reads chi2 zxx from command line
+ZZZ = sys.argv[5] # reads chi2 zzz from command line
 ##OUT = "../calculated/nrc/"
 
 # Angles
 THETA_RAD = math.radians(65)
 PHI_RAD = math.radians(30)
 # for debugging only, don't need this motherfucking shit
-ENERGY = np.linspace(0.01, 20, 2000) 
+#ENERGY = np.linspace(0.01, 20, 2000)
 
 ########### Functions ###########
 
@@ -65,11 +61,11 @@ def rif_constants(energy):
     dependencies: 1w energy array
     parents: nonlinear_reflection
     children: none
-    Multiplies constants. "electrondensity" merits revision.
+    Multiplies constants. "elecdens" merits revision.
     """
     # electronic density and scaling factor (1e-7 * 1e-21)
-    electrondensity = 1e-28
-    const = (32 * (sp.constants.pi ** 3) * ((energy / sp.constants.value("Planck constant over 2 pi in eV s")) ** 2)) / (electrondensity * ((sp.constants.c * 100) ** 3) * (math.cos(THETA_RAD) ** 2))
+    elecdens = 1e-28
+    const = (32 * (constants.pi ** 3) * ((energy / constants.value("Planck constant over 2 pi in eV s")) ** 2)) / (elecdens * ((constants.c * 100) ** 3) * (math.cos(THETA_RAD) ** 2))
     return const
 
 def fresnel_vl(polarization, energy):
@@ -153,12 +149,12 @@ def epsilon(energy):
     Combines splines for real and imaginary parts of Chi^(1)
     """
     chi1 = chi_spline("real", energy) + 1j * chi_spline("imag", energy)
-    linear = 4 * sp.constants.pi * chi1
+    linear = 4 * constants.pi * chi1
     return linear
 
 def wave_vector(energy):
     """
-    eq. 5: k_{z}(\omega)
+    eq. 5: k_{z}(omega)
     dependencies: energy array
     parents: fresnel_vl, fresnel_lb, reflection_components
     children: epsilon
@@ -174,9 +170,9 @@ def electrostatic_units(energy):
     """
     area = (1 / ((2 * np.sqrt(2)) ** 2)) * 2 * np.sqrt(3)
     factor = (1j * ((2 *
-              sp.constants.value("Rydberg constant times hc in eV")) ** 5) *
+              constants.value("Rydberg constant times hc in eV")) ** 5) *
               1e-5 * 2.08e-15 *
-            ((sp.constants.value("lattice parameter of silicon") / 1e-10) ** 3))\
+            ((constants.value("lattice parameter of silicon") / 1e-10) ** 3))\
               / (area * ((energy) ** 3))
     return factor
 
@@ -194,7 +190,7 @@ def control():
                               nonlinear_reflection(["p", "s"], onee),
                               nonlinear_reflection(["s", "p"], onee),
                               nonlinear_reflection(["s", "s"], onee)))
-    out  = "reflex.dat"
+    out = "reflex.dat"
     save_matrix(out, nrc)
 
 def load_chi(in_file):
@@ -204,8 +200,8 @@ def load_chi(in_file):
     children: none
     Loads Chi^(1) file, unpacks columns, and combines into complex numpy array.
     """
-    real, imaginary = np.loadtxt(in_file, unpack=True, usecols=[1, 2], skiprows=1)
-    data = real + 1j * imaginary
+    real, imag = np.loadtxt(in_file, unpack=True, usecols=[1, 2], skiprows=1)
+    data = real + 1j * imag
     return data
 
 def load_shg(in_file):
@@ -222,18 +218,18 @@ def load_shg(in_file):
     data = real + 1j * imaginary
     return data
 
-def save_matrix(out_file, data):
+def save_matrix(ofile, data):
     """
     CHAIN END
     dependencies: output file, data to be written
     parents: control
     children: none
-    Saves final numpy array to output file, and writes fancy header to file. 
-    FMT value for energy column differs from reflection components. 
+    Saves final numpy array to output file, and writes fancy header to file.
+    FMT value for energy column differs from reflection components.
     """
-    np.savetxt(out_file, data, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
-                            delimiter='    ', 
-                            header='w(eV)  Rpp                     Rps                     Rsp                     Rss')
+    np.savetxt(ofile, data, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
+                           delimiter='    ',
+                           header='w      Rpp                     Rps                     Rsp                     Rss')
 
 def chi_spline(part, energy):
     """
@@ -244,7 +240,7 @@ def chi_spline(part, energy):
     """
     chi1 = load_chi(CHI)
     interpolated = \
-    sp.interpolate.InterpolatedUnivariateSpline(energy, getattr(chi1, part))
+    interpolate.InterpolatedUnivariateSpline(energy, getattr(chi1, part))
     return interpolated(energy)
 
 control()
