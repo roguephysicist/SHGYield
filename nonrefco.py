@@ -52,8 +52,7 @@ def rif_constants(energy):
     Multiplies constants. "elecdens" merits revision.
     """
     elecdens = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
-    const = \
-        (32 * (constants.pi ** 3) * ((energy / constants.value("Planck constant over 2 pi in eV s")) ** 2)) / (elecdens * ((constants.c * 100) ** 3) * (math.cos(THETA_RAD) ** 2))
+    const = (32 * (constants.pi ** 3) * ((energy / constants.value("Planck constant over 2 pi in eV s")) ** 2)) / (elecdens * ((constants.c * 100) ** 3) * (math.cos(THETA_RAD) ** 2))
     return const
 
 def fresnel_vl(polarization, energy):
