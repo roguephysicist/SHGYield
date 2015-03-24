@@ -1,0 +1,7 @@
+# Sample input file
+chi: data/chi1
+xxx: data/xxx
+xxz: data/xxz
+zxx: data/zxx
+zzz: data/zzz
+output: sample_out.dat

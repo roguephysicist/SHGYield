@@ -1,4 +1,3 @@
-#!/Users/sma/anaconda/bin/python
 """
 nrc.py is a python program designed to calculate the Nonlinear reflection
 coefficient for silicon surfaces. It works in conjunction with the matrix
@@ -10,9 +9,6 @@ Please refer to "Strain induced SHG" manuscript (BMS) for equation references
 unless stated otherwise.
 
 Experimental gap for bulk Si = 3.4 according to Landolt-Boernstein
-
-TO-DO
-- read files for batch processing from an input file.
 """
 
 import sys
@@ -22,18 +18,10 @@ from scipy import constants, interpolate
 
 ########### User Input ###########
 
-CHI = sys.argv[1] # reads chi1 from command line
-XXX = sys.argv[2] # reads chi2 xxx from command line
-XXZ = sys.argv[3] # reads chi2 xxz from command line
-ZXX = sys.argv[4] # reads chi2 zxx from command line
-ZZZ = sys.argv[5] # reads chi2 zzz from command line
-##OUT = "../calculated/nrc/"
-
 # Angles
 THETA_RAD = math.radians(65)
 PHI_RAD = math.radians(30)
-# for debugging only, don't need this motherfucking shit
-#ENERGY = np.linspace(0.01, 20, 2000)
+#ENERGY = np.linspace(0.01, 20, 2000) # for debugging only
 
 ########### Functions ###########
 
@@ -63,9 +51,9 @@ def rif_constants(energy):
     children: none
     Multiplies constants. "elecdens" merits revision.
     """
-    # electronic density and scaling factor (1e-7 * 1e-21)
-    elecdens = 1e-28
-    const = (32 * (constants.pi ** 3) * ((energy / constants.value("Planck constant over 2 pi in eV s")) ** 2)) / (elecdens * ((constants.c * 100) ** 3) * (math.cos(THETA_RAD) ** 2))
+    elecdens = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
+    const = \
+        (32 * (constants.pi ** 3) * ((energy / constants.value("Planck constant over 2 pi in eV s")) ** 2)) / (elecdens * ((constants.c * 100) ** 3) * (math.cos(THETA_RAD) ** 2))
     return const
 
 def fresnel_vl(polarization, energy):
@@ -112,14 +100,10 @@ def reflection_components(polar_in, polar_out, energy, twoenergy):
     Calculates r_{if} factors. Loads shg arrays and does a lot of matrix
     operations. BMS program had electrostatic units multiplying shg arrays.
     """
-    # zzz = electrostatic_units(energy) * load_shg(ZZZ)
-    # zxx = electrostatic_units(energy) * load_shg(ZXX)
-    # xxz = electrostatic_units(energy) * load_shg(XXZ)
-    # xxx = electrostatic_units(energy) * load_shg(XXX)
-    zzz = load_shg(ZZZ)
-    zxx = load_shg(ZXX)
-    xxz = load_shg(XXZ)
-    xxx = load_shg(XXX)
+    zzz = load_shg(VARS['zzz']) # * electrostatic_units(energy)
+    zxx = load_shg(VARS['zxx']) # * electrostatic_units(energy)
+    xxz = load_shg(VARS['xxz']) # * electrostatic_units(energy)
+    xxx = load_shg(VARS['xxx']) # * electrostatic_units(energy)
     if polar_in == "p" and polar_out == "p":
         r_factor = math.sin(THETA_RAD) * epsilon(twoenergy) * \
                 (((math.sin(THETA_RAD) ** 2) * (epsilon(energy) ** 2) * zzz) +
@@ -187,11 +171,32 @@ def control():
     """
     onee = np.linspace(0.01, 20, 2000)
     nrc = np.column_stack((onee, nonlinear_reflection(["p", "p"], onee),
-                              nonlinear_reflection(["p", "s"], onee),
-                              nonlinear_reflection(["s", "p"], onee),
-                              nonlinear_reflection(["s", "s"], onee)))
-    out = "reflex.dat"
-    save_matrix(out, nrc)
+                                 nonlinear_reflection(["p", "s"], onee),
+                                 nonlinear_reflection(["s", "p"], onee),
+                                 nonlinear_reflection(["s", "s"], onee)))
+    #out = "reflex.dat"
+    save_matrix(VARS['output'], nrc)
+
+def parse_input():
+    """
+    parents: none
+    children: none
+    Parses input file specified in command line input
+    """
+    infile = sys.argv[1]
+    params = {}
+    targetfile = open(infile)
+    data = targetfile.readlines()
+    for line in data:
+        if '#' in line:
+            # split on comment char, keep only the part before
+            line = line.split('#', 1)
+        else:
+            # parse input, assign values to variables
+            key, value = line.split(":")
+            params[key.strip()] = value.strip()
+    targetfile.close()
+    return params
 
 def load_chi(in_file):
     """
@@ -212,7 +217,9 @@ def load_shg(in_file):
     Loads shg Chi^(2) files, unpacks columns, sums 1w and 2w for real and
     imag, and combines into complex numpy array.
     """
-    real1w, imaginary1w, real2w, imaginary2w = np.loadtxt(in_file, unpack=True, usecols=[1, 2, 3, 4], skiprows=1)
+    real1w, imaginary1w, real2w, imaginary2w = \
+            np.loadtxt(in_file, unpack=True,
+                       usecols=[1, 2, 3, 4], skiprows=1)
     real = real1w + real2w
     imaginary = imaginary1w + imaginary2w
     data = real + 1j * imaginary
@@ -228,8 +235,8 @@ def save_matrix(ofile, data):
     FMT value for energy column differs from reflection components.
     """
     np.savetxt(ofile, data, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
-                           delimiter='    ',
-                           header='w      Rpp                     Rps                     Rsp                     Rss')
+                            delimiter='    ',
+                            header='w      Rpp                     Rps                     Rsp                     Rss')
 
 def chi_spline(part, energy):
     """
@@ -238,9 +245,10 @@ def chi_spline(part, energy):
     children: load_chi
     Creates spline from real part of Chi^(1) array
     """
-    chi1 = load_chi(CHI)
+    chi1 = load_chi(VARS['chi'])
     interpolated = \
     interpolate.InterpolatedUnivariateSpline(energy, getattr(chi1, part))
     return interpolated(energy)
 
+VARS = parse_input()
 control()
