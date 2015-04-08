@@ -1,3 +1,4 @@
+#!/Users/sma/anaconda/bin/python
 """
 nrc.py is a python program designed to calculate the Nonlinear reflection
 coefficient for silicon surfaces. It works in conjunction with the matrix
@@ -22,7 +23,7 @@ from scipy import constants, interpolate
 THETA_RAD = math.radians(65)
 PHI_RAD = math.radians(30)
 #ENERGY = np.linspace(0.01, 20, 2000) # for debugging only
-
+#TWOENERGY = 2*ENERGY # for debugging only
 ########### Functions ###########
 
 ### Equations
@@ -132,7 +133,7 @@ def epsilon(energy):
     Combines splines for real and imaginary parts of Chi^(1)
     """
     chi1 = chi_spline("real", energy) + 1j * chi_spline("imag", energy)
-    linear = 4 * constants.pi * chi1
+    linear = 1 + (4 * constants.pi * chi1)
     return linear
 
 def wave_vector(energy):
