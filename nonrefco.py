@@ -54,10 +54,10 @@ def rif_constants(energy):
     """
     #elecdens = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
     elecdens = 1 # this term is included in chi^{2}
-    const = (32 * (constants.pi ** 3) * 
+    const = (32 * (constants.pi ** 3) *
             ((energy / constants.value("Planck constant over 2 pi in eV s")) ** 2)) / \
-            ((elecdens ** 2) * 
-            ((constants.c * 100) ** 3) * 
+            ((elecdens ** 2) *
+            ((constants.c * 100) ** 3) *
             (math.cos(THETA_RAD) ** 2))
     return const
 
@@ -109,21 +109,22 @@ def reflection_components(polar_in, polar_out, energy, twoenergy):
     zxx = load_shg(VARS['zxx']) # * electrostatic_units(energy)
     xxz = load_shg(VARS['xxz']) # * electrostatic_units(energy)
     xxx = load_shg(VARS['xxx']) # * electrostatic_units(energy)
+    ## This is from Mejia
     if polar_in == "p" and polar_out == "p":
-        r_factor = math.sin(THETA_RAD) * epsilon(twoenergy) * \
-                (((math.sin(THETA_RAD) ** 2) * (epsilon(energy) ** 2) * zzz) +
-                (wave_vector(energy) ** 2) * (epsilon(energy) ** 2) * zxx) \
-                 + epsilon(energy) * epsilon(twoenergy) * \
-                 wave_vector(energy) * wave_vector(twoenergy) * \
-                 (-2 * math.sin(THETA_RAD) * epsilon(energy) * xxz +
-                wave_vector(energy) * epsilon(energy) * xxx *
+        r_factor = math.sin(THETA_RAD) * epsilon("b", twoenergy) * \
+                (((math.sin(THETA_RAD) ** 2) * (epsilon("b", energy) ** 2) * zzz) +
+                (wave_vector("b", energy) ** 2) * (epsilon("l", energy) ** 2) * zxx) \
+                 + epsilon("l", energy) * epsilon("l", twoenergy) * \
+                 wave_vector("b", energy) * wave_vector("b", twoenergy) * \
+                 (-2 * math.sin(THETA_RAD) * epsilon("b", energy) * xxz +
+                wave_vector("b", energy) * epsilon("l", energy) * xxx *
                 math.cos(3 * PHI_RAD))
     elif polar_in == "s" and polar_out == "p":
-        r_factor = math.sin(THETA_RAD) * epsilon(twoenergy) * zxx - \
-               wave_vector(twoenergy) * epsilon(twoenergy) * \
+        r_factor = math.sin(THETA_RAD) * epsilon("b", twoenergy) * zxx - \
+               wave_vector("b", twoenergy) * epsilon("l", twoenergy) * \
                xxx * math.cos(3 * PHI_RAD)
     elif polar_in == "p" and polar_out == "s":
-        r_factor = -(wave_vector(energy) ** 2) * (epsilon(energy) ** 2) * \
+        r_factor = -(wave_vector("b", energy) ** 2) * (epsilon("l", energy) ** 2) * \
                      xxx * math.sin(3 * PHI_RAD)
     elif polar_in == "s" and polar_out == "s":
         r_factor = xxx * math.sin(3 * PHI_RAD)
@@ -143,7 +144,7 @@ def epsilon(interface, energy):
     elif interface == "l":
         chi1 = load_chi(VARS['chil'])
     elif interface == "b":
-        chi1 = load_chi(VARS['chib'])    
+        chi1 = load_chi(VARS['chib'])
     spline = chi_spline(chi1, "real", energy) + 1j * chi_spline(chi1, "imag", energy)
     eps = 1 + (4 * constants.pi * spline)
     return eps
