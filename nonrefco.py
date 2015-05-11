@@ -38,9 +38,9 @@ def nonlinear_reflection(state, energy):
     """
     onee = energy
     twoe = 2 * onee
-    nrc = rif_constants(onee) * np.absolute(((fresnel_vl(state[1], twoe) *
+    nrc = rif_constants(onee) * np.absolute((fresnel_vl(state[1], twoe) *
           fresnel_lb(state[1], twoe) * ((fresnel_vl(state[0], onee) *
-          fresnel_lb(state[0], onee)) ** 2)) / 2j) *
+          fresnel_lb(state[0], onee)) ** 2)) *
           reflection_components(state[0], state[1], onee, twoe)) ** 2
     return nrc
 
@@ -54,7 +54,11 @@ def rif_constants(energy):
     """
     #elecdens = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
     elecdens = 1 # this term is included in chi^{2}
-    const = (32 * (constants.pi ** 3) * ((energy / constants.value("Planck constant over 2 pi in eV s")) ** 2)) / (elecdens * ((constants.c * 100) ** 3) * (math.cos(THETA_RAD) ** 2))
+    const = (32 * (constants.pi ** 3) * 
+            ((energy / constants.value("Planck constant over 2 pi in eV s")) ** 2)) / \
+            ((elecdens ** 2) * 
+            ((constants.c * 100) ** 3) * 
+            (math.cos(THETA_RAD) ** 2))
     return const
 
 def fresnel_vl(polarization, energy):
@@ -67,10 +71,10 @@ def fresnel_vl(polarization, energy):
     """
     if polarization == "s":
         fresnel = (2 * math.cos(THETA_RAD)) / (math.cos(THETA_RAD) +
-                   wave_vector(energy))
+                   wave_vector("l", energy))
     elif polarization == "p":
-        fresnel = (2 * math.cos(THETA_RAD)) / (epsilon(energy) *
-                   math.cos(THETA_RAD) + wave_vector(energy))
+        fresnel = (2 * math.cos(THETA_RAD)) / (epsilon("l", energy) *
+                   math.cos(THETA_RAD) + wave_vector("l", energy))
     return fresnel
 
 def fresnel_lb(polarization, energy):
@@ -82,14 +86,14 @@ def fresnel_lb(polarization, energy):
     Calculates fresnel factors for surface to bulk
     """
     if polarization == "s":
-        fresnel = np.ones(2000, dtype=np.complex128)
-        # fresnel = (2 * wave_vector(energy)) / (wave_vector(energy)
-        #              + wave_vector(energy))
+        #fresnel = np.ones(2000, dtype=np.complex128)
+        fresnel = (2 * wave_vector("l", energy)) / (wave_vector("l", energy)
+                     + wave_vector("b", energy))
     elif polarization == "p":
-        fresnel = 1 / epsilon(energy)
-        # fresnel = (2 * wave_vector(energy)) / (epsilon(energy)
-        #              * wave_vector(energy) + epsilon(energy)
-        #              * wave_vector(energy))
+        #fresnel = 1 / epsilon(energy)
+        fresnel = (2 * wave_vector("l", energy)) / (epsilon("b", energy)
+                     * wave_vector("l", energy) + epsilon("l", energy)
+                     * wave_vector("b", energy))
     return fresnel
 
 def reflection_components(polar_in, polar_out, energy, twoenergy):
@@ -125,7 +129,7 @@ def reflection_components(polar_in, polar_out, energy, twoenergy):
         r_factor = xxx * math.sin(3 * PHI_RAD)
     return r_factor
 
-def epsilon(energy):
+def epsilon(interface, energy):
     """
     eq. ?? REFERENCE NEEDED
     dependencies: energy array
@@ -133,11 +137,18 @@ def epsilon(energy):
     children: chi_spline
     Combines splines for real and imaginary parts of Chi^(1)
     """
-    chi1 = chi_spline("real", energy) + 1j * chi_spline("imag", energy)
-    linear = 1 + (4 * constants.pi * chi1)
-    return linear
+    if interface == "v":
+        eps = np.ones(2000, dtype=np.complex128)
+        return eps
+    elif interface == "l":
+        chi1 = load_chi(VARS['chil'])
+    elif interface == "b":
+        chi1 = load_chi(VARS['chib'])    
+    spline = chi_spline(chi1, "real", energy) + 1j * chi_spline(chi1, "imag", energy)
+    eps = 1 + (4 * constants.pi * spline)
+    return eps
 
-def wave_vector(energy):
+def wave_vector(interface, energy):
     """
     eq. 5: k_{z}(omega)
     dependencies: energy array
@@ -145,13 +156,13 @@ def wave_vector(energy):
     children: epsilon
     Calculates wave vector k
     """
-    k = np.sqrt(epsilon(energy) - (math.sin(THETA_RAD) ** 2))
+    k = np.sqrt(epsilon(interface, energy) - (math.sin(THETA_RAD) ** 2))
     return k
 
 def electrostatic_units(energy):
     """
     coefficient to convert to appropriate electrostatic units
-    possibly deprecated?
+    deprecated
     """
     area = (1 / ((2 * np.sqrt(2)) ** 2)) * 2 * np.sqrt(3)
     factor = (1j * ((2 *
@@ -239,14 +250,13 @@ def save_matrix(ofile, data):
                             delimiter='    ',
                             header='w      Rpp                     Rps                     Rsp                     Rss')
 
-def chi_spline(part, energy):
+def chi_spline(chi1, part, energy):
     """
     dependencies: real or imaginary indicator, energy
     parents: epsilon
     children: load_chi
     Creates spline from real part of Chi^(1) array
     """
-    chi1 = load_chi(VARS['chi'])
     interpolated = \
     interpolate.InterpolatedUnivariateSpline(energy, getattr(chi1, part))
     return interpolated(energy)

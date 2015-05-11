@@ -1,5 +1,15 @@
 Nonlinear Reflection Coefficient for Silicon Surfaces
 ===========================
+
+Todo
+---------------
+
+1. Read shg-rad.pdf and start documenting the equations that are coded in nonrefco.
+2. Update nonrefco on this branch to reflect new NRC derivation.
+3. Read mejia articles and references to get a feel for NRC concepts.
+4. Compare `rad` directory with mejia publications and extract relevant experimental data.
+
+
 This repo houses the source code for my research project on the nonlinear
 reflection coefficient for silicon surfaces.
 
