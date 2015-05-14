@@ -17,18 +17,17 @@ import math
 import numpy as np
 from scipy import constants, interpolate
 
-########### User Input ###########
-
-# Angles
+# Angles and energies
 THETA_RAD = math.radians(65)
 PHI_RAD = math.radians(30)
-#ENERGY = np.linspace(0.01, 20, 2000) # for debugging only
-#TWOENERGY = 2*ENERGY # for debugging only
+ONEE = np.linspace(0.01, 20, 2000)
+TWOE = np.linspace(0.02, 40, 2000)
+
 ########### Functions ###########
 
 ### Equations
 ###
-def nonlinear_reflection(state, energy):
+def nonlinear_reflection(state):
     """
     eq. 22: R_{if}
     dependencies: polarization state arrays
@@ -36,12 +35,10 @@ def nonlinear_reflection(state, energy):
     children: rif_constants, fresnel_vl, fresnel_lb, reflection_components
     Calls math functions and returns numpy array for each polarization
     """
-    onee = energy
-    twoe = 2 * onee
-    nrc = rif_constants(onee) * np.absolute((fresnel_vl(state[1], twoe) *
-          fresnel_lb(state[1], twoe) * ((fresnel_vl(state[0], onee) *
-          fresnel_lb(state[0], onee)) ** 2)) *
-          reflection_components(state[0], state[1], onee, twoe)) ** 2
+    #nrc = rif_constants(ONEE) * np.absolute((fresnel_vl(state[1], TWOE) * fresnel_lb(state[1], TWOE) * ((fresnel_vl(state[0], ONEE) * fresnel_lb(state[0], ONEE)) ** 2)) * reflection_components(state[0], state[1], ONEE, TWOE)) ** 2
+    #nrc = np.absolute(reflection_components(state[0], state[1], ONEE, TWOE)) ** 2
+    #nrc = rif_constants(ONEE)
+    nrc = np.absolute((fresnel_vl(state[0], ONEE) * fresnel_lb(state[0], ONEE)) ** 2) ** 2
     return nrc
 
 def rif_constants(energy):
@@ -54,12 +51,11 @@ def rif_constants(energy):
     """
     #elecdens = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
     elecdens = 1 # this term is included in chi^{2}
-    #const = (32 * (constants.pi ** 3) *
-    #        ((energy / constants.value("Planck constant over 2 pi in eV s")) ** 2)) / \
-    #        ((elecdens ** 2) *
-    #        ((constants.c * 100) ** 3) *
-    #        (math.cos(THETA_RAD) ** 2))
-    const = 1
+    const = (32 * (constants.pi ** 3) *
+            ((energy / constants.value("Planck constant over 2 pi in eV s")) ** 2)) / \
+            ((elecdens ** 2) *
+            ((constants.c * 100) ** 3) *
+            (math.cos(THETA_RAD) ** 2))
     return const
 
 def fresnel_vl(polarization, energy):
@@ -71,11 +67,9 @@ def fresnel_vl(polarization, energy):
     Calculates fresnel factors for vacuum to surface
     """
     if polarization == "s":
-        fresnel = (2 * math.cos(THETA_RAD)) / (math.cos(THETA_RAD) +
-                   wave_vector("l", energy))
+        fresnel = (2 * math.cos(THETA_RAD)) / (math.cos(THETA_RAD) + wave_vector("l", energy))
     elif polarization == "p":
-        fresnel = (2 * math.cos(THETA_RAD)) / (epsilon("l", energy) *
-                   math.cos(THETA_RAD) + wave_vector("l", energy))
+        fresnel = (2 * math.cos(THETA_RAD)) / (epsilon("l", energy) * math.cos(THETA_RAD) + wave_vector("l", energy))
     return fresnel
 
 def fresnel_lb(polarization, energy):
@@ -87,14 +81,9 @@ def fresnel_lb(polarization, energy):
     Calculates fresnel factors for surface to bulk
     """
     if polarization == "s":
-        #fresnel = np.ones(2000, dtype=np.complex128)
-        fresnel = (2 * wave_vector("l", energy)) / (wave_vector("l", energy)
-                     + wave_vector("b", energy))
+        fresnel = (2 * wave_vector("l", energy)) / (wave_vector("l", energy) + wave_vector("b", energy))
     elif polarization == "p":
-        #fresnel = 1 / epsilon(energy)
-        fresnel = (2 * wave_vector("l", energy)) / (epsilon("b", energy)
-                     * wave_vector("l", energy) + epsilon("l", energy)
-                     * wave_vector("b", energy))
+        fresnel = (2 * wave_vector("l", energy)) / (epsilon("b", energy) * wave_vector("l", energy) + epsilon("l", energy) * wave_vector("b", energy))
     return fresnel
 
 def reflection_components(polar_in, polar_out, energy, twoenergy):
@@ -110,13 +99,12 @@ def reflection_components(polar_in, polar_out, energy, twoenergy):
     zxx = load_shg(VARS['zxx']) # * electrostatic_units(energy)
     xxz = load_shg(VARS['xxz']) # * electrostatic_units(energy)
     xxx = load_shg(VARS['xxx']) # * electrostatic_units(energy)
-    ## This is from Mejia
     if polar_in == "p" and polar_out == "p":
         r_factor = math.sin(THETA_RAD) * epsilon("b", twoenergy) * (((math.sin(THETA_RAD) ** 2) * (epsilon("b", energy) ** 2) * zzz) + (wave_vector("b", energy) ** 2) * (epsilon("l", energy) ** 2) * zxx) + epsilon("l", energy) * epsilon("l", twoenergy) * wave_vector("b", energy) * wave_vector("b", twoenergy) * (-2 * math.sin(THETA_RAD) * epsilon("b", energy) * xxz + wave_vector("b", energy) * epsilon("l", energy) * xxx * math.cos(3 * PHI_RAD))
-    elif polar_in == "s" and polar_out == "p":
-        r_factor = math.sin(THETA_RAD) * epsilon("b", twoenergy) * zxx - wave_vector("b", twoenergy) * epsilon("l", twoenergy) * xxx * math.cos(3 * PHI_RAD)
     elif polar_in == "p" and polar_out == "s":
         r_factor = -(wave_vector("b", energy) ** 2) * (epsilon("l", energy) ** 2) * xxx * math.sin(3 * PHI_RAD)
+    elif polar_in == "s" and polar_out == "p":
+        r_factor = math.sin(THETA_RAD) * epsilon("b", twoenergy) * zxx - wave_vector("b", twoenergy) * epsilon("l", twoenergy) * xxx * math.cos(3 * PHI_RAD)
     elif polar_in == "s" and polar_out == "s":
         r_factor = xxx * math.sin(3 * PHI_RAD)
     return r_factor
@@ -173,13 +161,13 @@ def control():
     children: nonlinear_reflection, save_matrix
     Creates final matrix and writes to file.
     """
-    onee = np.linspace(0.01, 20, 2000)
-    nrc = np.column_stack((onee, nonlinear_reflection(["p", "p"], onee),
-                                 nonlinear_reflection(["p", "s"], onee),
-                                 nonlinear_reflection(["s", "p"], onee),
-                                 nonlinear_reflection(["s", "s"], onee)))
-    #out = "reflex.dat"
-    save_matrix(VARS['output'], nrc)
+    nrc = np.column_stack((ONEE, nonlinear_reflection(["p", "p"]),
+                                 nonlinear_reflection(["p", "s"]),
+                                 nonlinear_reflection(["s", "p"]),
+                                 nonlinear_reflection(["s", "s"])))
+    #outfile = VARS['output']
+    outfile = sys.argv[2]
+    save_matrix(outfile, nrc)
 
 def parse_input():
     """
@@ -253,5 +241,14 @@ def chi_spline(chi1, part, energy):
     interpolate.InterpolatedUnivariateSpline(energy, getattr(chi1, part))
     return interpolated(energy)
 
+def test_epsilon():
+    """
+    for dem paranoid mofos
+    """
+    energy = ONEE
+    eps = np.column_stack((energy, getattr(epsilon("l", energy), "real"), getattr(epsilon("l", energy), "imag")))
+    np.savetxt("epsilon.dat", eps, fmt=('%05.2f', '%.14e', '%.14e'), delimiter='    ')
+
 VARS = parse_input()
-control()
+test_epsilon()
+#control()
