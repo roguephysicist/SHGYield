@@ -35,10 +35,7 @@ def nonlinear_reflection(state):
     children: rif_constants, fresnel_vl, fresnel_lb, reflection_components
     Calls math functions and returns numpy array for each polarization
     """
-    #nrc = rif_constants(ONEE) * np.absolute((fresnel_vl(state[1], TWOE) * fresnel_lb(state[1], TWOE) * ((fresnel_vl(state[0], ONEE) * fresnel_lb(state[0], ONEE)) ** 2)) * reflection_components(state[0], state[1], ONEE, TWOE)) ** 2
-    #nrc = np.absolute(reflection_components(state[0], state[1], ONEE, TWOE)) ** 2
-    #nrc = rif_constants(ONEE)
-    nrc = np.absolute((fresnel_vl(state[0], ONEE) * fresnel_lb(state[0], ONEE)) ** 2) ** 2
+    nrc = rif_constants(ONEE) * np.absolute((fresnel_vl(state[1], TWOE) * fresnel_lb(state[1], TWOE) * ((fresnel_vl(state[0], ONEE) * fresnel_lb(state[0], ONEE)) ** 2)) * reflection_components(state[0], state[1], ONEE, TWOE)) ** 2
     return nrc
 
 def rif_constants(energy):
@@ -51,11 +48,7 @@ def rif_constants(energy):
     """
     #elecdens = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
     elecdens = 1 # this term is included in chi^{2}
-    const = (32 * (constants.pi ** 3) *
-            ((energy / constants.value("Planck constant over 2 pi in eV s")) ** 2)) / \
-            ((elecdens ** 2) *
-            ((constants.c * 100) ** 3) *
-            (math.cos(THETA_RAD) ** 2))
+    const = (32 * (constants.pi ** 3) * ((energy / constants.value("Planck constant over 2 pi in eV s")) ** 2)) / ((elecdens ** 2) * ((constants.c * 100) ** 3) * (math.cos(THETA_RAD) ** 2))
     return const
 
 def fresnel_vl(polarization, energy):
@@ -136,8 +129,9 @@ def wave_vector(interface, energy):
     children: epsilon
     Calculates wave vector k
     """
-    k = np.sqrt(epsilon(interface, energy) - (math.sin(THETA_RAD) ** 2))
-    return k
+    kz = np.sqrt(epsilon(interface, energy) - (math.sin(THETA_RAD) ** 2))
+    #test = getattr(kz, "real") + 1j * np.absolute(getattr(kz, "imag"))
+    return kz
 
 def electrostatic_units(energy):
     """
@@ -241,14 +235,23 @@ def chi_spline(chi1, part, energy):
     interpolate.InterpolatedUnivariateSpline(energy, getattr(chi1, part))
     return interpolated(energy)
 
-def test_epsilon():
+def debug():
     """
     for dem paranoid mofos
     """
     energy = ONEE
     eps = np.column_stack((energy, getattr(epsilon("l", energy), "real"), getattr(epsilon("l", energy), "imag")))
-    np.savetxt("epsilon.dat", eps, fmt=('%05.2f', '%.14e', '%.14e'), delimiter='    ')
+    np.savetxt("epsilon.dat", eps, delimiter='    ')
+    kzl = np.column_stack((energy, getattr(wave_vector("l", energy), "real"), getattr(wave_vector("l", energy), "imag")))
+    np.savetxt("kzl.dat", kzl, delimiter='    ')
+    kzb = np.column_stack((energy, getattr(wave_vector("b", energy), "real"), getattr(wave_vector("b", energy), "imag")))
+    np.savetxt("kzb.dat", kzb, delimiter='    ')
+    fresnel = np.column_stack((energy, getattr(fresnel_vl("s", energy), "real"), getattr(fresnel_vl("s", energy), "imag"), getattr(fresnel_vl("p", energy), "real"), getattr(fresnel_vl("p", energy), "imag"), getattr(fresnel_lb("s", energy), "real"), getattr(fresnel_lb("s", energy), "imag"), getattr(fresnel_lb("p", energy), "real"), getattr(fresnel_lb("p", energy), "imag")))
+    np.savetxt("fresnel.dat", fresnel, delimiter='    ')
+    ref = np.column_stack((energy, getattr(reflection_components("p", "p", energy, 2*energy), "real"), getattr(reflection_components("p", "p", energy, 2*energy), "imag")))
+    #ref = np.column_stack((energy, np.absolute(reflection_components("p", "p", energy, 2*energy)), np.absolute(reflection_components("p", "s", energy, 2*energy)), np.absolute(reflection_components("s", "p", energy, 2*energy)), np.absolute(reflection_components("s", "s", energy, 2*energy))))
+    np.savetxt("refs.dat", ref, delimiter='    ')
 
 VARS = parse_input()
-test_epsilon()
-#control()
+debug()
+control()

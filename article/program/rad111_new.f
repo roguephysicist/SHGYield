@@ -234,7 +234,7 @@ c **
 	ctpS = ctsvs2w*ctssb2w*(ctpvsw*ctpsbw)**2/(2.*ci)
 	ctsS = ctsvs2w*ctssb2w*(ctsvsw*ctssbw)**2/(2.*ci)
 c ** for chi in esu.cm
-      write(*,*)w(iw),cradps
+!!      write(*,*)w(iw),cradps
 	radpP(iw) = pfesu*cabs(ctpP*cradpP)**2*w(iw)**2
 	radsP(iw) = pfesu*cabs(ctsP*cradsP)**2*w(iw)**2
 	radpS(iw) = pfesu*cabs(ctpS*cradpS)**2*w(iw)**2
@@ -251,6 +251,12 @@ c ** R_pP with each X_ijk
 c**  shifted energy
 	 ws = 2.*w(iw)
        if(itb.eq.2)ws= 2.*w(iw)
+       write(301,*)w(iw),real(ctsvsw),aimag(ctsvsw)
+       write(302,*)w(iw),real(ctpvsw),aimag(ctpvsw)
+       write(303,*)w(iw),real(ctssbw),aimag(ctssbw)
+       write(304,*)w(iw),real(ctpsbw),aimag(ctpsbw)
+!!       write(69,*)ws,cabs(cradpP),cabs(cradpS),cabs(cradsP),cabs(cradsS)
+       write(69,*)ws,real(cradpP),aimag(cradpP)
        write(36,*)ws,radpP(iw),radsP(iw),radpS(iw),radsS(iw)
        write(38,*)ws,radpPxxz,radpPzxx,radpPzzz
 	write(91,901)ws,cabs(czzzb),cabs(czxxb),cabs(cxxzb),cabs(cxxxb)
