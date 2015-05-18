@@ -20,6 +20,7 @@ from scipy import constants, interpolate
 # Angles and energies
 THETA_RAD = math.radians(65)
 PHI_RAD = math.radians(30)
+hbar = constants.value("Planck constant over 2 pi in eV s")
 ONEE = np.linspace(0.01, 20, 2000)
 TWOE = np.linspace(0.02, 40, 2000)
 
@@ -35,20 +36,21 @@ def nonlinear_reflection(state):
     children: rif_constants, fresnel_vl, fresnel_lb, reflection_components
     Calls math functions and returns numpy array for each polarization
     """
-    nrc = rif_constants(ONEE) * np.absolute((fresnel_vl(state[1], TWOE) * fresnel_lb(state[1], TWOE) * ((fresnel_vl(state[0], ONEE) * fresnel_lb(state[0], ONEE)) ** 2)) * reflection_components(state[0], state[1], ONEE, TWOE)) ** 2
+    nrc = rif_constants * ((ONEE / hbar) ** 2) * np.absolute((fresnel_vl(state[1], TWOE) * fresnel_lb(state[1], TWOE) * ((fresnel_vl(state[0], ONEE) * fresnel_lb(state[0], ONEE)) ** 2)) * reflection_components(state[0], state[1], ONEE, TWOE)) ** 2
     return nrc
 
-def rif_constants(energy):
+def rif_constants():
     """
     eq. 22: constant term outside absolute value
-    dependencies: 1w energy array
+    dependencies: none
     parents: nonlinear_reflection
     children: none
     Multiplies constants. "elecdens" merits revision.
     """
     #elecdens = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
     elecdens = 1 # this term is included in chi^{2}
-    const = (32 * (constants.pi ** 3) * ((energy / constants.value("Planck constant over 2 pi in eV s")) ** 2)) / ((elecdens ** 2) * ((constants.c * 100) ** 3) * (math.cos(THETA_RAD) ** 2))
+    #const = (32 * (constants.pi ** 3)) / ((elecdens ** 2) * ((constants.c * 100) ** 3) * (math.cos(THETA_RAD) ** 2))
+    const = 1
     return const
 
 def fresnel_vl(polarization, energy):
