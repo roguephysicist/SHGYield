@@ -157,7 +157,7 @@ def control():
     children: nonlinear_reflection, save_matrix
     Creates final matrix and writes to file.
     """
-    nrc = np.column_stack((ONEE, nonlinear_reflection(["p", "p"]),
+    nrc = np.column_stack((TWOE, nonlinear_reflection(["p", "p"]),
                                  nonlinear_reflection(["p", "s"]),
                                  nonlinear_reflection(["s", "p"]),
                                  nonlinear_reflection(["s", "s"])))
@@ -242,26 +242,31 @@ def debug():
     for dem paranoid mofos
     """
     energy = ONEE
-    ## epsilons
+    ### epsilons
     epsl = np.column_stack((energy, epsilon("l", energy).real, epsilon("l", energy).imag))
     np.savetxt("debug/epsl.dat", epsl, delimiter='    ')
     epsb = np.column_stack((energy, epsilon("b", energy).real, epsilon("b", energy).imag))
     np.savetxt("debug/epsb.dat", epsb, delimiter='    ')
-    ## wave vectors
-    kzl = np.column_stack((energy, wave_vector("l", energy).real, wave_vector("l", energy).imag))
-    np.savetxt("debug/kzl.dat", kzl, delimiter='    ')
-    kzb = np.column_stack((energy, wave_vector("b", energy).real, wave_vector("b", energy).imag))
-    np.savetxt("debug/kzb.dat", kzb, delimiter='    ')
-    ## fresnel factors
-    fresnel = np.column_stack((energy, np.absolute(fresnel_vl("s", energy)), np.absolute(fresnel_vl("p", energy)), np.absolute(fresnel_lb("s", energy)), np.absolute(fresnel_lb("p", energy))))
-    np.savetxt("debug/fresnel.dat", fresnel, delimiter='    ')
-    ## r_if 
-    #ref = np.column_stack((energy, reflection_components("p", "p", energy, 2*energy).real, reflection_components("p", "p", energy, 2*energy).imag))
-    ref = np.column_stack((energy, np.absolute(reflection_components("p", "p", energy, 2*energy)), np.absolute(reflection_components("p", "s", energy, 2*energy)), np.absolute(reflection_components("s", "p", energy, 2*energy)), np.absolute(reflection_components("s", "s", energy, 2*energy))))
-    np.savetxt("debug/refs.dat", ref, delimiter='    ')
-    ## chi2 components
+    ### chi2 components
     comps = np.column_stack((energy, load_shg(VARS['zzz']).real, load_shg(VARS['zzz']).imag, load_shg(VARS['zxx']).real, load_shg(VARS['zxx']).imag, load_shg(VARS['xxz']).real, load_shg(VARS['xxz']).imag, load_shg(VARS['xxx']).real, load_shg(VARS['xxx']).imag))
     np.savetxt("debug/comps.dat", comps, delimiter='    ')
+
+    # fort.301
+    eps = np.column_stack((energy, np.absolute(epsilon("b", energy)), np.absolute(epsilon("l", energy)), np.absolute(epsilon("b", 2*energy)), np.absolute(epsilon("l", 2*energy))))
+    np.savetxt("debug/epsilon.dat", eps, delimiter='    ')
+    # fort.302
+    kz = np.column_stack((energy, np.absolute(wave_vector("b", energy)), np.absolute(wave_vector("b", 2*energy)), np.absolute(wave_vector("l", energy)), np.absolute(wave_vector("l", 2*energy))))
+    np.savetxt("debug/kz.dat", kz, delimiter='    ')    
+    # fort.303
+    fresnel = np.column_stack((energy, np.absolute(fresnel_vl("s", energy)), np.absolute(fresnel_vl("p", energy)), np.absolute(fresnel_lb("s", energy)), np.absolute(fresnel_lb("p", energy))))
+    np.savetxt("debug/fresnel.dat", fresnel, delimiter='    ')
+    # fort.304
+    fresnel = np.column_stack((energy, np.absolute(fresnel_vl("s", 2*energy)), np.absolute(fresnel_vl("p", 2*energy)), np.absolute(fresnel_lb("s", 2*energy)), np.absolute(fresnel_lb("p", 2*energy))))
+    np.savetxt("debug/fresnel.dat", fresnel, delimiter='    ')
+    # fort.305
+    ref = np.column_stack((energy, np.absolute(reflection_components("p", "p", energy, 2*energy)), np.absolute(reflection_components("p", "s", energy, 2*energy)), np.absolute(reflection_components("s", "p", energy, 2*energy)), np.absolute(reflection_components("s", "s", energy, 2*energy))))
+    np.savetxt("debug/refs.dat", ref, delimiter='    ')
+    
 
 VARS = parse_input()
 debug()
