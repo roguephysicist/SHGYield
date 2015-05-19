@@ -36,7 +36,7 @@ def nonlinear_reflection(state):
     children: rif_constants, fresnel_vl, fresnel_lb, reflection_components
     Calls math functions and returns numpy array for each polarization
     """
-    nrc = rif_constants * ((ONEE / hbar) ** 2) * np.absolute((fresnel_vl(state[1], TWOE) * fresnel_lb(state[1], TWOE) * ((fresnel_vl(state[0], ONEE) * fresnel_lb(state[0], ONEE)) ** 2)) * reflection_components(state[0], state[1], ONEE, TWOE)) ** 2
+    nrc = rif_constants() * ((ONEE / hbar) ** 2) * np.absolute((fresnel_vl(state[1], TWOE) * fresnel_lb(state[1], TWOE) * ((fresnel_vl(state[0], ONEE) * fresnel_lb(state[0], ONEE)) ** 2)) * reflection_components(state[0], state[1], ONEE, TWOE)) ** 2
     return nrc
 
 def rif_constants():
@@ -242,17 +242,26 @@ def debug():
     for dem paranoid mofos
     """
     energy = ONEE
-    eps = np.column_stack((energy, getattr(epsilon("l", energy), "real"), getattr(epsilon("l", energy), "imag")))
-    np.savetxt("epsilon.dat", eps, delimiter='    ')
-    kzl = np.column_stack((energy, getattr(wave_vector("l", energy), "real"), getattr(wave_vector("l", energy), "imag")))
-    np.savetxt("kzl.dat", kzl, delimiter='    ')
-    kzb = np.column_stack((energy, getattr(wave_vector("b", energy), "real"), getattr(wave_vector("b", energy), "imag")))
-    np.savetxt("kzb.dat", kzb, delimiter='    ')
-    fresnel = np.column_stack((energy, getattr(fresnel_vl("s", energy), "real"), getattr(fresnel_vl("s", energy), "imag"), getattr(fresnel_vl("p", energy), "real"), getattr(fresnel_vl("p", energy), "imag"), getattr(fresnel_lb("s", energy), "real"), getattr(fresnel_lb("s", energy), "imag"), getattr(fresnel_lb("p", energy), "real"), getattr(fresnel_lb("p", energy), "imag")))
-    np.savetxt("fresnel.dat", fresnel, delimiter='    ')
-    ref = np.column_stack((energy, getattr(reflection_components("p", "p", energy, 2*energy), "real"), getattr(reflection_components("p", "p", energy, 2*energy), "imag")))
-    #ref = np.column_stack((energy, np.absolute(reflection_components("p", "p", energy, 2*energy)), np.absolute(reflection_components("p", "s", energy, 2*energy)), np.absolute(reflection_components("s", "p", energy, 2*energy)), np.absolute(reflection_components("s", "s", energy, 2*energy))))
-    np.savetxt("refs.dat", ref, delimiter='    ')
+    ## epsilons
+    epsl = np.column_stack((energy, epsilon("l", energy).real, epsilon("l", energy).imag))
+    np.savetxt("debug/epsl.dat", epsl, delimiter='    ')
+    epsb = np.column_stack((energy, epsilon("b", energy).real, epsilon("b", energy).imag))
+    np.savetxt("debug/epsb.dat", epsb, delimiter='    ')
+    ## wave vectors
+    kzl = np.column_stack((energy, wave_vector("l", energy).real, wave_vector("l", energy).imag))
+    np.savetxt("debug/kzl.dat", kzl, delimiter='    ')
+    kzb = np.column_stack((energy, wave_vector("b", energy).real, wave_vector("b", energy).imag))
+    np.savetxt("debug/kzb.dat", kzb, delimiter='    ')
+    ## fresnel factors
+    fresnel = np.column_stack((energy, np.absolute(fresnel_vl("s", energy)), np.absolute(fresnel_vl("p", energy)), np.absolute(fresnel_lb("s", energy)), np.absolute(fresnel_lb("p", energy))))
+    np.savetxt("debug/fresnel.dat", fresnel, delimiter='    ')
+    ## r_if 
+    #ref = np.column_stack((energy, reflection_components("p", "p", energy, 2*energy).real, reflection_components("p", "p", energy, 2*energy).imag))
+    ref = np.column_stack((energy, np.absolute(reflection_components("p", "p", energy, 2*energy)), np.absolute(reflection_components("p", "s", energy, 2*energy)), np.absolute(reflection_components("s", "p", energy, 2*energy)), np.absolute(reflection_components("s", "s", energy, 2*energy))))
+    np.savetxt("debug/refs.dat", ref, delimiter='    ')
+    ## chi2 components
+    comps = np.column_stack((energy, load_shg(VARS['zzz']).real, load_shg(VARS['zzz']).imag, load_shg(VARS['zxx']).real, load_shg(VARS['zxx']).imag, load_shg(VARS['xxz']).real, load_shg(VARS['xxz']).imag, load_shg(VARS['xxx']).real, load_shg(VARS['xxx']).imag))
+    np.savetxt("debug/comps.dat", comps, delimiter='    ')
 
 VARS = parse_input()
 debug()
