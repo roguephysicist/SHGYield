@@ -255,14 +255,14 @@ def debug():
     eps = np.column_stack((energy, np.absolute(epsilon("b", energy)), np.absolute(epsilon("l", energy)), np.absolute(epsilon("b", 2*energy)), np.absolute(epsilon("l", 2*energy))))
     np.savetxt("debug/epsilon.dat", eps, delimiter='    ')
     # fort.302
-    kz = np.column_stack((energy, np.absolute(wave_vector("b", energy)), np.absolute(wave_vector("b", 2*energy)), np.absolute(wave_vector("l", energy)), np.absolute(wave_vector("l", 2*energy))))
+    kz = np.column_stack((energy, np.absolute(wave_vector("b", energy)), np.absolute(wave_vector("l", energy)), np.absolute(wave_vector("b", 2*energy)), np.absolute(wave_vector("l", 2*energy))))
     np.savetxt("debug/kz.dat", kz, delimiter='    ')    
     # fort.303
-    fresnel = np.column_stack((energy, np.absolute(fresnel_vl("s", energy)), np.absolute(fresnel_vl("p", energy)), np.absolute(fresnel_lb("s", energy)), np.absolute(fresnel_lb("p", energy))))
-    np.savetxt("debug/fresnel.dat", fresnel, delimiter='    ')
+    fresnel1w = np.column_stack((energy, np.absolute(fresnel_vl("s", energy)), np.absolute(fresnel_vl("p", energy)), np.absolute(fresnel_lb("s", energy)), np.absolute(fresnel_lb("p", energy))))
+    np.savetxt("debug/fresnel1w.dat", fresnel1w, delimiter='    ')
     # fort.304
-    fresnel = np.column_stack((energy, np.absolute(fresnel_vl("s", 2*energy)), np.absolute(fresnel_vl("p", 2*energy)), np.absolute(fresnel_lb("s", 2*energy)), np.absolute(fresnel_lb("p", 2*energy))))
-    np.savetxt("debug/fresnel.dat", fresnel, delimiter='    ')
+    fresnel2w = np.column_stack((energy, np.absolute(fresnel_vl("s", 2*energy)), np.absolute(fresnel_vl("p", 2*energy)), np.absolute(fresnel_lb("s", 2*energy)), np.absolute(fresnel_lb("p", 2*energy))))
+    np.savetxt("debug/fresnel2w.dat", fresnel2w, delimiter='    ')
     # fort.305
     ref = np.column_stack((energy, np.absolute(reflection_components("p", "p", energy, 2*energy)), np.absolute(reflection_components("p", "s", energy, 2*energy)), np.absolute(reflection_components("s", "p", energy, 2*energy)), np.absolute(reflection_components("s", "s", energy, 2*energy))))
     np.savetxt("debug/refs.dat", ref, delimiter='    ')
