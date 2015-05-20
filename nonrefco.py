@@ -223,8 +223,8 @@ def save_matrix(ofile, data):
     FMT value for energy column differs from reflection components.
     """
     np.savetxt(ofile, data, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
-                            delimiter='    ',
-                            header='w      Rpp                     Rps                     Rsp                     Rss')
+                            delimiter='    ')
+                           # header='w      Rpp                     Rps                     Rsp                     Rss')
 
 def chi_spline(chi1, part, energy):
     """
@@ -237,20 +237,11 @@ def chi_spline(chi1, part, energy):
     interpolate.InterpolatedUnivariateSpline(energy, getattr(chi1, part))
     return interpolated(energy)
 
-def debug():
+def fort_comparison():
     """
     for dem paranoid mofos
     """
     energy = ONEE
-    ### epsilons
-    epsl = np.column_stack((energy, epsilon("l", energy).real, epsilon("l", energy).imag))
-    np.savetxt("debug/epsl.dat", epsl, delimiter='    ')
-    epsb = np.column_stack((energy, epsilon("b", energy).real, epsilon("b", energy).imag))
-    np.savetxt("debug/epsb.dat", epsb, delimiter='    ')
-    ### chi2 components
-    comps = np.column_stack((energy, load_shg(VARS['zzz']).real, load_shg(VARS['zzz']).imag, load_shg(VARS['zxx']).real, load_shg(VARS['zxx']).imag, load_shg(VARS['xxz']).real, load_shg(VARS['xxz']).imag, load_shg(VARS['xxx']).real, load_shg(VARS['xxx']).imag))
-    np.savetxt("debug/comps.dat", comps, delimiter='    ')
-
     # fort.301
     eps = np.column_stack((energy, np.absolute(epsilon("b", energy)), np.absolute(epsilon("l", energy)), np.absolute(epsilon("b", 2*energy)), np.absolute(epsilon("l", 2*energy))))
     np.savetxt("debug/epsilon.dat", eps, delimiter='    ')
@@ -266,8 +257,19 @@ def debug():
     # fort.305
     ref = np.column_stack((energy, np.absolute(reflection_components("p", "p", energy, 2*energy)), np.absolute(reflection_components("p", "s", energy, 2*energy)), np.absolute(reflection_components("s", "p", energy, 2*energy)), np.absolute(reflection_components("s", "s", energy, 2*energy))))
     np.savetxt("debug/refs.dat", ref, delimiter='    ')
+
+def fort_output():
+    energy = ONEE
+    ### epsilons
+    epsl = np.column_stack((energy, epsilon("l", energy).real, epsilon("l", energy).imag))
+    np.savetxt("debug/epsl.dat", epsl, delimiter='    ')
+    epsb = np.column_stack((energy, epsilon("b", energy).real, epsilon("b", energy).imag))
+    np.savetxt("debug/epsb.dat", epsb, delimiter='    ')
+    ### chi2 components
+    comps = np.column_stack((energy, load_shg(VARS['zzz']).real, load_shg(VARS['zzz']).imag, load_shg(VARS['zxx']).real, load_shg(VARS['zxx']).imag, load_shg(VARS['xxz']).real, load_shg(VARS['xxz']).imag, load_shg(VARS['xxx']).real, load_shg(VARS['xxx']).imag))
+    np.savetxt("debug/comps.dat", comps, delimiter='    ')
     
 
 VARS = parse_input()
-debug()
+fort_output()
 control()

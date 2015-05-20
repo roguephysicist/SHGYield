@@ -59,7 +59,7 @@ end if
 !** intervals as those of X_{ijk}
 if(itb.eq.2)Nint=2000
 if(itb.eq.1)Nint=Emax/Dw-1
-write(*,*)'Nint =',Nint
+! write(*,*)'Nint =',Nint
 do i = 1,Nint
     ! read(14,*)w(i),epsr,epsi
     read(14,*)xx,epsr,epsi
@@ -94,7 +94,7 @@ sect2=1./qz**2
 pf = gamma*sect2
 pf = pf*1.e21 ! R in 10^{-21} cm^2/W for \chi^s in esu.cm
 pf = 1
-write(*,*)'pf =',pf
+! write(*,*)'pf =',pf
 !** cycle for radiation
 !** since we need w and 2w we only go in X_{ijk} up to w/2
 maxi=Nint/2
@@ -222,11 +222,13 @@ do iw = 1,maxi
     !**  shifted energy
     if(itb.eq.2) ws= 2.*w(iw)
     write(36,*)ws,radpP(iw),radpS(iw),radsP(iw),radsS(iw)
-    write(301,*)w(iw),cabs(cepsbw),cabs(cepssw),cabs(cepsb2w),cabs(cepss2w)
-    write(302,*)w(iw),cabs(ckzbw),cabs(ckzsw),cabs(ckzb2w),cabs(ckzs2w)
-    write(303,*)w(iw),cabs(ctsvsw),cabs(ctpvsw),cabs(ctssbw),cabs(ctpsbw)
-    write(304,*)w(iw),cabs(ctsvs2w),cabs(ctpvs2w),cabs(ctssb2w),cabs(ctpsb2w)
-    write(305,*)w(iw),cabs(cradpP),cabs(cradpS),cabs(cradsP),cabs(cradsS)
+    ! My debug stuff
+    ! write(301,*)w(iw),cabs(cepsbw),cabs(cepssw),cabs(cepsb2w),cabs(cepss2w)
+    ! write(302,*)w(iw),cabs(ckzbw),cabs(ckzsw),cabs(ckzb2w),cabs(ckzs2w)
+    ! write(303,*)w(iw),cabs(ctsvsw),cabs(ctpvsw),cabs(ctssbw),cabs(ctpsbw)
+    ! write(304,*)w(iw),cabs(ctsvs2w),cabs(ctpvs2w),cabs(ctssb2w),cabs(ctpsb2w)
+    ! write(305,*)w(iw),cabs(cradpP),cabs(cradpS),cabs(cradsP),cabs(cradsS)
+
     ! write(38,*)ws,radpPzzz,radpPzxx,radpPxxz
     ! write(91,901)ws,cabs(czzzb),cabs(czxxb),cabs(cxxzb),cabs(cxxxb)
     ! write(92,901)w(iw),cXzzz(iw),cXzxx(iw),cXxxz(iw)
