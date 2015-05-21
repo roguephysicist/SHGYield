@@ -36,7 +36,12 @@ def nonlinear_reflection(state):
     children: rif_constants, fresnel_vl, fresnel_lb, reflection_components
     Calls math functions and returns numpy array for each polarization
     """
-    nrc = rif_constants() * ((ONEE / hbar) ** 2) * np.absolute((fresnel_vl(state[1], TWOE) * fresnel_lb(state[1], TWOE) * ((fresnel_vl(state[0], ONEE) * fresnel_lb(state[0], ONEE)) ** 2)) * reflection_components(state[0], state[1], ONEE, TWOE)) ** 2
+    nrc = rif_constants() * ((ONEE / hbar) ** 2) * \
+          np.absolute(
+            (fresnel_vl(state[1], TWOE) * fresnel_lb(state[1], TWOE) *
+            ((fresnel_vl(state[0], ONEE) * fresnel_lb(state[0], ONEE)) ** 2)) *
+            reflection_components(state[0], state[1], ONEE, TWOE)
+                    ) ** 2
     return nrc
 
 def rif_constants():
@@ -49,7 +54,10 @@ def rif_constants():
     """
     #elecdens = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
     elecdens = 1 # this term is included in chi^{2}
-    #const = (32 * (constants.pi ** 3)) / ((elecdens ** 2) * ((constants.c * 100) ** 3) * (math.cos(THETA_RAD) ** 2))
+    #const = (32 * (constants.pi ** 3)) / \
+    #        ((elecdens ** 2) * \
+    #        ((constants.c * 100) ** 3) * \
+    #        (math.cos(THETA_RAD) ** 2))
     const = 1
     return const
 
@@ -62,9 +70,11 @@ def fresnel_vl(polarization, energy):
     Calculates fresnel factors for vacuum to surface
     """
     if polarization == "s":
-        fresnel = (2 * math.cos(THETA_RAD)) / (math.cos(THETA_RAD) + wave_vector("l", energy))
+        fresnel = (2 * math.cos(THETA_RAD)) / \
+            (math.cos(THETA_RAD) + wave_vector("l", energy))
     elif polarization == "p":
-        fresnel = (2 * math.cos(THETA_RAD)) / (epsilon("l", energy) * math.cos(THETA_RAD) + wave_vector("l", energy))
+        fresnel = (2 * math.cos(THETA_RAD)) / \
+        (epsilon("l", energy) * math.cos(THETA_RAD) + wave_vector("l", energy))
     return fresnel
 
 def fresnel_lb(polarization, energy):
@@ -76,9 +86,12 @@ def fresnel_lb(polarization, energy):
     Calculates fresnel factors for surface to bulk
     """
     if polarization == "s":
-        fresnel = (2 * wave_vector("l", energy)) / (wave_vector("l", energy) + wave_vector("b", energy))
+        fresnel = (2 * wave_vector("l", energy)) / \
+            (wave_vector("l", energy) + wave_vector("b", energy))
     elif polarization == "p":
-        fresnel = (2 * wave_vector("l", energy)) / (epsilon("b", energy) * wave_vector("l", energy) + epsilon("l", energy) * wave_vector("b", energy))
+        fresnel = (2 * wave_vector("l", energy)) / \
+            (epsilon("b", energy) * wave_vector("l", energy) + 
+             epsilon("l", energy) * wave_vector("b", energy))
     return fresnel
 
 def reflection_components(polar_in, polar_out, energy, twoenergy):
@@ -119,7 +132,8 @@ def epsilon(interface, energy):
         chi1 = load_chi(VARS['chil'])
     elif interface == "b":
         chi1 = load_chi(VARS['chib'])
-    spline = chi_spline(chi1, "real", energy) + 1j * chi_spline(chi1, "imag", energy)
+    spline = chi_spline(chi1, "real", energy) + \
+            1j * chi_spline(chi1, "imag", energy)
     eps = 1 + (4 * constants.pi * spline)
     return eps
 
@@ -132,7 +146,6 @@ def wave_vector(interface, energy):
     Calculates wave vector k
     """
     kz = np.sqrt(epsilon(interface, energy) - (math.sin(THETA_RAD) ** 2))
-    #test = getattr(kz, "real") + 1j * np.absolute(getattr(kz, "imag"))
     return kz
 
 def electrostatic_units(energy):
@@ -152,7 +165,6 @@ def electrostatic_units(energy):
 ###
 def control():
     """
-    CHAIN START
     parents: none
     children: nonlinear_reflection, save_matrix
     Creates final matrix and writes to file.
@@ -162,8 +174,9 @@ def control():
                                  nonlinear_reflection(["s", "p"]),
                                  nonlinear_reflection(["s", "s"])))
     #outfile = VARS['output']
-    outfile = sys.argv[2]
-    save_matrix(outfile, nrc)
+    outf = sys.argv[2]
+    np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
+                            delimiter='    ')
 
 def parse_input():
     """
@@ -206,25 +219,11 @@ def load_shg(in_file):
     imag, and combines into complex numpy array.
     """
     real1w, imaginary1w, real2w, imaginary2w = \
-            np.loadtxt(in_file, unpack=True,
-                       usecols=[1, 2, 3, 4], skiprows=1)
+            np.loadtxt(in_file, unpack=True, usecols=[1, 2, 3, 4], skiprows=1)
     real = real1w + real2w
     imaginary = imaginary1w + imaginary2w
     data = real + 1j * imaginary
     return data
-
-def save_matrix(ofile, data):
-    """
-    CHAIN END
-    dependencies: output file, data to be written
-    parents: control
-    children: none
-    Saves final numpy array to output file, and writes fancy header to file.
-    FMT value for energy column differs from reflection components.
-    """
-    np.savetxt(ofile, data, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
-                            delimiter='    ')
-                           # header='w      Rpp                     Rps                     Rsp                     Rss')
 
 def chi_spline(chi1, part, energy):
     """
@@ -237,39 +236,48 @@ def chi_spline(chi1, part, energy):
     interpolate.InterpolatedUnivariateSpline(energy, getattr(chi1, part))
     return interpolated(energy)
 
+### Debug functions
+###
+def debug():
+    zzz = load_shg(VARS['zzz'])
+    zxx = load_shg(VARS['zxx'])
+    xxz = load_shg(VARS['xxz'])
+    czzz = (math.sin(THETA_RAD) ** 3) * epsilon("b", TWOE) * (epsilon("b", ONEE) ** 2) * zzz
+    czxx = math.sin(THETA_RAD) * epsilon("b", TWOE) * (epsilon("b", ONEE) ** 2) * (wave_vector("b", ONEE) ** 2) * zxx
+    cxxz = -2 * math.sin(THETA_RAD) * epsilon("b", TWOE) * (epsilon("b", ONEE) ** 2) * wave_vector("b", ONEE) * wave_vector("b", TWOE) * xxz
+    deb = np.column_stack((ONEE, np.absolute(czzz)**2, np.absolute(czxx)**2, np.absolute(cxxz)**2))
+    np.savetxt("debug/coefs.dat", deb, delimiter='    ')
+
 def fort_comparison():
-    """
-    for dem paranoid mofos
-    """
-    energy = ONEE
     # fort.301
-    eps = np.column_stack((energy, np.absolute(epsilon("b", energy)), np.absolute(epsilon("l", energy)), np.absolute(epsilon("b", 2*energy)), np.absolute(epsilon("l", 2*energy))))
+    eps = np.column_stack((ONEE, np.absolute(epsilon("b", ONEE)), np.absolute(epsilon("l", ONEE)), np.absolute(epsilon("b", 2*ONEE)), np.absolute(epsilon("l", 2*ONEE))))
     np.savetxt("debug/epsilon.dat", eps, delimiter='    ')
     # fort.302
-    kz = np.column_stack((energy, np.absolute(wave_vector("b", energy)), np.absolute(wave_vector("l", energy)), np.absolute(wave_vector("b", 2*energy)), np.absolute(wave_vector("l", 2*energy))))
+    kz = np.column_stack((ONEE, np.absolute(wave_vector("b", ONEE)), np.absolute(wave_vector("l", ONEE)), np.absolute(wave_vector("b", 2*ONEE)), np.absolute(wave_vector("l", 2*ONEE))))
     np.savetxt("debug/kz.dat", kz, delimiter='    ')    
     # fort.303
-    fresnel1w = np.column_stack((energy, np.absolute(fresnel_vl("s", energy)), np.absolute(fresnel_vl("p", energy)), np.absolute(fresnel_lb("s", energy)), np.absolute(fresnel_lb("p", energy))))
+    fresnel1w = np.column_stack((ONEE, np.absolute(fresnel_vl("s", ONEE)), np.absolute(fresnel_vl("p", ONEE)), np.absolute(fresnel_lb("s", ONEE)), np.absolute(fresnel_lb("p", ONEE))))
     np.savetxt("debug/fresnel1w.dat", fresnel1w, delimiter='    ')
     # fort.304
-    fresnel2w = np.column_stack((energy, np.absolute(fresnel_vl("s", 2*energy)), np.absolute(fresnel_vl("p", 2*energy)), np.absolute(fresnel_lb("s", 2*energy)), np.absolute(fresnel_lb("p", 2*energy))))
+    fresnel2w = np.column_stack((ONEE, np.absolute(fresnel_vl("s", 2*ONEE)), np.absolute(fresnel_vl("p", 2*ONEE)), np.absolute(fresnel_lb("s", 2*ONEE)), np.absolute(fresnel_lb("p", 2*ONEE))))
     np.savetxt("debug/fresnel2w.dat", fresnel2w, delimiter='    ')
     # fort.305
-    ref = np.column_stack((energy, np.absolute(reflection_components("p", "p", energy, 2*energy)), np.absolute(reflection_components("p", "s", energy, 2*energy)), np.absolute(reflection_components("s", "p", energy, 2*energy)), np.absolute(reflection_components("s", "s", energy, 2*energy))))
+    ref = np.column_stack((ONEE, np.absolute(reflection_components("p", "p", ONEE, 2*ONEE)), np.absolute(reflection_components("p", "s", ONEE, 2*ONEE)), np.absolute(reflection_components("s", "p", ONEE, 2*ONEE)), np.absolute(reflection_components("s", "s", energy, 2*energy))))
     np.savetxt("debug/refs.dat", ref, delimiter='    ')
 
 def fort_output():
-    energy = ONEE
     ### epsilons
-    epsl = np.column_stack((energy, epsilon("l", energy).real, epsilon("l", energy).imag))
+    epsl = np.column_stack((ONEE, epsilon("l", ONEE).real, epsilon("l", ONEE).imag))
     np.savetxt("debug/epsl.dat", epsl, delimiter='    ')
-    epsb = np.column_stack((energy, epsilon("b", energy).real, epsilon("b", energy).imag))
+    epsb = np.column_stack((ONEE, epsilon("b", ONEE).real, epsilon("b", ONEE).imag))
     np.savetxt("debug/epsb.dat", epsb, delimiter='    ')
     ### chi2 components
-    comps = np.column_stack((energy, load_shg(VARS['zzz']).real, load_shg(VARS['zzz']).imag, load_shg(VARS['zxx']).real, load_shg(VARS['zxx']).imag, load_shg(VARS['xxz']).real, load_shg(VARS['xxz']).imag, load_shg(VARS['xxx']).real, load_shg(VARS['xxx']).imag))
+    comps = np.column_stack((ONEE, load_shg(VARS['zzz']).real, load_shg(VARS['zzz']).imag, load_shg(VARS['zxx']).real, load_shg(VARS['zxx']).imag, load_shg(VARS['xxz']).real, load_shg(VARS['xxz']).imag, load_shg(VARS['xxx']).real, load_shg(VARS['xxx']).imag))
     np.savetxt("debug/comps.dat", comps, delimiter='    ')
     
 
 VARS = parse_input()
 fort_output()
+#fort_comparison()
+#debug()
 control()
