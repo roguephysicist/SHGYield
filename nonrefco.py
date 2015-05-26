@@ -20,9 +20,7 @@ from scipy import constants, interpolate
 # Angles and energies
 THETA_RAD = math.radians(65)
 PHI_RAD = math.radians(30)
-hbar = constants.value("Planck constant over 2 pi in eV s")
-ONEE = np.linspace(0.01, 20, 2000)
-TWOE = np.linspace(0.02, 40, 2000)
+ONEE = np.linspace(0.01, 10, 1000)
 
 ########### Functions ###########
 
@@ -36,11 +34,12 @@ def nonlinear_reflection(state):
     children: rif_constants, fresnel_vl, fresnel_lb, reflection_components
     Calls math functions and returns numpy array for each polarization
     """
+    hbar = constants.value("Planck constant over 2 pi in eV s")
     nrc = rif_constants() * ((ONEE / hbar) ** 2) * \
           np.absolute(
-            (fresnel_vl(state[1], TWOE) * fresnel_lb(state[1], TWOE) *
-            ((fresnel_vl(state[0], ONEE) * fresnel_lb(state[0], ONEE)) ** 2)) *
-            reflection_components(state[0], state[1], ONEE, TWOE)
+            (fresnel_vl(state[1], "twoe") * fresnel_lb(state[1], "twoe") *
+            ((fresnel_vl(state[0], "onee") * fresnel_lb(state[0], "onee")) ** 2)) *
+            reflection_components(state[0], state[1])
                     ) ** 2
     return nrc
 
@@ -94,7 +93,7 @@ def fresnel_lb(polarization, energy):
              epsilon("l", energy) * wave_vector("b", energy))
     return fresnel
 
-def reflection_components(polar_in, polar_out, energy, twoenergy):
+def reflection_components(polar_in, polar_out):
     """
     eqs. 34a--34d
     dependencies: polarization states, 1w and 2w energy arrays
@@ -108,11 +107,11 @@ def reflection_components(polar_in, polar_out, energy, twoenergy):
     xxz = load_shg(VARS['xxz']) # * electrostatic_units(energy)
     xxx = load_shg(VARS['xxx']) # * electrostatic_units(energy)
     if polar_in == "p" and polar_out == "p":
-        r_factor = math.sin(THETA_RAD) * epsilon("b", twoenergy) * (((math.sin(THETA_RAD) ** 2) * (epsilon("b", energy) ** 2) * zzz) + (wave_vector("b", energy) ** 2) * (epsilon("l", energy) ** 2) * zxx) + epsilon("l", energy) * epsilon("l", twoenergy) * wave_vector("b", energy) * wave_vector("b", twoenergy) * (-2 * math.sin(THETA_RAD) * epsilon("b", energy) * xxz + wave_vector("b", energy) * epsilon("l", energy) * xxx * math.cos(3 * PHI_RAD))
+        r_factor = math.sin(THETA_RAD) * epsilon("b", "twoe") * (((math.sin(THETA_RAD) ** 2) * (epsilon("b", "onee") ** 2) * zzz) + (wave_vector("b", "onee") ** 2) * (epsilon("l", "onee") ** 2) * zxx) + epsilon("l", "onee") * epsilon("l", "twoe") * wave_vector("b", "onee") * wave_vector("b", "twoe") * (-2 * math.sin(THETA_RAD) * epsilon("b", "onee") * xxz + wave_vector("b", "onee") * epsilon("l", "onee") * xxx * math.cos(3 * PHI_RAD))
     elif polar_in == "p" and polar_out == "s":
-        r_factor = -(wave_vector("b", energy) ** 2) * (epsilon("l", energy) ** 2) * xxx * math.sin(3 * PHI_RAD)
+        r_factor = -(wave_vector("b", "onee") ** 2) * (epsilon("l", "onee") ** 2) * xxx * math.sin(3 * PHI_RAD)
     elif polar_in == "s" and polar_out == "p":
-        r_factor = math.sin(THETA_RAD) * epsilon("b", twoenergy) * zxx - wave_vector("b", twoenergy) * epsilon("l", twoenergy) * xxx * math.cos(3 * PHI_RAD)
+        r_factor = math.sin(THETA_RAD) * epsilon("b", "twoe") * zxx - wave_vector("b", "twoe") * epsilon("l", "twoe") * xxx * math.cos(3 * PHI_RAD)
     elif polar_in == "s" and polar_out == "s":
         r_factor = xxx * math.sin(3 * PHI_RAD)
     return r_factor
@@ -129,12 +128,13 @@ def epsilon(interface, energy):
         eps = np.ones(2000, dtype=np.complex128)
         return eps
     elif interface == "l":
-        chi1 = load_chi(VARS['chil'])
+        chi1 = load_chi(VARS['chil'], energy)
     elif interface == "b":
-        chi1 = load_chi(VARS['chib'])
-    spline = chi_spline(chi1, "real", energy) + \
-            1j * chi_spline(chi1, "imag", energy)
-    eps = 1 + (4 * constants.pi * spline)
+        chi1 = load_chi(VARS['chib'], energy)
+    #spline = chi_spline(chi1, "real", energy) + \
+    #        1j * chi_spline(chi1, "imag", energy)
+    #eps = 1 + (4 * constants.pi * spline)
+    eps = 1 + (4 * constants.pi * chi1)
     return eps
 
 def wave_vector(interface, energy):
@@ -169,10 +169,10 @@ def control():
     children: nonlinear_reflection, save_matrix
     Creates final matrix and writes to file.
     """
-    nrc = np.column_stack((TWOE, nonlinear_reflection(["p", "p"]),
-                                 nonlinear_reflection(["p", "s"]),
-                                 nonlinear_reflection(["s", "p"]),
-                                 nonlinear_reflection(["s", "s"])))
+    nrc = np.column_stack((2*ONEE, nonlinear_reflection(["p", "p"]),
+                                   nonlinear_reflection(["p", "s"]),
+                                   nonlinear_reflection(["s", "p"]),
+                                   nonlinear_reflection(["s", "s"])))
     #outfile = VARS['output']
     outf = sys.argv[2]
     np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
@@ -190,16 +190,14 @@ def parse_input():
     data = targetfile.readlines()
     for line in data:
         if '#' in line:
-            # split on comment char, keep only the part before
             line = line.split('#', 1)
         else:
-            # parse input, assign values to variables
             key, value = line.split(":")
             params[key.strip()] = value.strip()
     targetfile.close()
     return params
 
-def load_chi(in_file):
+def load_chi(in_file, energy):
     """
     dependencies: input file
     parents: chi_spline
@@ -208,7 +206,11 @@ def load_chi(in_file):
     """
     real, imag = np.loadtxt(in_file, unpack=True, usecols=[1, 2], skiprows=1)
     data = real + 1j * imag
-    return data
+    if energy == "onee":
+        chi = data[:1000]
+    elif energy == "twoe":
+        chi = data[1::2]
+    return chi
 
 def load_shg(in_file):
     """
@@ -223,7 +225,8 @@ def load_shg(in_file):
     real = real1w + real2w
     imaginary = imaginary1w + imaginary2w
     data = real + 1j * imaginary
-    return data
+    shg = data[:1000]
+    return shg
 
 def chi_spline(chi1, part, energy):
     """
@@ -242,34 +245,34 @@ def debug():
     zzz = load_shg(VARS['zzz'])
     zxx = load_shg(VARS['zxx'])
     xxz = load_shg(VARS['xxz'])
-    czzz = (math.sin(THETA_RAD) ** 3) * epsilon("b", TWOE) * (epsilon("b", ONEE) ** 2) * zzz
-    czxx = math.sin(THETA_RAD) * epsilon("b", TWOE) * (epsilon("b", ONEE) ** 2) * (wave_vector("b", ONEE) ** 2) * zxx
-    cxxz = -2 * math.sin(THETA_RAD) * epsilon("b", TWOE) * (epsilon("b", ONEE) ** 2) * wave_vector("b", ONEE) * wave_vector("b", TWOE) * xxz
+    czzz = (math.sin(THETA_RAD) ** 3) * epsilon("b", "twoe") * (epsilon("b", "onee") ** 2) * zzz
+    czxx = math.sin(THETA_RAD) * epsilon("b", "twoe") * (epsilon("b", "onee") ** 2) * (wave_vector("b", "onee") ** 2) * zxx
+    cxxz = -2 * math.sin(THETA_RAD) * epsilon("b", "twoe") * (epsilon("b", "onee") ** 2) * wave_vector("b", "onee") * wave_vector("b", "twoe") * xxz
     deb = np.column_stack((ONEE, np.absolute(czzz)**2, np.absolute(czxx)**2, np.absolute(cxxz)**2))
     np.savetxt("debug/coefs.dat", deb, delimiter='    ')
 
 def fort_comparison():
     # fort.301
-    eps = np.column_stack((ONEE, np.absolute(epsilon("b", ONEE)), np.absolute(epsilon("l", ONEE)), np.absolute(epsilon("b", 2*ONEE)), np.absolute(epsilon("l", 2*ONEE))))
+    eps = np.column_stack((ONEE, np.absolute(epsilon("b", "onee")), np.absolute(epsilon("l", "onee")), np.absolute(epsilon("b", 2*"onee")), np.absolute(epsilon("l", 2*"onee"))))
     np.savetxt("debug/epsilon.dat", eps, delimiter='    ')
     # fort.302
-    kz = np.column_stack((ONEE, np.absolute(wave_vector("b", ONEE)), np.absolute(wave_vector("l", ONEE)), np.absolute(wave_vector("b", 2*ONEE)), np.absolute(wave_vector("l", 2*ONEE))))
+    kz = np.column_stack((ONEE, np.absolute(wave_vector("b", "onee")), np.absolute(wave_vector("l", "onee")), np.absolute(wave_vector("b", 2*"onee")), np.absolute(wave_vector("l", 2*"onee"))))
     np.savetxt("debug/kz.dat", kz, delimiter='    ')    
     # fort.303
-    fresnel1w = np.column_stack((ONEE, np.absolute(fresnel_vl("s", ONEE)), np.absolute(fresnel_vl("p", ONEE)), np.absolute(fresnel_lb("s", ONEE)), np.absolute(fresnel_lb("p", ONEE))))
+    fresnel1w = np.column_stack((ONEE, np.absolute(fresnel_vl("s", "onee")), np.absolute(fresnel_vl("p", "onee")), np.absolute(fresnel_lb("s", "onee")), np.absolute(fresnel_lb("p", "onee"))))
     np.savetxt("debug/fresnel1w.dat", fresnel1w, delimiter='    ')
     # fort.304
-    fresnel2w = np.column_stack((ONEE, np.absolute(fresnel_vl("s", 2*ONEE)), np.absolute(fresnel_vl("p", 2*ONEE)), np.absolute(fresnel_lb("s", 2*ONEE)), np.absolute(fresnel_lb("p", 2*ONEE))))
+    fresnel2w = np.column_stack((ONEE, np.absolute(fresnel_vl("s", 2*"onee")), np.absolute(fresnel_vl("p", 2*"onee")), np.absolute(fresnel_lb("s", 2*"onee")), np.absolute(fresnel_lb("p", 2*"onee"))))
     np.savetxt("debug/fresnel2w.dat", fresnel2w, delimiter='    ')
     # fort.305
-    ref = np.column_stack((ONEE, np.absolute(reflection_components("p", "p", ONEE, 2*ONEE)), np.absolute(reflection_components("p", "s", ONEE, 2*ONEE)), np.absolute(reflection_components("s", "p", ONEE, 2*ONEE)), np.absolute(reflection_components("s", "s", energy, 2*energy))))
+    ref = np.column_stack((ONEE, np.absolute(reflection_components("p", "p")), np.absolute(reflection_components("p", "s")), np.absolute(reflection_components("s", "p")), np.absolute(reflection_components("s", "s"))))
     np.savetxt("debug/refs.dat", ref, delimiter='    ')
 
 def fort_output():
     ### epsilons
-    epsl = np.column_stack((ONEE, epsilon("l", ONEE).real, epsilon("l", ONEE).imag))
+    epsl = np.column_stack((ONEE, epsilon("l", "onee").real, epsilon("l", "onee").imag))
     np.savetxt("debug/epsl.dat", epsl, delimiter='    ')
-    epsb = np.column_stack((ONEE, epsilon("b", ONEE).real, epsilon("b", ONEE).imag))
+    epsb = np.column_stack((ONEE, epsilon("b", "onee").real, epsilon("b", "onee").imag))
     np.savetxt("debug/epsb.dat", epsb, delimiter='    ')
     ### chi2 components
     comps = np.column_stack((ONEE, load_shg(VARS['zzz']).real, load_shg(VARS['zzz']).imag, load_shg(VARS['zxx']).real, load_shg(VARS['zxx']).imag, load_shg(VARS['xxz']).real, load_shg(VARS['xxz']).imag, load_shg(VARS['xxx']).real, load_shg(VARS['xxx']).imag))
@@ -277,7 +280,7 @@ def fort_output():
     
 
 VARS = parse_input()
-fort_output()
+#fort_output()
 #fort_comparison()
 #debug()
 control()
