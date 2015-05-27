@@ -124,10 +124,7 @@ def epsilon(interface, energy):
     children: chi_spline
     Combines splines for real and imaginary parts of Chi^(1)
     """
-    if interface == "v":
-        eps = np.ones(2000, dtype=np.complex128)
-        return eps
-    elif interface == "l":
+    if interface == "l":
         chi1 = load_chi(VARS['chil'], energy)
     elif interface == "b":
         chi1 = load_chi(VARS['chib'], energy)
@@ -253,16 +250,16 @@ def debug():
 
 def fort_comparison():
     # fort.301
-    eps = np.column_stack((ONEE, np.absolute(epsilon("b", "onee")), np.absolute(epsilon("l", "onee")), np.absolute(epsilon("b", 2*"onee")), np.absolute(epsilon("l", 2*"onee"))))
+    eps = np.column_stack((ONEE, np.absolute(epsilon("b", "onee")), np.absolute(epsilon("l", "onee")), np.absolute(epsilon("b", "twoe")), np.absolute(epsilon("l", "twoe"))))
     np.savetxt("debug/epsilon.dat", eps, delimiter='    ')
     # fort.302
-    kz = np.column_stack((ONEE, np.absolute(wave_vector("b", "onee")), np.absolute(wave_vector("l", "onee")), np.absolute(wave_vector("b", 2*"onee")), np.absolute(wave_vector("l", 2*"onee"))))
+    kz = np.column_stack((ONEE, np.absolute(wave_vector("b", "onee")), np.absolute(wave_vector("l", "onee")), np.absolute(wave_vector("b", "twoe")), np.absolute(wave_vector("l", "twoe"))))
     np.savetxt("debug/kz.dat", kz, delimiter='    ')    
     # fort.303
     fresnel1w = np.column_stack((ONEE, np.absolute(fresnel_vl("s", "onee")), np.absolute(fresnel_vl("p", "onee")), np.absolute(fresnel_lb("s", "onee")), np.absolute(fresnel_lb("p", "onee"))))
     np.savetxt("debug/fresnel1w.dat", fresnel1w, delimiter='    ')
     # fort.304
-    fresnel2w = np.column_stack((ONEE, np.absolute(fresnel_vl("s", 2*"onee")), np.absolute(fresnel_vl("p", 2*"onee")), np.absolute(fresnel_lb("s", 2*"onee")), np.absolute(fresnel_lb("p", 2*"onee"))))
+    fresnel2w = np.column_stack((ONEE, np.absolute(fresnel_vl("s", "twoe")), np.absolute(fresnel_vl("p", "twoe")), np.absolute(fresnel_lb("s", "twoe")), np.absolute(fresnel_lb("p", "twoe"))))
     np.savetxt("debug/fresnel2w.dat", fresnel2w, delimiter='    ')
     # fort.305
     ref = np.column_stack((ONEE, np.absolute(reflection_components("p", "p")), np.absolute(reflection_components("p", "s")), np.absolute(reflection_components("s", "p")), np.absolute(reflection_components("s", "s"))))

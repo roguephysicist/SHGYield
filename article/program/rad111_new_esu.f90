@@ -201,10 +201,10 @@ do iw = 1,maxi
     !** {\cal R}_{Pp}, {\cal R}_{Ps}, {\cal R}_{Sp} and {\cal R}_{Ss}, equal to
     !** {\cal R}_{pP}, {\cal R}_{sP}, {\cal R}_{pS} and {\cal R}_{sS}
     !**
-    ctpP = ctpvs2w*ctpsb2w*(ctpvsw*ctpsbw)**2/(2.*ci)
-    ctsP = ctpvs2w*ctpsb2w*(ctsvsw*ctssbw)**2/(2.*ci)
-    ctpS = ctsvs2w*ctssb2w*(ctpvsw*ctpsbw)**2/(2.*ci)
-    ctsS = ctsvs2w*ctssb2w*(ctsvsw*ctssbw)**2/(2.*ci)
+    ctpP = ctpvs2w*ctpsb2w*(ctpvsw*ctpsbw)**2!/(2.*ci)
+    ctsP = ctpvs2w*ctpsb2w*(ctsvsw*ctssbw)**2!/(2.*ci)
+    ctpS = ctsvs2w*ctssb2w*(ctpvsw*ctpsbw)**2!/(2.*ci)
+    ctsS = ctsvs2w*ctssb2w*(ctsvsw*ctssbw)**2!/(2.*ci)
     !** for chi in esu.cm
     radpP(iw) = pf*(w(iw)/hbeV)**2*cabs(ctpP*cradpP)**2
     radsP(iw) = pf*(w(iw)/hbeV)**2*cabs(ctsP*cradsP)**2
