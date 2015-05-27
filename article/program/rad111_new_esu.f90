@@ -57,7 +57,7 @@ end if
 !** reads eps(w) NOTICE that it must have the same broadening
 !** in KK transform. Also eps(w)  .05 < w < 13 and w must be same
 !** intervals as those of X_{ijk}
-if(itb.eq.2)Nint=2000
+if(itb.eq.2)Nint=1000
 if(itb.eq.1)Nint=Emax/Dw-1
 ! write(*,*)'Nint =',Nint
 do i = 1,Nint
