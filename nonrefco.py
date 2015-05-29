@@ -277,7 +277,7 @@ def fort_output():
     
 
 VARS = parse_input()
-fort_output()
+#fort_output()
 #fort_comparison()
 #debug()
 control()
