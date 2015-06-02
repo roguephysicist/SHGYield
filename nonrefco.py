@@ -102,16 +102,24 @@ def reflection_components(polar_in, polar_out):
     Calculates r_{if} factors. Loads shg arrays and does a lot of matrix
     operations. BMS program had electrostatic units multiplying shg arrays.
     """
+    epsl1 = epsilon("l", "onee")
+    epsl2 = epsilon("l", "twoe")
+    epsb1 = epsilon("b", "onee")
+    epsb2 = epsilon("b", "twoe")
+    wvl1 = wave_vector("l", "onee")
+    wvl2 = wave_vector("l", "twoe")
+    wvb1 = wave_vector("b", "onee")
+    wvb2 = wave_vector("b", "twoe")
     zzz = load_shg(VARS['zzz']) # * electrostatic_units(energy)
     zxx = load_shg(VARS['zxx']) # * electrostatic_units(energy)
     xxz = load_shg(VARS['xxz']) # * electrostatic_units(energy)
     xxx = load_shg(VARS['xxx']) # * electrostatic_units(energy)
     if polar_in == "p" and polar_out == "p":
-        r_factor = math.sin(THETA_RAD) * epsilon("b", "twoe") * (((math.sin(THETA_RAD) ** 2) * (epsilon("b", "onee") ** 2) * zzz) + (wave_vector("b", "onee") ** 2) * (epsilon("l", "onee") ** 2) * zxx) + epsilon("l", "onee") * epsilon("l", "twoe") * wave_vector("b", "onee") * wave_vector("b", "twoe") * (-2 * math.sin(THETA_RAD) * epsilon("b", "onee") * xxz + wave_vector("b", "onee") * epsilon("l", "onee") * xxx * math.cos(3 * PHI_RAD))
+        r_factor = math.sin(THETA_RAD) * epsb2 * (((math.sin(THETA_RAD) ** 2) * (epsb1 ** 2) * zzz) + (wvb1 ** 2) * (epsl1 ** 2) * zxx) + epsl1 * epsl2 * wvb1 * wvb2 * (-2 * math.sin(THETA_RAD) * epsb1 * xxz + wvb1 * epsl1 * xxx * math.cos(3 * PHI_RAD))
     elif polar_in == "p" and polar_out == "s":
-        r_factor = -(wave_vector("b", "onee") ** 2) * (epsilon("l", "onee") ** 2) * xxx * math.sin(3 * PHI_RAD)
+        r_factor = -(wvb1 ** 2) * (epsl1 ** 2) * xxx * math.sin(3 * PHI_RAD)
     elif polar_in == "s" and polar_out == "p":
-        r_factor = math.sin(THETA_RAD) * epsilon("b", "twoe") * zxx - wave_vector("b", "twoe") * epsilon("l", "twoe") * xxx * math.cos(3 * PHI_RAD)
+        r_factor = math.sin(THETA_RAD) * epsb2 * zxx - wvb2 * epsl2 * xxx * math.cos(3 * PHI_RAD)
     elif polar_in == "s" and polar_out == "s":
         r_factor = xxx * math.sin(3 * PHI_RAD)
     return r_factor
@@ -248,23 +256,6 @@ def debug():
     deb = np.column_stack((ONEE, np.absolute(czzz)**2, np.absolute(czxx)**2, np.absolute(cxxz)**2))
     np.savetxt("debug/coefs.dat", deb, delimiter='    ')
 
-def fort_comparison():
-    # fort.301
-    eps = np.column_stack((ONEE, np.absolute(epsilon("b", "onee")), np.absolute(epsilon("l", "onee")), np.absolute(epsilon("b", "twoe")), np.absolute(epsilon("l", "twoe"))))
-    np.savetxt("debug/epsilon.dat", eps, delimiter='    ')
-    # fort.302
-    kz = np.column_stack((ONEE, np.absolute(wave_vector("b", "onee")), np.absolute(wave_vector("l", "onee")), np.absolute(wave_vector("b", "twoe")), np.absolute(wave_vector("l", "twoe"))))
-    np.savetxt("debug/kz.dat", kz, delimiter='    ')    
-    # fort.303
-    fresnel1w = np.column_stack((ONEE, np.absolute(fresnel_vl("s", "onee")), np.absolute(fresnel_vl("p", "onee")), np.absolute(fresnel_lb("s", "onee")), np.absolute(fresnel_lb("p", "onee"))))
-    np.savetxt("debug/fresnel1w.dat", fresnel1w, delimiter='    ')
-    # fort.304
-    fresnel2w = np.column_stack((ONEE, np.absolute(fresnel_vl("s", "twoe")), np.absolute(fresnel_vl("p", "twoe")), np.absolute(fresnel_lb("s", "twoe")), np.absolute(fresnel_lb("p", "twoe"))))
-    np.savetxt("debug/fresnel2w.dat", fresnel2w, delimiter='    ')
-    # fort.305
-    ref = np.column_stack((ONEE, np.absolute(reflection_components("p", "p")), np.absolute(reflection_components("p", "s")), np.absolute(reflection_components("s", "p")), np.absolute(reflection_components("s", "s"))))
-    np.savetxt("debug/refs.dat", ref, delimiter='    ')
-
 def fort_output():
     ### epsilons
     epsl = np.column_stack((ONEE, epsilon("l", "onee").real, epsilon("l", "onee").imag))
@@ -278,6 +269,5 @@ def fort_output():
 
 VARS = parse_input()
 #fort_output()
-#fort_comparison()
 #debug()
 control()
