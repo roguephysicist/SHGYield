@@ -75,7 +75,8 @@ chib1w = load_chi(param['chib'], "1w")
 chib2w = load_chi(param['chib'], "2w")
 zzz = load_shg(param['zzz'])
 zxx = load_shg(param['zxx'])
-xxz = load_shg(param['xxz'])
+#xxz = load_shg(param['xxz'])
+opt = load_shg(param['xxz'])
 xxx = load_shg(param['xxx'])
 
 # constants and numpy array for 1w energy values
@@ -108,6 +109,7 @@ Tlbs = (2 * kzl2w) / (kzl2w + kzb2w)
 Tlbp = (2 * kzl2w) / (epsb2w * kzl2w + epsl2w * kzb2w)
 
 # r factors for different input and output polarizations
+xxz = opt/epsl1w
 rpp = math.sin(THETA_RAD) * epsb2w * \
     (((math.sin(THETA_RAD) ** 2) * (epsb1w ** 2) * zzz) + \
     (kzb1w ** 2) * (epsl1w ** 2) * zxx) + epsl1w * epsl2w * \
@@ -130,7 +132,7 @@ Rss = const * ((onee / hbar) ** 2) * \
 
 # creates columns for 2w and R factors and writes to file
 nrc = np.column_stack((2*onee, Rpp, Rps, Rsp, Rss))
-#outfile = param['output']
+#outf = param['output']
 outf = sys.argv[2]
 np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
                       delimiter='    ',
