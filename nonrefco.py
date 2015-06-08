@@ -67,17 +67,12 @@ def load_shg(in_file):
     shg = data[:MAX_E]
     return shg
 
-# reads input file, and loads appropriate numpy arrays from files
+# reads input file, loads chi1
 param = parse_input()
 chil1w = load_chi(param['chil'], "1w")
 chil2w = load_chi(param['chil'], "2w")
 chib1w = load_chi(param['chib'], "1w")
 chib2w = load_chi(param['chib'], "2w")
-zzz = load_shg(param['zzz'])
-zxx = load_shg(param['zxx'])
-#xxz = load_shg(param['xxz'])
-opt = load_shg(param['xxz'])
-xxx = load_shg(param['xxx'])
 
 # constants and numpy array for 1w energy values
 onee = np.linspace(0.01, 10, MAX_E)
@@ -108,8 +103,14 @@ Tvlp = (2 * math.cos(THETA_RAD)) / (epsl2w * math.cos(THETA_RAD) + kzl2w)
 Tlbs = (2 * kzl2w) / (kzl2w + kzb2w)
 Tlbp = (2 * kzl2w) / (epsb2w * kzl2w + epsl2w * kzb2w)
 
+# loads chi2
+zzz = load_shg(param['zzz'])
+zxx = load_shg(param['zxx'])
+#xxz = load_shg(param['xxz'])/epsl1w
+xxz = load_shg(param['xxz'])
+xxx = load_shg(param['xxx'])
+
 # r factors for different input and output polarizations
-xxz = opt/epsl1w
 rpp = math.sin(THETA_RAD) * epsb2w * \
     (((math.sin(THETA_RAD) ** 2) * (epsb1w ** 2) * zzz) + \
     (kzb1w ** 2) * (epsl1w ** 2) * zxx) + epsl1w * epsl2w * \
