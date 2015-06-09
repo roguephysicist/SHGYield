@@ -67,12 +67,18 @@ def load_shg(in_file):
     shg = data[:MAX_E]
     return shg
 
-# reads input file, loads chi1
+# reads input file
 param = parse_input()
+
+# loads chi1 and epsilons
 chil1w = load_chi(param['chil'], "1w")
 chil2w = load_chi(param['chil'], "2w")
 chib1w = load_chi(param['chib'], "1w")
 chib2w = load_chi(param['chib'], "2w")
+epsl1w = 1 + (4 * constants.pi * chil1w)
+epsl2w = 1 + (4 * constants.pi * chil2w)
+epsb1w = 1 + (4 * constants.pi * chib1w)
+epsb2w = 1 + (4 * constants.pi * chib2w)
 
 # constants and numpy array for 1w energy values
 onee = np.linspace(0.01, 10, MAX_E)
@@ -83,11 +89,7 @@ hbar = constants.value("Planck constant over 2 pi in eV s")
 #        ((constants.c * 100) ** 3) * (math.cos(THETA_RAD) ** 2))
 const = 1
 
-# epsilon and wave vectors for 1w and 2w 
-epsl1w = 1 + (4 * constants.pi * chil1w)
-epsl2w = 1 + (4 * constants.pi * chil2w)
-epsb1w = 1 + (4 * constants.pi * chib1w)
-epsb2w = 1 + (4 * constants.pi * chib2w)
+# wave vectors for 1w and 2w 
 kzl1w = np.sqrt(epsl1w - (math.sin(THETA_RAD) ** 2))
 kzl2w = np.sqrt(epsl2w - (math.sin(THETA_RAD) ** 2))
 kzb1w = np.sqrt(epsb1w - (math.sin(THETA_RAD) ** 2))
@@ -103,11 +105,10 @@ Tvlp = (2 * math.cos(THETA_RAD)) / (epsl2w * math.cos(THETA_RAD) + kzl2w)
 Tlbs = (2 * kzl2w) / (kzl2w + kzb2w)
 Tlbp = (2 * kzl2w) / (epsb2w * kzl2w + epsl2w * kzb2w)
 
-# loads chi2
-zzz = load_shg(param['zzz'])
+# loads chi2 and screens them with layer epsilon
+zzz = load_shg(param['zzz'])/epsl1w
 zxx = load_shg(param['zxx'])
-#xxz = load_shg(param['xxz'])/epsl1w
-xxz = load_shg(param['xxz'])
+xxz = load_shg(param['xxz'])/epsl1w
 xxx = load_shg(param['xxx'])
 
 # r factors for different input and output polarizations
