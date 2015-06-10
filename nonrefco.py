@@ -106,7 +106,7 @@ Tlbs = (2 * kzl2w) / (kzl2w + kzb2w)
 Tlbp = (2 * kzl2w) / (epsb2w * kzl2w + epsl2w * kzb2w)
 
 # loads chi2 and screens them with layer epsilon
-zzz = load_shg(param['zzz'])/epsl1w
+zzz = load_shg(param['zzz'])/epsl1w ** 2
 zxx = load_shg(param['zxx'])
 xxz = load_shg(param['xxz'])/epsl1w
 xxx = load_shg(param['xxx'])
