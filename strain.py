@@ -14,12 +14,21 @@ import math
 INFILE = sys.argv[1]
 ELEMENTS = sys.argv[2]
 
-def distance(atom1, atom2):
+def radius(atom1, atom2):
     """ calculates distance between two points """
     dist = (((float(atom2[0]) - float(atom1[0])) ** 2) +
             ((float(atom2[1]) - float(atom1[1])) ** 2) +
             ((float(atom2[2]) - float(atom1[2])) ** 2)) ** 0.5
     return dist
+
+def theta(disty, distx):
+    angle = math.atan2(disty, distx)
+    return angle
+
+def phi(distz, radius):
+    ratio = distz/radius
+    angle = math.acos(ratio)
+    return angle
 
 def parse_elements():
     """ parses element symbol names from command line """
@@ -50,7 +59,7 @@ def print_table():
                     float(atom[1]),
                     float(atom[2]))
         if idx != len(ATOMS) - 1:
-            print '|' + 21 * 3 * '=' + "| {0}: {1:15.14f}"\
+            print '|' + 21 * 3 * '=' + "| {0}: {1:16.14f}"\
                 .format(str(idx+1).zfill(2), BONDS[idx])
     print
 
