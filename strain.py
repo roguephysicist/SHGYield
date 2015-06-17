@@ -1,80 +1,93 @@
 #!/Users/sma/anaconda/bin/python
 """
-Functionality:
-* Build an array (dict) with element symbol, coordinates, and bond length
-* Function that refreshes lengths and prints table
-* Allow user to select desired bond, then how much to grow or shrink
-* Saves new coordinates
-* Saves config file with all changes saved for easy repeatability
+Allows you to add stretch or shrink bonds between atoms in a xyz file.
+* Make lists that contain what changes in order of change, like 
+[2,3,+4]
+[3,4,-4]
 """
 
-import sys, os
+import sys
 import math
 
-INFILE = sys.argv[1]
-ELEMENTS = sys.argv[2]
+DELTA = 10
 
-def radius(atom1, atom2):
-    """ calculates distance between two points """
-    dist = (((float(atom2[0]) - float(atom1[0])) ** 2) +
-            ((float(atom2[1]) - float(atom1[1])) ** 2) +
-            ((float(atom2[2]) - float(atom1[2])) ** 2)) ** 0.5
-    return dist
+def read_atoms():
+    """ reads atoms from file and converts strings to floats """
+    atoms = []
+    infile = sys.argv[1]
+    strings = [line.strip().split() for line in open(infile)]
+    for atom in strings:
+        temp = [float(item) for item in atom]
+        atoms.append(temp)
+    return atoms
 
-def theta(disty, distx):
-    angle = math.atan2(disty, distx)
-    return angle
+def atom_lengths(atom1, atom2):
+    """ distances between each cartesian coordinate for two atoms """
+    distx = atom2[0] - atom1[0]
+    disty = atom2[1] - atom1[1]
+    distz = atom2[2] - atom1[2]
+    lengths = [distx, disty, distz]
+    return lengths
 
-def phi(distz, radius):
-    ratio = distz/radius
-    angle = math.acos(ratio)
-    return angle
+def spherical_coords(atom1, atom2):
+    """ converts cartesian to spherical coordinates """
+    dist = atom_lengths(atom1, atom2)
+    radius = (((atom2[0] - atom1[0]) ** 2) +
+              ((atom2[1] - atom1[1]) ** 2) +
+              ((atom2[2] - atom1[2]) ** 2)) ** 0.5
+    theta = math.atan2(dist[1], dist[0])
+    phi = math.acos(dist[2]/radius)
+    coords = [radius, theta, phi]
+    return coords
 
-def parse_elements():
-    """ parses element symbol names from command line """
-    elem = []
-    for name in ELEMENTS.split():
-        symbol = name.split('*')
-        for x in xrange(int(symbol[0])): # don't need this motherfucker
-            elem.append(symbol[1])
-    return elem
+def cartesian_coords(radius, theta, phi):
+    """ convertes spherical to cartesian coordinates """
+    xcart = radius * math.cos(theta) * math.sin(phi)
+    ycart = radius * math.sin(theta) * math.sin(phi)
+    zcart = radius * math.cos(phi)
+    deltas = [xcart, ycart, zcart]
+    return deltas
 
-def bond_lengths():
-    """ calculates all bond lengths between atoms """
-    bonds = []
-    for idx, atom in enumerate(ATOMS): # why do we need atom here? or enumerate atoms for that matter
-        if idx != 0:
-            length = distance(ATOMS[idx-1], ATOMS[idx])
-            bonds.append(length)
-    return bonds
+def newcoords(origin, deltas):
+    """ adds calculated deltas to original coordinate """
+    xnew = deltas[0] + origin[0]
+    ynew = deltas[1] + origin[1]
+    znew = deltas[2] + origin[2]
+    coords = [xnew, ynew, znew]
+    return coords
 
-def print_table():
-    """ prints table with atoms, symbol names, and bond lengths """
-    os.system('clear')
-    print "Available atoms and bond lengths (Bohrs):"
-    for idx, atom in enumerate(ATOMS):
-        print "{0} {1:18.14f}   {2:18.14f}    {3:18.14f}"\
-            .format(SYMBOL[idx].ljust(2),
-                    float(atom[0]),
-                    float(atom[1]),
-                    float(atom[2]))
-        if idx != len(ATOMS) - 1:
-            print '|' + 21 * 3 * '=' + "| {0}: {1:16.14f}"\
-                .format(str(idx+1).zfill(2), BONDS[idx])
-    print
+def control(origin, target):
+    """ obtains the new coordinate. put inside for loop """
+    porcent = 1 + DELTA/100.0
+    sphere = spherical_coords(origin, target)
+    new_radius = sphere[0] * porcent
+    diff = cartesian_coords(new_radius, sphere[1], sphere[2])
+    new = newcoords(origin, diff)
+    return new
 
-ATOMS = [line.strip().split() for line in open(INFILE)]
-SYMBOL = parse_elements()
-BONDS = bond_lengths()
-NUMBER = len(ATOMS)
+ATOMS = read_atoms()
+print control(ATOMS[2], ATOMS[1])
 
-print_table()
-#SEL_BOND = input("Which bond do you want to modify? ")
 
-#percent = 1 + DELTA/100.0
-#hnew = distance(Si1, Si2) * percent
-#zdist = Si1[2] - Si2[2]
-#xdist = Si1[0] - Si2[0]
-#ang = math.atan(zdist/xdist) + math.pi
-#znew = hnew * math.sin(ang) + Si2[2]
-#xnew = hnew * math.cos(ang) + Si2[0]
+
+# def print_table():
+#     """ prints table with atoms, symbol names, and bond lengths """
+#     os.system('clear')
+#     print "Available atoms and bond lengths (Bohrs):"
+#     for idx, atom in enumerate(ATOMS):
+#         print "{0} {1:18.14f}   {2:18.14f}    {3:18.14f}"\
+#             .format(SYMBOL[idx].ljust(2),
+#                     float(atom[0]),
+#                     float(atom[1]),
+#                     float(atom[2]))
+#         if idx != len(ATOMS) - 1:
+#             print '|' + 21 * 3 * '=' + "| {0}: {1:16.14f}"\
+#                 .format(str(idx+1).zfill(2), BONDS[idx])
+#    print
+
+# print_table()
+# SELECTION = input("Which bond do you want to modify? ")
+# DELTA = input("By how much do you wish to modify it? (%) ")
+# print "You have selected bond {0}".format(SELECTION)
+# print "Old bond length = {0:18.14f}".format(SELECTION)
+# percent = 1 + DELTA/100.0
