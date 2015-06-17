@@ -1,15 +1,10 @@
 #!/Users/sma/anaconda/bin/python
 """
 Allows you to add stretch or shrink bonds between atoms in a xyz file.
-* Make lists that contain what changes in order of change, like 
-[2,3,+4]
-[3,4,-4]
 """
 
 import sys
 import math
-
-DELTA = 10
 
 def read_atoms():
     """ reads atoms from file and converts strings to floats """
@@ -48,7 +43,7 @@ def cartesian_coords(radius, theta, phi):
     deltas = [xcart, ycart, zcart]
     return deltas
 
-def newcoords(origin, deltas):
+def add_deltas(origin, deltas):
     """ adds calculated deltas to original coordinate """
     xnew = deltas[0] + origin[0]
     ynew = deltas[1] + origin[1]
@@ -56,38 +51,32 @@ def newcoords(origin, deltas):
     coords = [xnew, ynew, znew]
     return coords
 
-def control(origin, target):
+def control(origin, target, porcent):
     """ obtains the new coordinate. put inside for loop """
-    porcent = 1 + DELTA/100.0
+    delta = 1 + porcent/100.0
     sphere = spherical_coords(origin, target)
-    new_radius = sphere[0] * porcent
+    new_radius = sphere[0] * delta
     diff = cartesian_coords(new_radius, sphere[1], sphere[2])
-    new = newcoords(origin, diff)
+    new = add_deltas(origin, diff)
     return new
 
+#STRAIN = [[3, 4], [2, 4]]
+#OUTFILE = 'plus01.xyz'
+#STRAIN = [[5, 4], [4, 4], [3, 4], [2, 4]]
+#OUTFILE = 'plus02.xyz'
+#STRAIN = [[7, 4], [6, 4], [5, 4], [4, 4], [3, 4], [2, 4]]
+#OUTFILE = 'plus03.xyz'
+#STRAIN = [[9, 4], [8, 4], [7, 4], [6, 4], [5, 4], [4, 4], [3, 4], [2, 4]]
+#OUTFILE = 'plus04.xyz'
+STRAIN = [[11, 4], [10, 4], [9, 4], [8, 4], [7, 4], [6, 4],  [5, 4], [4, 4], [2, 4], [3, 4]]
+OUTFILE = 'plus05.xyz'
 ATOMS = read_atoms()
-print control(ATOMS[2], ATOMS[1])
-
-
-
-# def print_table():
-#     """ prints table with atoms, symbol names, and bond lengths """
-#     os.system('clear')
-#     print "Available atoms and bond lengths (Bohrs):"
-#     for idx, atom in enumerate(ATOMS):
-#         print "{0} {1:18.14f}   {2:18.14f}    {3:18.14f}"\
-#             .format(SYMBOL[idx].ljust(2),
-#                     float(atom[0]),
-#                     float(atom[1]),
-#                     float(atom[2]))
-#         if idx != len(ATOMS) - 1:
-#             print '|' + 21 * 3 * '=' + "| {0}: {1:16.14f}"\
-#                 .format(str(idx+1).zfill(2), BONDS[idx])
-#    print
-
-# print_table()
-# SELECTION = input("Which bond do you want to modify? ")
-# DELTA = input("By how much do you wish to modify it? (%) ")
-# print "You have selected bond {0}".format(SELECTION)
-# print "Old bond length = {0:18.14f}".format(SELECTION)
-# percent = 1 + DELTA/100.0
+for trans in STRAIN:
+    NEWATOM = control(ATOMS[trans[0]], ATOMS[trans[0] - 1], trans[1])
+    DELTAS = atom_lengths(ATOMS[trans[0] - 1], NEWATOM)
+    for num in xrange(trans[0]):
+        newatom = add_deltas(ATOMS[num], DELTAS)
+        ATOMS[num] = newatom
+with open(OUTFILE, 'w') as file:
+    for item in ATOMS:
+        file.write("{0:17.14f}   {1:17.14f}    {2:18.14f}".format(item[0], item[1], item[2]) + '\n')
