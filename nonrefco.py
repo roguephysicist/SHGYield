@@ -137,5 +137,5 @@ nrc = np.column_stack((2*onee, Rpp, Rps, Rsp, Rss))
 #outf = param['output']
 outf = sys.argv[2]
 np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
-                      delimiter='    ',
-                      header='2w      Rpp                     Rps                     Rsp                     Rss')
+                      delimiter='    ')
+                      #header='2w      Rpp                     Rps                     Rsp                     Rss')
