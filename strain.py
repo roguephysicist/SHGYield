@@ -60,16 +60,16 @@ def control(origin, target, porcent):
     new = add_deltas(origin, diff)
     return new
 
-#STRAIN = [[3, 4], [2, 4]]
-#OUTFILE = 'plus01.xyz'
-#STRAIN = [[5, 4], [4, 4], [3, 4], [2, 4]]
-#OUTFILE = 'plus02.xyz'
-#STRAIN = [[7, 4], [6, 4], [5, 4], [4, 4], [3, 4], [2, 4]]
-#OUTFILE = 'plus03.xyz'
-#STRAIN = [[9, 4], [8, 4], [7, 4], [6, 4], [5, 4], [4, 4], [3, 4], [2, 4]]
-#OUTFILE = 'plus04.xyz'
-STRAIN = [[11, 4], [10, 4], [9, 4], [8, 4], [7, 4], [6, 4],  [5, 4], [4, 4], [2, 4], [3, 4]]
-OUTFILE = 'plus05.xyz'
+STRAIN = [[3, -4], [2, -4]]
+OUTFILE = 'minus01.xyz'
+#STRAIN = [[5, -4], [4, -4], [3, -4], [2, -4]]
+#OUTFILE = 'minus02.xyz'
+#STRAIN = [[7, -4], [6, -4], [5, -4], [4, -4], [3, -4], [2, -4]]
+#OUTFILE = 'minus03.xyz'
+#STRAIN = [[9, -4], [8, -4], [7, -4], [6, -4], [5, -4], [4, -4], [3, -4], [2, -4]]
+#OUTFILE = 'minus04.xyz'
+#STRAIN = [[11, -4], [10, -4], [9, -4], [8, -4], [7, -4], [6, -4],  [5, -4], [4, -4], [2, -4], [3, -4]]
+#OUTFILE = 'minus05.xyz'
 ATOMS = read_atoms()
 for trans in STRAIN:
     NEWATOM = control(ATOMS[trans[0]], ATOMS[trans[0] - 1], trans[1])
