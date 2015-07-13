@@ -83,13 +83,14 @@ epsb2w = 1 + (4 * constants.pi * chib2w)
 # constants and numpy array for 1w energy values
 onee = np.linspace(0.01, 10, MAX_E)
 hbar = constants.value("Planck constant over 2 pi in eV s")
-#elecdens = 1e-28 # electronic density and scaling factor (1e-7 * 1e-21)
-#const = (32 * (constants.pi ** 3)) / \
-#        ((elecdens ** 2) * \
-#        ((constants.c * 100) ** 3) * (math.cos(THETA_RAD) ** 2))
-const = 1
+eps0 = constants.epsilon_0 / 100 # (in F/cm)
+lspeed = constants.c * 100 # (in cm/s)
+pico2cent2 = 1e-20
+n0e = 1.11e19 # for silicon (ref. 17 from PRB 81, 3781. not needed in mks!)
+const = (32 * (constants.pi ** 3) * ((onee / hbar) ** 2)) / \
+        (eps0 * (lspeed ** 3) * (math.cos(THETA_RAD) ** 2))
 
-# wave vectors for 1w and 2w 
+# wave vectors for 1w and 2w
 kzl1w = np.sqrt(epsl1w - (math.sin(THETA_RAD) ** 2))
 kzl2w = np.sqrt(epsl2w - (math.sin(THETA_RAD) ** 2))
 kzb1w = np.sqrt(epsb1w - (math.sin(THETA_RAD) ** 2))
@@ -105,37 +106,32 @@ Tvlp = (2 * math.cos(THETA_RAD)) / (epsl2w * math.cos(THETA_RAD) + kzl2w)
 Tlbs = (2 * kzl2w) / (kzl2w + kzb2w)
 Tlbp = (2 * kzl2w) / (epsb2w * kzl2w + epsl2w * kzb2w)
 
-# loads chi2 and screens them with layer epsilon
-zzz = load_shg(param['zzz'])/epsl1w ** 2
-zxx = load_shg(param['zxx'])
-xxz = load_shg(param['xxz'])/epsl1w
-xxx = load_shg(param['xxx'])
+# loads chi2, converts to cm^2/V, and screens them with layer epsilon
+zzz = pico2cent2 * load_shg(param['zzz'])/epsl1w ** 2
+zxx = pico2cent2 * load_shg(param['zxx'])
+xxz = pico2cent2 * load_shg(param['xxz'])/epsl1w
+xxx = pico2cent2 * load_shg(param['xxx'])
 
 # r factors for different input and output polarizations
 rpp = math.sin(THETA_RAD) * epsb2w * \
-    (((math.sin(THETA_RAD) ** 2) * (epsb1w ** 2) * zzz) + \
-    (kzb1w ** 2) * (epsl1w ** 2) * zxx) + epsl1w * epsl2w * \
-    kzb1w * kzb2w * (-2 * math.sin(THETA_RAD) * epsb1w * xxz + \
-    kzb1w * epsl1w * xxx * math.cos(3 * PHI_RAD))
+      (((math.sin(THETA_RAD) ** 2) * (epsb1w ** 2) * zzz) + \
+      (kzb1w ** 2) * (epsl1w ** 2) * zxx) + epsl1w * epsl2w * \
+      kzb1w * kzb2w * (-2 * math.sin(THETA_RAD) * epsb1w * xxz + \
+      kzb1w * epsl1w * xxx * math.cos(3 * PHI_RAD))
 rps = -(kzb1w ** 2) * (epsl1w ** 2) * xxx * math.sin(3 * PHI_RAD)
 rsp = math.sin(THETA_RAD) * epsb2w * zxx - \
-    kzb2w * epsl2w * xxx * math.cos(3 * PHI_RAD)
+      kzb2w * epsl2w * xxx * math.cos(3 * PHI_RAD)
 rss = xxx * math.sin(3 * PHI_RAD)
 
-# R factors for different input and output polarizations
-Rpp = const * ((onee / hbar) ** 2) * \
-        np.absolute((Tvlp * Tlbp * ((tvlp * tlbp) ** 2)) * rpp) ** 2
-Rps = const * ((onee / hbar) ** 2) * \
-        np.absolute((Tvls * Tlbs * ((tvlp * tlbp) ** 2)) * rps) ** 2
-Rsp = const * ((onee / hbar) ** 2) * \
-        np.absolute((Tvlp * Tlbp * ((tvls * tlbs) ** 2)) * rsp) ** 2
-Rss = const * ((onee / hbar) ** 2) * \
-        np.absolute((Tvls * Tlbs * ((tvls * tlbs) ** 2)) * rss) ** 2
+# R factors for different input and output polarizations (in cm^2/W)
+Rpp = const * np.absolute((Tvlp * Tlbp * ((tvlp * tlbp) ** 2)) * rpp) ** 2
+Rps = const * np.absolute((Tvls * Tlbs * ((tvlp * tlbp) ** 2)) * rps) ** 2
+Rsp = const * np.absolute((Tvlp * Tlbp * ((tvls * tlbs) ** 2)) * rsp) ** 2
+Rss = const * np.absolute((Tvls * Tlbs * ((tvls * tlbs) ** 2)) * rss) ** 2
 
 # creates columns for 2w and R factors and writes to file
 nrc = np.column_stack((2*onee, Rpp, Rps, Rsp, Rss))
-#outf = param['output']
-outf = sys.argv[2]
+outf = param['output']
+#outf = sys.argv[2]
 np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
                       delimiter='    ')
-                      #header='2w      Rpp                     Rps                     Rsp                     Rss')
