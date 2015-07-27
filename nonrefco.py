@@ -80,15 +80,29 @@ epsl2w = 1 + (4 * constants.pi * chil2w)
 epsb1w = 1 + (4 * constants.pi * chib1w)
 epsb2w = 1 + (4 * constants.pi * chib2w)
 
-# constants and numpy array for 1w energy values
-onee = np.linspace(0.01, 10, MAX_E)
+# constants 
 hbar = constants.value("Planck constant over 2 pi in eV s")
-eps0 = constants.epsilon_0 / 100 # (in F/cm)
-lspeed = constants.c * 100 # (in cm/s)
-pico2cent2 = 1e-20
-n0e = 1.11e19 # for silicon (ref. 17 from PRB 81, 3781. not needed in mks!)
-const = (32 * (constants.pi ** 3) * ((onee / hbar) ** 2)) / \
-        (eps0 * (lspeed ** 3) * (math.cos(THETA_RAD) ** 2))
+eps0 = constants.epsilon_0 / 100 # (F/cm)
+lspeed = constants.c * 100 # (cm/s)
+rydberg = constants.value("Rydberg constant times hc in eV") # (eV)
+a0 = constants.value("lattice parameter of silicon") * 100 # (cm)
+ab = constants.value("Bohr radius") * 100 # (cm)
+#n0e = 1.11e19 # for silicon, from PRB 81, 3781 Ref. 17 (V/m^2)
+n0esquared = 1.4399764 * 1e6 * 1e-13 * constants.e * (1.5e10)**2 # (J/cm^5)
+n0e_pm = 1.11e-5 # for silicon, from PRB 81, 3781 Ref. 17 (V/pm^2)
+
+# unit conversions and prefactors
+onee = np.linspace(0.01, 10, MAX_E) # 1w energy array
+pico2cent2 = 1e-20 # pm^2 to cm^2
+tinibascale = 1e6
+intensity = 1e7 # intensity from CGS (erg/cm^2 s) to MKS (cm^2/W)
+scale = 1e21 # for R in 1e-21 (cm^2/W) for \chi^ijk in (esu cm)
+mks2cgs = 1e-12 # when converting from MKS [1e6 pm^2/V] to CGS [1e-13 esu cm]
+area = 2 * 3**0.5 / 8
+esufactor = 1j * (2 * rydberg)**5 * (ab/a0)**5 * 2.08e-15 * (a0 / 1e-8)**3 / area
+prefactor = (32 * constants.pi**3) / (hbar**2 * lspeed**3 * math.cos(THETA_RAD)**2) * intensity
+#prefactor = (32 * constants.pi**3) / (hbar**2 * n0esquared * lspeed**3 * math.cos(THETA_RAD)**2)
+#prefactor = (32 * (constants.pi ** 3) * ((onee / hbar) ** 2)) / (eps0 * (lspeed ** 3) * (math.cos(THETA_RAD) ** 2))
 
 # wave vectors for 1w and 2w
 kzl1w = np.sqrt(epsl1w - (math.sin(THETA_RAD) ** 2))
@@ -107,10 +121,10 @@ Tlbs = (2 * kzl2w) / (kzl2w + kzb2w)
 Tlbp = (2 * kzl2w) / (epsb2w * kzl2w + epsl2w * kzb2w)
 
 # loads chi2, converts to cm^2/V, and screens them with layer epsilon
-zzz = pico2cent2 * load_shg(param['zzz'])/epsl1w ** 2
-zxx = pico2cent2 * load_shg(param['zxx'])
-xxz = pico2cent2 * load_shg(param['xxz'])/epsl1w
-xxx = pico2cent2 * load_shg(param['xxx'])
+zzz = esufactor * 0.01 * load_shg(param['zzz'])/epsl1w ** 2
+zxx = esufactor * 0.01 * load_shg(param['zxx'])
+xxz = esufactor * 0.01 * load_shg(param['xxz'])/epsl1w
+xxx = esufactor * 0.01 * load_shg(param['xxx'])
 
 # r factors for different input and output polarizations
 rpp = math.sin(THETA_RAD) * epsb2w * \
@@ -124,14 +138,18 @@ rsp = math.sin(THETA_RAD) * epsb2w * zxx - \
 rss = xxx * math.sin(3 * PHI_RAD)
 
 # R factors for different input and output polarizations (in cm^2/W)
-Rpp = const * np.absolute((Tvlp * Tlbp * ((tvlp * tlbp) ** 2)) * rpp) ** 2
-Rps = const * np.absolute((Tvls * Tlbs * ((tvlp * tlbp) ** 2)) * rps) ** 2
-Rsp = const * np.absolute((Tvlp * Tlbp * ((tvls * tlbs) ** 2)) * rsp) ** 2
-Rss = const * np.absolute((Tvls * Tlbs * ((tvls * tlbs) ** 2)) * rss) ** 2
+Rpp = math.cos(THETA_RAD) * prefactor * (onee ** 2) * np.absolute((Tvlp * Tlbp * ((tvlp * tlbp) ** 2) / (2j)) * rpp) ** 2
+Rps = math.cos(THETA_RAD) * prefactor * (onee ** 2) * np.absolute((Tvls * Tlbs * ((tvlp * tlbp) ** 2) / (2j)) * rps) ** 2
+Rsp = math.cos(THETA_RAD) * prefactor * (onee ** 2) * np.absolute((Tvlp * Tlbp * ((tvls * tlbs) ** 2) / (2j)) * rsp) ** 2
+Rss = math.cos(THETA_RAD) * prefactor * (onee ** 2) * np.absolute((Tvls * Tlbs * ((tvls * tlbs) ** 2) / (2j)) * rss) ** 2
 
 # creates columns for 2w and R factors and writes to file
 nrc = np.column_stack((2*onee, Rpp, Rps, Rsp, Rss))
+epsb = np.column_stack((onee, epsb1w.real, epsb1w.imag))
+epsl = np.column_stack((onee, epsl1w.real, epsl1w.imag))
 outf = param['output']
-#outf = sys.argv[2]
+# outf = sys.argv[2]
+#np.savetxt('/Users/sma/Downloads/test/epsb', epsb, fmt=('%05.2f', '%.14e', '%.14e'),delimiter='    ')
+#np.savetxt('/Users/sma/Downloads/test/epsl', epsl, fmt=('%05.2f', '%.14e', '%.14e'),delimiter='    ')
 np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
                       delimiter='    ')
