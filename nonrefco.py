@@ -145,11 +145,7 @@ Rss = math.cos(THETA_RAD) * prefactor * (onee ** 2) * np.absolute((Tvls * Tlbs *
 
 # creates columns for 2w and R factors and writes to file
 nrc = np.column_stack((2*onee, Rpp, Rps, Rsp, Rss))
-epsb = np.column_stack((onee, epsb1w.real, epsb1w.imag))
-epsl = np.column_stack((onee, epsl1w.real, epsl1w.imag))
 outf = param['output']
 # outf = sys.argv[2]
-#np.savetxt('/Users/sma/Downloads/test/epsb', epsb, fmt=('%05.2f', '%.14e', '%.14e'),delimiter='    ')
-#np.savetxt('/Users/sma/Downloads/test/epsl', epsl, fmt=('%05.2f', '%.14e', '%.14e'),delimiter='    ')
 np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
                       delimiter='    ')
