@@ -43,8 +43,10 @@ def load_chi(in_file, energy):
     Loads Chi^(1) file, unpacks columns, and combines into complex numpy array.
     """
     global MAX_E
-    real, imag = np.loadtxt(in_file, unpack=True, usecols=[1, 2], skiprows=1)
-    data = real + 1j * imag
+    realx, imagx, realy, imagy, realz, imagz = np.loadtxt(in_file, unpack=True, usecols=[1, 2, 3, 4, 5, 6], skiprows=1)
+    data = realx + 1j * imagx
+    datay = realy + 1j * imagy
+    data z= realz + 1j * imagz
     MAX_E = len(data)/2
     if energy == "1w":
         chi = data[:MAX_E]
@@ -146,6 +148,8 @@ Rss = math.cos(THETA_RAD) * prefactor * (onee ** 2) * np.absolute((Tvls * Tlbs *
 # creates columns for 2w and R factors and writes to file
 nrc = np.column_stack((2*onee, Rpp, Rps, Rsp, Rss))
 outf = param['output']
+#epsl = np.column_stack((onee, epsl1w.real, epsl1w.imag))
 # outf = sys.argv[2]
+#np.savetxt('/Users/sma/Downloads/epslz', epsl, fmt=('%05.2f', '%.14e', '%.14e'),delimiter='    ')
 np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
                       delimiter='    ')
