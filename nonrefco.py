@@ -43,10 +43,22 @@ def load_chi(in_file, energy):
     Loads Chi^(1) file, unpacks columns, and combines into complex numpy array.
     """
     global MAX_E
-    realx, imagx, realy, imagy, realz, imagz = np.loadtxt(in_file, unpack=True, usecols=[1, 2, 3, 4, 5, 6], skiprows=1)
-    data = realx + 1j * imagx
-    datay = realy + 1j * imagy
-    data z= realz + 1j * imagz
+    real, imag = np.loadtxt(in_file, unpack=True, usecols=[1, 2], skiprows=1)
+    data = real + 1j * imag
+    MAX_E = len(data)/2
+    if energy == "1w":
+        chi = data[:MAX_E]
+    elif energy == "2w":
+        chi = data[1::2]
+    return chi
+
+def load_chiz(in_file, energy):
+    """
+    Loads Chi^(1) file, unpacks columns, and combines into complex numpy array.
+    """
+    global MAX_E
+    real, imag = np.loadtxt(in_file, unpack=True, usecols=[5, 6], skiprows=1)
+    data = real + 1j * imag
     MAX_E = len(data)/2
     if energy == "1w":
         chi = data[:MAX_E]
@@ -81,6 +93,10 @@ epsl1w = 1 + (4 * constants.pi * chil1w)
 epsl2w = 1 + (4 * constants.pi * chil2w)
 epsb1w = 1 + (4 * constants.pi * chib1w)
 epsb2w = 1 + (4 * constants.pi * chib2w)
+
+# for screening with eps_z ## NEEDS TO BE OPTIMIZED
+chil1wz = load_chiz(param['chil'], "1w")
+epsl1wz = 1 + (4 * constants.pi * chil1wz)
 
 # constants 
 hbar = constants.value("Planck constant over 2 pi in eV s")
@@ -123,9 +139,9 @@ Tlbs = (2 * kzl2w) / (kzl2w + kzb2w)
 Tlbp = (2 * kzl2w) / (epsb2w * kzl2w + epsl2w * kzb2w)
 
 # loads chi2, converts to cm^2/V, and screens them with layer epsilon
-zzz = esufactor * 0.01 * load_shg(param['zzz'])/epsl1w ** 2
+zzz = esufactor * 0.01 * load_shg(param['zzz'])/epsl1wz ** 2
 zxx = esufactor * 0.01 * load_shg(param['zxx'])
-xxz = esufactor * 0.01 * load_shg(param['xxz'])/epsl1w
+xxz = esufactor * 0.01 * load_shg(param['xxz'])/epsl1wz
 xxx = esufactor * 0.01 * load_shg(param['xxx'])
 
 # r factors for different input and output polarizations
