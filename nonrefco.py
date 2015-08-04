@@ -121,6 +121,7 @@ esufactor = 1j * (2 * rydberg)**5 * (ab/a0)**5 * 2.08e-15 * (a0 / 1e-8)**3 / are
 prefactor = (32 * constants.pi**3) / (hbar**2 * lspeed**3 * math.cos(THETA_RAD)**2) * intensity
 #prefactor = (32 * constants.pi**3) / (hbar**2 * n0esquared * lspeed**3 * math.cos(THETA_RAD)**2)
 #prefactor = (32 * (constants.pi ** 3) * ((onee / hbar) ** 2)) / (eps0 * (lspeed ** 3) * (math.cos(THETA_RAD) ** 2))
+#prefactor = 1
 
 # wave vectors for 1w and 2w
 kzl1w = np.sqrt(epsl1w - (math.sin(THETA_RAD) ** 2))
@@ -137,6 +138,12 @@ Tvls = (2 * math.cos(THETA_RAD)) / (math.cos(THETA_RAD) + kzl2w)
 Tvlp = (2 * math.cos(THETA_RAD)) / (epsl2w * math.cos(THETA_RAD) + kzl2w)
 Tlbs = (2 * kzl2w) / (kzl2w + kzb2w)
 Tlbp = (2 * kzl2w) / (epsb2w * kzl2w + epsl2w * kzb2w)
+
+#Tvlp = 1
+#Tlbp = 1
+#tvlp = 1
+#tlbp = 1
+
 
 # loads chi2, converts to cm^2/V, and screens them with layer epsilon
 zzz = esufactor * 0.01 * load_shg(param['zzz'])/epsl1wz ** 2
