@@ -100,7 +100,9 @@ epsb2w = 1 + (4 * constants.pi * chib2w)
 
 # for screening with eps_z ## NEEDS TO BE OPTIMIZED
 chil1wz = load_chiz(param['chil'], "1w")
+chil2wz = load_chiz(param['chil'], "2w")
 epsl1wz = 1 + (4 * constants.pi * chil1wz)
+epsl2wz = 1 + (4 * constants.pi * chil2wz)
 
 # constants 
 hbar = constants.value("Planck constant over 2 pi in eV s")
