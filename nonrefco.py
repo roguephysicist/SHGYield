@@ -10,6 +10,9 @@ Please refer to "Strain induced SHG" manuscript (BMS) for equation references
 unless stated otherwise.
 
 Experimental gap for bulk Si = 3.4 according to Landolt-Boernstein
+
+For gnuplot:
+abso(w,x,y,z)=sqrt((w+y)**2+(x+z)**2)
 """
 
 import sys
@@ -55,6 +58,7 @@ def load_chi(in_file, energy):
 def load_chiz(in_file, energy):
     """
     Loads Chi^(1) file, unpacks columns, and combines into complex numpy array.
+    NEEDS TO BE OPTIMIZED
     """
     global MAX_E
     real, imag = np.loadtxt(in_file, unpack=True, usecols=[5, 6], skiprows=1)
@@ -118,10 +122,10 @@ scale = 1e21 # for R in 1e-21 (cm^2/W) for \chi^ijk in (esu cm)
 mks2cgs = 1e-12 # when converting from MKS [1e6 pm^2/V] to CGS [1e-13 esu cm]
 area = 2 * 3**0.5 / 8
 esufactor = 1j * (2 * rydberg)**5 * (ab/a0)**5 * 2.08e-15 * (a0 / 1e-8)**3 / area
-prefactor = (32 * constants.pi**3) / (hbar**2 * lspeed**3 * math.cos(THETA_RAD)**2) * intensity
+#prefactor = (32 * constants.pi**3) / (hbar**2 * lspeed**3 * math.cos(THETA_RAD)**2) * intensity
 #prefactor = (32 * constants.pi**3) / (hbar**2 * n0esquared * lspeed**3 * math.cos(THETA_RAD)**2)
 #prefactor = (32 * (constants.pi ** 3) * ((onee / hbar) ** 2)) / (eps0 * (lspeed ** 3) * (math.cos(THETA_RAD) ** 2))
-#prefactor = 1
+prefactor = 1
 
 # wave vectors for 1w and 2w
 kzl1w = np.sqrt(epsl1w - (math.sin(THETA_RAD) ** 2))
@@ -139,17 +143,11 @@ Tvlp = (2 * math.cos(THETA_RAD)) / (epsl2w * math.cos(THETA_RAD) + kzl2w)
 Tlbs = (2 * kzl2w) / (kzl2w + kzb2w)
 Tlbp = (2 * kzl2w) / (epsb2w * kzl2w + epsl2w * kzb2w)
 
-#Tvlp = 1
-#Tlbp = 1
-#tvlp = 1
-#tlbp = 1
-
-
 # loads chi2, converts to cm^2/V, and screens them with layer epsilon
-zzz = esufactor * 0.01 * load_shg(param['zzz'])/epsl1wz ** 2
-zxx = esufactor * 0.01 * load_shg(param['zxx'])
-xxz = esufactor * 0.01 * load_shg(param['xxz'])/epsl1wz
-xxx = esufactor * 0.01 * load_shg(param['xxx'])
+zzz = load_shg(param['zzz'])/(epsl1wz**2)
+zxx = load_shg(param['zxx'])
+xxz = load_shg(param['xxz'])/epsl1wz
+xxx = load_shg(param['xxx'])
 
 # r factors for different input and output polarizations
 rpp = math.sin(THETA_RAD) * epsb2w * \
@@ -162,17 +160,28 @@ rsp = math.sin(THETA_RAD) * epsb2w * zxx - \
       kzb2w * epsl2w * xxx * math.cos(3 * PHI_RAD)
 rss = xxx * math.sin(3 * PHI_RAD)
 
+# fresnel factors multiplied out for ease of debugging
+fpp = Tvlp * Tlbp * (tvlp * tlbp)**2
+fps = Tvls * Tlbs * (tvlp * tlbp)**2
+fsp = Tvlp * Tlbp * (tvls * tlbs)**2
+fss = Tvls * Tlbs * (tvls * tlbs)**2
+
 # R factors for different input and output polarizations (in cm^2/W)
-Rpp = math.cos(THETA_RAD) * prefactor * (onee ** 2) * np.absolute((Tvlp * Tlbp * ((tvlp * tlbp) ** 2) / (2j)) * rpp) ** 2
-Rps = math.cos(THETA_RAD) * prefactor * (onee ** 2) * np.absolute((Tvls * Tlbs * ((tvlp * tlbp) ** 2) / (2j)) * rps) ** 2
-Rsp = math.cos(THETA_RAD) * prefactor * (onee ** 2) * np.absolute((Tvlp * Tlbp * ((tvls * tlbs) ** 2) / (2j)) * rsp) ** 2
-Rss = math.cos(THETA_RAD) * prefactor * (onee ** 2) * np.absolute((Tvls * Tlbs * ((tvls * tlbs) ** 2) / (2j)) * rss) ** 2
+Rpp = (onee ** 2) * np.absolute(fpp * rpp)**2
+Rps = (onee ** 2) * np.absolute(fps * rps)**2
+Rsp = (onee ** 2) * np.absolute(fsp * rsp)**2
+Rss = (onee ** 2) * np.absolute(fss * rss)**2
 
 # creates columns for 2w and R factors and writes to file
 nrc = np.column_stack((2*onee, Rpp, Rps, Rsp, Rss))
+eps = np.column_stack((onee, epsl1w.real, epsl1w.imag, epsl1wz.real, epsl1wz.imag))
+chi = np.column_stack((onee, xxx.real, xxx.imag, xxz.real, xxz.imag, zxx.real, zxx.imag, zzz.real, zzz.imag))
+rif = np.column_stack((onee, rpp.real, rpp.imag, rps.real, rps.imag, rsp.real, rsp.imag, rss.real, rss.imag))
+fre = np.column_stack((onee, fpp.real, fpp.imag, fps.real, fps.imag, fsp.real, fsp.imag, fss.real, fss.imag))
 outf = param['output']
-#epsl = np.column_stack((onee, epsl1w.real, epsl1w.imag))
 # outf = sys.argv[2]
-#np.savetxt('/Users/sma/Downloads/epslz', epsl, fmt=('%05.2f', '%.14e', '%.14e'),delimiter='    ')
-np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
-                      delimiter='    ')
+np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'), delimiter='    ')
+np.savetxt('eps_' + outf, eps, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'), delimiter='    ')
+np.savetxt('chi_' + outf, chi, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e'), delimiter='    ')
+np.savetxt('rif_' + outf, rif, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e'), delimiter='    ')
+np.savetxt('fre_' + outf, fre, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e'), delimiter='    ')
