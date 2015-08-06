@@ -20,9 +20,10 @@ import math
 import numpy as np
 from scipy import constants
 
-# Angles and energies
+# Angles and max energy
 THETA_RAD = math.radians(65)
 PHI_RAD = math.radians(30)
+MAXE = 1000
 
 def parse_input():
     """
@@ -43,11 +44,9 @@ def parse_input():
 
 def load_chi(in_file):
     """
-    Loads Chi^(1) file, unpacks columns, and combines into complex numpy array.
+    Loads Chi^(1) file, unpacks columns, and creates numpy array.
     """
-    global MAX_E
     data = np.loadtxt(in_file, unpack=True, skiprows=1)
-    MAX_E = len(data[0])/2
     return data
 
 def load_shg(in_file):
@@ -55,18 +54,25 @@ def load_shg(in_file):
     Loads shg Chi^(2) files, unpacks columns, sums 1w and 2w for real and
     imag, and combines into complex numpy array.
     """
-    real1w, imaginary1w, real2w, imaginary2w = np.loadtxt(in_file,
-                                                          unpack=True,
-                                                          usecols=[1, 2, 3, 4],
-                                                          skiprows=1)
-    real = real1w + real2w
-    imaginary = imaginary1w + imaginary2w
-    data = real + 1j * imaginary
-    shg = data[:MAX_E]
+    data = np.loadtxt(in_file, unpack=True, skiprows=1)
+    comp = (data[1] + data[3]) + 1j * (data[2] + data[4])
+    shg = comp[:MAXE]
     return shg
 
 # reads input file
 param = parse_input()
+
+# constants, conversions, and prefactor
+onee = np.linspace(0.01, 10, MAXE) # 1w energy array
+hbar = constants.value("Planck constant over 2 pi in eV s")
+eps0 = constants.epsilon_0 # (F/m)
+lspeed = constants.c # (m/s)
+n0e = 1.11e19 # for silicon, from PRB 81, 3781 Ref. 17 (V/m^2)
+pm2tom2 = 1e-24 # pm^2 to m^2
+m2tocm2 = 1e4 # m^2 to cm^2
+tinibascale = 1e6 # for scaling chi in 1e6 (pm^2/V)
+scale = 1e20 # for R in 1e-20 (cm^2/W)
+prefactor = 1 / (2 * eps0 * hbar**2 * lspeed**3 * math.cos(THETA_RAD)**2)
 
 # loads chi1 and epsilons
 chil = load_chi(param['chil'])
@@ -74,25 +80,11 @@ chib = load_chi(param['chib'])
 chilzz = chil[5] + 1j * chil[6]
 chilxx = chil[1] + 1j * chil[2]
 chibxx = chib[1] + 1j * chib[2]
-epslz = 1 + (4 * constants.pi * chilzz[:MAX_E])
-epsl1w = 1 + (4 * constants.pi * chilxx[:MAX_E])
+epslzz = 1 + (4 * constants.pi * chilzz[:MAXE])
+epsl1w = 1 + (4 * constants.pi * chilxx[:MAXE])
 epsl2w = 1 + (4 * constants.pi * chilxx[1::2])
-epsb1w = 1 + (4 * constants.pi * chibxx[:MAX_E])
+epsb1w = 1 + (4 * constants.pi * chibxx[:MAXE])
 epsb2w = 1 + (4 * constants.pi * chibxx[1::2])
-
-# constants 
-hbar = constants.value("Planck constant over 2 pi in eV s")
-eps0 = constants.epsilon_0 # (F/m)
-lspeed = constants.c # (m/s)
-#n0e = 1.11e19 # for silicon, from PRB 81, 3781 Ref. 17 (V/m^2)
-
-# unit conversions and prefactors
-onee = np.linspace(0.01, 10, MAX_E) # 1w energy array
-pm2tom2 = 1e-24 # pm^2 to m^2
-m2tocm2 = 1e4 # m^2 to cm^2
-tinibascale = 1e6 # for scaling chi 1e6 (pm^2/V)
-scale = 1e20 # for R in 1e-20 (cm^2/W)
-prefactor = 1 / (2 * eps0 * hbar**2 * lspeed**3 * math.cos(THETA_RAD)**2)
 
 # wave vectors for 1w and 2w
 kzl1w = np.sqrt(epsl1w - (math.sin(THETA_RAD) ** 2))
@@ -111,9 +103,9 @@ Tlbs = (2 * kzl2w) / (kzl2w + kzb2w)
 Tlbp = (2 * kzl2w) / (epsb2w * kzl2w + epsl2w * kzb2w)
 
 # loads chi2, converts to cm^2/V, and screens them with layer epsilon
-zzz = (tinibascale * pm2tom2 * load_shg(param['zzz']))/(epslz**2)
+zzz = (tinibascale * pm2tom2 * load_shg(param['zzz']))/(epslzz**2)
 zxx = (tinibascale * pm2tom2 * load_shg(param['zxx']))
-xxz = (tinibascale * pm2tom2 * load_shg(param['xxz']))/epslz
+xxz = (tinibascale * pm2tom2 * load_shg(param['xxz']))/epslzz
 xxx = (tinibascale * pm2tom2 * load_shg(param['xxx']))
 
 # r factors for different input and output polarizations
@@ -143,12 +135,7 @@ Rss = scale * m2tocm2 * prefactor * (onee ** 2) * np.absolute(fss * rss)**2
 nrc = np.column_stack((2*onee, Rpp, Rps, Rsp, Rss))
 outf = param['output']
 # outf = sys.argv[2]
-np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'), delimiter='    ', header='RiF in 1e-20 (cm^2/W)\n2w     Rpp' + 21*' ' + 'Rps' + 21*' ' + 'Rsp' + 21*' ' + 'Rss')
-#eps = np.column_stack((onee, epsl1w.real, epsl1w.imag, epsl1wz.real, epsl1wz.imag))
-#chi = np.column_stack((onee, xxx.real, xxx.imag, xxz.real, xxz.imag, zxx.real, zxx.imag, zzz.real, zzz.imag))
-#rif = np.column_stack((onee, rpp.real, rpp.imag, rps.real, rps.imag, rsp.real, rsp.imag, rss.real, rss.imag))
-#fre = np.column_stack((onee, fpp.real, fpp.imag, fps.real, fps.imag, fsp.real, fsp.imag, fss.real, fss.imag))
-#np.savetxt('eps_' + outf, eps, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'), delimiter='    ')
-#np.savetxt('chi_' + outf, chi, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e'), delimiter='    ')
-#np.savetxt('rif_' + outf, rif, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e'), delimiter='    ')
-#np.savetxt('fre_' + outf, fre, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e'), delimiter='    ')
+np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
+delimiter='    ',
+header='RiF in 1e-20 (cm^2/W)\n\
+2w     Rpp' + 21*' ' + 'Rps' + 21*' ' + 'Rsp' + 21*' ' + 'Rss')
