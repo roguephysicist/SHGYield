@@ -42,14 +42,25 @@ def parse_input():
     targetfile.close()
     return params
 
-def load_chi(in_file):
+def epsilon(in_file):
     """
     Loads Chi^(1) file, unpacks columns, and creates numpy array.
     """
     data = np.loadtxt(in_file, unpack=True, skiprows=1)
-    return data
+    real = (data[1] + data[3] + data[5])/3 # real average
+    imag = (data[2] + data[4] + data[6])/3 # imag average
+    coma = real + 1j * imag # complex average
+    comx = data[1] + 1j * data[2] # complex x component
+    comy = data[3] + 1j * data[4] # complex y component
+    comz = data[5] + 1j * data[6] # complex z component
+    epsa = 1 + (4 * constants.pi * coma) # epsilon average
+    epsx = 1 + (4 * constants.pi * comx) # epsilon x component
+    epsy = 1 + (4 * constants.pi * comy) # epsilon y component
+    epsz = 1 + (4 * constants.pi * comz) # epsilon z component
+    eps = [epsa, epsx, epsy, epsz]
+    return eps
 
-def load_shg(in_file):
+def shgcomp(in_file):
     """
     Loads shg Chi^(2) files, unpacks columns, sums 1w and 2w for real and
     imag, and combines into complex numpy array.
@@ -75,16 +86,13 @@ scale = 1e20 # for R in 1e-20 (cm^2/W)
 prefactor = 1 / (2 * eps0 * hbar**2 * lspeed**3 * math.cos(THETA_RAD)**2)
 
 # loads chi1 and epsilons
-chil = load_chi(param['chil'])
-chib = load_chi(param['chib'])
-chilzz = chil[5] + 1j * chil[6]
-chilxx = chil[1] + 1j * chil[2]
-chibxx = chib[1] + 1j * chib[2]
-epslzz = 1 + (4 * constants.pi * chilzz[:MAXE])
-epsl1w = 1 + (4 * constants.pi * chilxx[:MAXE])
-epsl2w = 1 + (4 * constants.pi * chilxx[1::2])
-epsb1w = 1 + (4 * constants.pi * chibxx[:MAXE])
-epsb2w = 1 + (4 * constants.pi * chibxx[1::2])
+epsl = epsilon(param['chil'])
+epsb = epsilon(param['chib'])
+epsl1w = epsl[0][:MAXE]
+epsl2w = epsl[0][1::2]
+epsb1w = epsb[0][:MAXE]
+epsb2w = epsb[0][1::2]
+epslzz = epsl[3][:MAXE]
 
 # wave vectors for 1w and 2w
 kzl1w = np.sqrt(epsl1w - (math.sin(THETA_RAD) ** 2))
@@ -103,10 +111,10 @@ Tlbs = (2 * kzl2w) / (kzl2w + kzb2w)
 Tlbp = (2 * kzl2w) / (epsb2w * kzl2w + epsl2w * kzb2w)
 
 # loads chi2, converts to cm^2/V, and screens them with layer epsilon
-zzz = (tinibascale * pm2tom2 * load_shg(param['zzz']))/(epslzz**2)
-zxx = (tinibascale * pm2tom2 * load_shg(param['zxx']))
-xxz = (tinibascale * pm2tom2 * load_shg(param['xxz']))/epslzz
-xxx = (tinibascale * pm2tom2 * load_shg(param['xxx']))
+zzz = (tinibascale * pm2tom2 * shgcomp(param['zzz']))/(epslzz**2)
+zxx = (tinibascale * pm2tom2 * shgcomp(param['zxx']))
+xxz = (tinibascale * pm2tom2 * shgcomp(param['xxz']))/epslzz
+xxx = (tinibascale * pm2tom2 * shgcomp(param['xxx']))
 
 # r factors for different input and output polarizations
 rpp = math.sin(THETA_RAD) * epsb2w * \
@@ -139,3 +147,5 @@ np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
 delimiter='    ',
 header='RiF in 1e-20 (cm^2/W)\n\
 2w     Rpp' + 21*' ' + 'Rps' + 21*' ' + 'Rsp' + 21*' ' + 'Rss')
+#eps = np.column_stack((onee, epsl[0][:MAXE].real, epsl[0][:MAXE].imag, epsl[1][:MAXE].real, epsl[1][:MAXE].imag, epsl[2][:MAXE].real, epsl[2][:MAXE].imag, epsl[3][:MAXE].real, epsl[3][:MAXE].imag))
+#np.savetxt('epsilon.dat', eps, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e'), delimiter='    ', header='w      Re[eps_avg]' + 13*' ' + 'Im[eps_avg]' + 13*' ' + 'Re[eps_xx]' + 14*' ' + 'Im[eps_xx]' + 14*' ' + 'Re[eps_yy]' + 14*' ' + 'Im[eps_yy]' + 14*' ' + 'Re[eps_zz]' + 14*' ' + 'Im[eps_zz]')
