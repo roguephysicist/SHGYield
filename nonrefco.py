@@ -111,7 +111,7 @@ Tlbs = (2 * kzl2w) / (kzl2w + kzb2w)
 Tlbp = (2 * kzl2w) / (epsb2w * kzl2w + epsl2w * kzb2w)
 
 # loads chi2, converts to cm^2/V, and screens them with layer epsilon
-zzz = (tinibascale * pm2tom2 * shgcomp(param['zzz']))/(epslzz**2)
+zzz = (tinibascale * pm2tom2 * shgcomp(param['zzz']))/epslzz**2
 zxx = (tinibascale * pm2tom2 * shgcomp(param['zxx']))
 xxz = (tinibascale * pm2tom2 * shgcomp(param['xxz']))/epslzz
 xxx = (tinibascale * pm2tom2 * shgcomp(param['xxx']))
