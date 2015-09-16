@@ -93,6 +93,7 @@ epsl2w = epsl[0][1::2]
 epsb1w = epsb[0][:MAXE]
 epsb2w = epsb[0][1::2]
 epslzz = epsl[3][:MAXE]
+#epslzz = 1
 
 # wave vectors for 1w and 2w
 kzl1w = np.sqrt(epsl1w - (math.sin(THETA_RAD) ** 2))
