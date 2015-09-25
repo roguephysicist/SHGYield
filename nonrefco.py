@@ -92,8 +92,6 @@ epsl1w = epsl[0][:MAXE]
 epsl2w = epsl[0][1::2]
 epsb1w = epsb[0][:MAXE]
 epsb2w = epsb[0][1::2]
-epslzz = epsl[3][:MAXE]
-#epslzz = 1
 
 # wave vectors for 1w and 2w
 kzl1w = np.sqrt(epsl1w - (math.sin(THETA_RAD) ** 2))
@@ -112,9 +110,9 @@ Tlbs = (2 * kzl2w) / (kzl2w + kzb2w)
 Tlbp = (2 * kzl2w) / (epsb2w * kzl2w + epsl2w * kzb2w)
 
 # loads chi2, converts to cm^2/V, and screens them with layer epsilon
-zzz = (tinibascale * pm2tom2 * shgcomp(param['zzz']))/epslzz**2
+zzz = (tinibascale * pm2tom2 * shgcomp(param['zzz']))
 zxx = (tinibascale * pm2tom2 * shgcomp(param['zxx']))
-xxz = (tinibascale * pm2tom2 * shgcomp(param['xxz']))/epslzz
+xxz = (tinibascale * pm2tom2 * shgcomp(param['xxz']))
 xxx = (tinibascale * pm2tom2 * shgcomp(param['xxx']))
 
 # r factors for different input and output polarizations
@@ -141,12 +139,12 @@ Rsp = scale * m2tocm2 * prefactor * (onee ** 2) * np.absolute(fsp * rsp)**2
 Rss = scale * m2tocm2 * prefactor * (onee ** 2) * np.absolute(fss * rss)**2
 
 # creates columns for 2w and R factors and writes to file
-nrc = np.column_stack((2*onee, Rpp, Rps, Rsp, Rss))
+nrc = np.column_stack((onee, Rpp, Rps, Rsp, Rss))
 outf = param['output']
 # outf = sys.argv[2]
 np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
-delimiter='    ',
-header='RiF in 1e-20 (cm^2/W)\n\
-2w     Rpp' + 21*' ' + 'Rps' + 21*' ' + 'Rsp' + 21*' ' + 'Rss')
+delimiter='    ')#,
+#header='RiF in 1e-20 (cm^2/W)\n\
+#2w     Rpp' + 21*' ' + 'Rps' + 21*' ' + 'Rsp' + 21*' ' + 'Rss')
 #eps = np.column_stack((onee, epsl[0][:MAXE].real, epsl[0][:MAXE].imag, epsl[1][:MAXE].real, epsl[1][:MAXE].imag, epsl[2][:MAXE].real, epsl[2][:MAXE].imag, epsl[3][:MAXE].real, epsl[3][:MAXE].imag))
 #np.savetxt('epsilon.dat', eps, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e'), delimiter='    ', header='w      Re[eps_avg]' + 13*' ' + 'Im[eps_avg]' + 13*' ' + 'Re[eps_xx]' + 14*' ' + 'Im[eps_xx]' + 14*' ' + 'Re[eps_yy]' + 14*' ' + 'Im[eps_yy]' + 14*' ' + 'Re[eps_zz]' + 14*' ' + 'Im[eps_zz]')
