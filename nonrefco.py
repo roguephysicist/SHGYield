@@ -20,9 +20,7 @@ import math
 import numpy as np
 from scipy import constants
 
-# Angles and max energy
-THETA_RAD = math.radians(65)
-PHI_RAD = math.radians(30)
+# max energy
 MAXE = 1000
 
 def parse_input():
@@ -73,6 +71,10 @@ def shgcomp(in_file):
 # reads input file
 param = parse_input()
 
+# angles
+thetarad = math.radians(float(param['theta']))
+phirad = math.radians(float(param['phi']))
+
 # constants, conversions, and prefactor
 onee = np.linspace(0.01, 10, MAXE) # 1w energy array
 hbar = constants.value("Planck constant over 2 pi in eV s")
@@ -83,7 +85,7 @@ pm2tom2 = 1e-24 # pm^2 to m^2
 m2tocm2 = 1e4 # m^2 to cm^2
 tinibascale = 1e6 # for scaling chi in 1e6 (pm^2/V)
 scale = 1e20 # for R in 1e-20 (cm^2/W)
-prefactor = 1 / (2 * eps0 * hbar**2 * lspeed**3 * math.cos(THETA_RAD)**2)
+prefactor = 1 / (2 * eps0 * hbar**2 * lspeed**3 * math.cos(thetarad)**2)
 
 # loads chi1 and epsilons
 epsl = epsilon(param['chil'])
@@ -94,18 +96,18 @@ epsb1w = epsb[0][:MAXE]
 epsb2w = epsb[0][1::2]
 
 # wave vectors for 1w and 2w
-kzl1w = np.sqrt(epsl1w - (math.sin(THETA_RAD) ** 2))
-kzl2w = np.sqrt(epsl2w - (math.sin(THETA_RAD) ** 2))
-kzb1w = np.sqrt(epsb1w - (math.sin(THETA_RAD) ** 2))
-kzb2w = np.sqrt(epsb2w - (math.sin(THETA_RAD) ** 2))
+kzl1w = np.sqrt(epsl1w - (math.sin(thetarad) ** 2))
+kzl2w = np.sqrt(epsl2w - (math.sin(thetarad) ** 2))
+kzb1w = np.sqrt(epsb1w - (math.sin(thetarad) ** 2))
+kzb2w = np.sqrt(epsb2w - (math.sin(thetarad) ** 2))
 
 # fresnel factors for 1w and 2w, s and p polarizations
-tvls = (2 * math.cos(THETA_RAD)) / (math.cos(THETA_RAD) + kzl1w)
-tvlp = (2 * math.cos(THETA_RAD)) / (epsl1w * math.cos(THETA_RAD) + kzl1w)
+tvls = (2 * math.cos(thetarad)) / (math.cos(thetarad) + kzl1w)
+tvlp = (2 * math.cos(thetarad)) / (epsl1w * math.cos(thetarad) + kzl1w)
 tlbs = (2 * kzl1w) / (kzl1w + kzb1w)
 tlbp = (2 * kzl1w) / (epsb1w * kzl1w + epsl1w * kzb1w)
-Tvls = (2 * math.cos(THETA_RAD)) / (math.cos(THETA_RAD) + kzl2w)
-Tvlp = (2 * math.cos(THETA_RAD)) / (epsl2w * math.cos(THETA_RAD) + kzl2w)
+Tvls = (2 * math.cos(thetarad)) / (math.cos(thetarad) + kzl2w)
+Tvlp = (2 * math.cos(thetarad)) / (epsl2w * math.cos(thetarad) + kzl2w)
 Tlbs = (2 * kzl2w) / (kzl2w + kzb2w)
 Tlbp = (2 * kzl2w) / (epsb2w * kzl2w + epsl2w * kzb2w)
 
@@ -116,15 +118,15 @@ xxz = (tinibascale * pm2tom2 * shgcomp(param['xxz']))
 xxx = (tinibascale * pm2tom2 * shgcomp(param['xxx']))
 
 # r factors for different input and output polarizations
-rpp = math.sin(THETA_RAD) * epsb2w * \
-      (((math.sin(THETA_RAD) ** 2) * (epsb1w ** 2) * zzz) + \
+rpp = math.sin(thetarad) * epsb2w * \
+      (((math.sin(thetarad) ** 2) * (epsb1w ** 2) * zzz) + \
       (kzb1w ** 2) * (epsl1w ** 2) * zxx) + epsl1w * epsl2w * \
-      kzb1w * kzb2w * (-2 * math.sin(THETA_RAD) * epsb1w * xxz + \
-      kzb1w * epsl1w * xxx * math.cos(3 * PHI_RAD))
-rps = -(kzb1w ** 2) * (epsl1w ** 2) * xxx * math.sin(3 * PHI_RAD)
-rsp = math.sin(THETA_RAD) * epsb2w * zxx - \
-      kzb2w * epsl2w * xxx * math.cos(3 * PHI_RAD)
-rss = xxx * math.sin(3 * PHI_RAD)
+      kzb1w * kzb2w * (-2 * math.sin(thetarad) * epsb1w * xxz + \
+      kzb1w * epsl1w * xxx * math.cos(3 * phirad))
+rps = -(kzb1w ** 2) * (epsl1w ** 2) * xxx * math.sin(3 * phirad)
+rsp = math.sin(thetarad) * epsb2w * zxx - \
+      kzb2w * epsl2w * xxx * math.cos(3 * phirad)
+rss = xxx * math.sin(3 * phirad)
 
 # fresnel factors multiplied out for ease of debugging
 fpp = Tvlp * Tlbp * (tvlp * tlbp)**2
@@ -144,7 +146,5 @@ outf = param['output']
 # outf = sys.argv[2]
 np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
 delimiter='    ')#,
-#header='RiF in 1e-20 (cm^2/W)\n\
-#2w     Rpp' + 21*' ' + 'Rps' + 21*' ' + 'Rsp' + 21*' ' + 'Rss')
-#eps = np.column_stack((onee, epsl[0][:MAXE].real, epsl[0][:MAXE].imag, epsl[1][:MAXE].real, epsl[1][:MAXE].imag, epsl[2][:MAXE].real, epsl[2][:MAXE].imag, epsl[3][:MAXE].real, epsl[3][:MAXE].imag))
-#np.savetxt('epsilon.dat', eps, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e'), delimiter='    ', header='w      Re[eps_avg]' + 13*' ' + 'Im[eps_avg]' + 13*' ' + 'Re[eps_xx]' + 14*' ' + 'Im[eps_xx]' + 14*' ' + 'Re[eps_yy]' + 14*' ' + 'Im[eps_yy]' + 14*' ' + 'Re[eps_zz]' + 14*' ' + 'Im[eps_zz]')
+header='RiF in 1e-20 (cm^2/W)\n\
+2w     Rpp' + 21*' ' + 'Rps' + 21*' ' + 'Rsp' + 21*' ' + 'Rss')
