@@ -145,6 +145,7 @@ nrc = np.column_stack((onee, Rpp, Rps, Rsp, Rss))
 outf = param['output']
 # outf = sys.argv[2]
 np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
-delimiter='    ')#,
-header='RiF in 1e-20 (cm^2/W)\n\
+delimiter='    ', header='RiF in 1e-20 (cm^2/W)\n\
 2w     Rpp' + 21*' ' + 'Rps' + 21*' ' + 'Rsp' + 21*' ' + 'Rss')
+#eps = np.column_stack((onee, epsl[0][:MAXE].real, epsl[0][:MAXE].imag, epsl[1][:MAXE].real, epsl[1][:MAXE].imag, epsl[2][:MAXE].real, epsl[2][:MAXE].imag, epsl[3][:MAXE].real, epsl[3][:MAXE].imag))
+#np.savetxt('/Users/sma/Developer/article-SHG_Surfaces/plots/data/epsilon.dat', eps, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e'), delimiter='    ', header='w      Re[eps_avg]' + 13*' ' + 'Im[eps_avg]' + 13*' ' + 'Re[eps_xx]' + 14*' ' + 'Im[eps_xx]' + 14*' ' + 'Re[eps_yy]' + 14*' ' + 'Im[eps_yy]' + 14*' ' + 'Re[eps_zz]' + 14*' ' + 'Im[eps_zz]')
