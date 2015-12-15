@@ -92,6 +92,8 @@ epsl = epsilon(param['chil'])
 epsb = epsilon(param['chib'])
 epsl1w = epsl[0][:MAXE]
 epsl2w = epsl[0][1::2]
+#epsl1w = 1
+#epsl2w = 1
 epsb1w = epsb[0][:MAXE]
 epsb2w = epsb[0][1::2]
 
