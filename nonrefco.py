@@ -118,11 +118,15 @@ xxz = (tinibascale * pm2tom2 * shgcomp(param['xxz']))
 xxx = (tinibascale * pm2tom2 * shgcomp(param['xxx']))
 
 # r factors for different input and output polarizations
-rpp = math.sin(thetarad) * epsb2w * \
-      (((math.sin(thetarad) ** 2) * (epsb1w ** 2) * zzz) + \
-      (kzb1w ** 2) * (epsl1w ** 2) * zxx) + epsl1w * epsl2w * \
-      kzb1w * kzb2w * (-2 * math.sin(thetarad) * epsb1w * xxz - \
-      kzb1w * epsl1w * xxx * math.cos(3 * phirad))
+#rpp = math.sin(thetarad) * epsb2w * \
+#      (((math.sin(thetarad) ** 2) * (epsb1w ** 2) * zzz) + \
+#      (kzb1w ** 2) * (epsl1w ** 2) * zxx) + epsl1w * epsl2w * \
+#      kzb1w * kzb2w * (-2 * math.sin(thetarad) * epsb1w * xxz - \
+#      kzb1w * epsl1w * xxx * math.cos(3 * phirad))
+rpp = math.sin(thetarad) * epsb2w * (((math.sin(thetarad) ** 2) * zzz) + \
+                                          (kzb1w ** 2) * epsb2w * zxx) + \
+                       kzb1w * kzb2w * (-2 * math.sin(thetarad) * xxz - \
+                                                          kzb1w * xxx * math.cos(3 * phirad))
 rps = -(kzb1w ** 2) * (epsl1w ** 2) * xxx * math.sin(3 * phirad)
 rsp = math.sin(thetarad) * epsb2w * zxx - \
       kzb2w * epsl2w * xxx * math.cos(3 * phirad)
