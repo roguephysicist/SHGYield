@@ -92,8 +92,6 @@ epsl = epsilon(param['chil'])
 epsb = epsilon(param['chib'])
 epsl1w = epsl[0][:MAXE]
 epsl2w = epsl[0][1::2]
-#epsl1w = 1
-#epsl2w = 1
 epsb1w = epsb[0][:MAXE]
 epsb2w = epsb[0][1::2]
 
@@ -123,7 +121,7 @@ xxx = (tinibascale * pm2tom2 * shgcomp(param['xxx']))
 rpp = math.sin(thetarad) * epsb2w * \
       (((math.sin(thetarad) ** 2) * (epsb1w ** 2) * zzz) + \
       (kzb1w ** 2) * (epsl1w ** 2) * zxx) + epsl1w * epsl2w * \
-      kzb1w * kzb2w * (-2 * math.sin(thetarad) * epsb1w * xxz + \
+      kzb1w * kzb2w * (-2 * math.sin(thetarad) * epsb1w * xxz - \
       kzb1w * epsl1w * xxx * math.cos(3 * phirad))
 rps = -(kzb1w ** 2) * (epsl1w ** 2) * xxx * math.sin(3 * phirad)
 rsp = math.sin(thetarad) * epsb2w * zxx - \
