@@ -88,7 +88,8 @@ scale = 1e20 # for R in 1e-20 (cm^2/W)
 prefactor = 1 / (2 * eps0 * hbar**2 * lspeed**3 * math.cos(thetarad)**2)
 
 # loads chi1 and epsilons
-epsl = epsilon(param['chil'])
+#epsl = epsilon(param['chil'])
+epsl = epsilon(param['chib'])
 epsb = epsilon(param['chib'])
 epsl1w = epsl[0][:MAXE]
 epsl2w = epsl[0][1::2]
@@ -118,15 +119,11 @@ xxz = (tinibascale * pm2tom2 * shgcomp(param['xxz']))
 xxx = (tinibascale * pm2tom2 * shgcomp(param['xxx']))
 
 # r factors for different input and output polarizations
-#rpp = math.sin(thetarad) * epsb2w * \
-#      (((math.sin(thetarad) ** 2) * (epsb1w ** 2) * zzz) + \
-#      (kzb1w ** 2) * (epsl1w ** 2) * zxx) + epsl1w * epsl2w * \
-#      kzb1w * kzb2w * (-2 * math.sin(thetarad) * epsb1w * xxz - \
-#      kzb1w * epsl1w * xxx * math.cos(3 * phirad))
-rpp = math.sin(thetarad) * epsb2w * (((math.sin(thetarad) ** 2) * zzz) + \
-                                          (kzb1w ** 2) * epsb2w * zxx) + \
-                       kzb1w * kzb2w * (-2 * math.sin(thetarad) * xxz - \
-                                                          kzb1w * xxx * math.cos(3 * phirad))
+rpp = math.sin(thetarad) * epsb2w * \
+      (((math.sin(thetarad) ** 2) * (epsb1w ** 2) * zzz) + \
+      (kzb1w ** 2) * (epsl1w ** 2) * zxx) + epsl1w * epsl2w * \
+      kzb1w * kzb2w * (-2 * math.sin(thetarad) * epsb1w * xxz - \
+      kzb1w * epsl1w * xxx * math.cos(3 * phirad))
 rps = -(kzb1w ** 2) * (epsl1w ** 2) * xxx * math.sin(3 * phirad)
 rsp = math.sin(thetarad) * epsb2w * zxx - \
       kzb2w * epsl2w * xxx * math.cos(3 * phirad)
@@ -147,9 +144,9 @@ Rss = scale * m2tocm2 * prefactor * (onee ** 2) * np.absolute(fss * rss)**2
 # creates columns for 2w and R factors and writes to file
 nrc = np.column_stack((onee, Rpp, Rps, Rsp, Rss))
 outf = param['output']
-# outf = sys.argv[2]
 np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
             delimiter='    ', header='RiF in 1e-20 (cm^2/W)\n\
             2w     Rpp' + 21*' ' + 'Rps' + 21*' ' + 'Rsp' + 21*' ' + 'Rss')
+fresnel= np.column_stack((onee, Tlbp.real, Tlbp.imag, tlbp.real, tlbp.imag))
 #eps = np.column_stack((onee, epsl[0][:MAXE].real, epsl[0][:MAXE].imag, epsl[1][:MAXE].real, epsl[1][:MAXE].imag, epsl[2][:MAXE].real, epsl[2][:MAXE].imag, epsl[3][:MAXE].real, epsl[3][:MAXE].imag))
-#np.savetxt('/Users/sma/Developer/article-SHG_Surfaces/plots/data/epsilon.dat', eps, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e'), delimiter='    ', header='w      Re[eps_avg]' + 13*' ' + 'Im[eps_avg]' + 13*' ' + 'Re[eps_xx]' + 14*' ' + 'Im[eps_xx]' + 14*' ' + 'Re[eps_yy]' + 14*' ' + 'Im[eps_yy]' + 14*' ' + 'Re[eps_zz]' + 14*' ' + 'Im[eps_zz]')
+np.savetxt('/Users/sma/Dropbox/temp/rady/data/fresnel.dat', fresnel, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'), delimiter='    ')
