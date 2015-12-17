@@ -88,8 +88,7 @@ scale = 1e20 # for R in 1e-20 (cm^2/W)
 prefactor = 1 / (2 * eps0 * hbar**2 * lspeed**3 * math.cos(thetarad)**2)
 
 # loads chi1 and epsilons
-#epsl = epsilon(param['chil'])
-epsl = epsilon(param['chib'])
+epsl = epsilon(param['chil'])
 epsb = epsilon(param['chib'])
 epsl1w = epsl[0][:MAXE]
 epsl2w = epsl[0][1::2]
@@ -147,6 +146,3 @@ outf = param['output']
 np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
             delimiter='    ', header='RiF in 1e-20 (cm^2/W)\n\
             2w     Rpp' + 21*' ' + 'Rps' + 21*' ' + 'Rsp' + 21*' ' + 'Rss')
-fresnel= np.column_stack((onee, Tlbp.real, Tlbp.imag, tlbp.real, tlbp.imag))
-#eps = np.column_stack((onee, epsl[0][:MAXE].real, epsl[0][:MAXE].imag, epsl[1][:MAXE].real, epsl[1][:MAXE].imag, epsl[2][:MAXE].real, epsl[2][:MAXE].imag, epsl[3][:MAXE].real, epsl[3][:MAXE].imag))
-np.savetxt('/Users/sma/Dropbox/temp/rady/data/fresnel.dat', fresnel, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'), delimiter='    ')
