@@ -120,14 +120,14 @@ kl1w = np.sqrt(epsl1w - (math.sin(thetain) ** 2))
 kl2w = np.sqrt(epsl2w - (math.sin(thetain) ** 2))
 
 ## fresnel factors for 1w and 2w, s and p polarizations
-tvls = fresnel("s", "v", "b", "1w")
-tvlp = fresnel("p", "v", "b", "1w")
-tlbs = fresnel("s", "b", "b", "1w")
-tlbp = fresnel("p", "b", "b", "1w")
-Tvls = fresnel("s", "v", "v", "2w")
-Tvlp = fresnel("p", "v", "v", "2w")
-Tlbs = fresnel("s", "v", "b", "2w")
-Tlbp = fresnel("p", "v", "b", "2w")
+tvls = fresnel("s", "v", "l", "1w")
+tvlp = fresnel("p", "v", "l", "1w")
+tlbs = fresnel("s", "l", "b", "1w")
+tlbp = fresnel("p", "l", "b", "1w")
+Tvls = fresnel("s", "v", "l", "2w")
+Tvlp = fresnel("p", "v", "l", "2w")
+Tlbs = fresnel("s", "l", "b", "2w")
+Tlbp = fresnel("p", "l", "b", "2w")
 
 # loads chi2, converts to cm^2/V, and screens them with layer epsilon
 zzz = (tinibascale * pm2tom2 * shgcomp(param['zzz']))
@@ -163,5 +163,5 @@ Rss = scale * m2tocm2 * prefactor * (onee ** 2) * np.absolute(gammass * rss)**2
 nrc = np.column_stack((onee, Rpp, Rps, Rsp, Rss))
 outf = param['output']
 np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
-            delimiter='    ', header='RiF in 1e-20 (cm^2/W)\n\
-            2w     Rpp' + 21*' ' + 'Rps' + 21*' ' + 'Rsp' + 21*' ' + 'Rss')
+           delimiter='    ', header='RiF in 1e-20 (cm^2/W)\n\
+           2w     Rpp' + 21*' ' + 'Rps' + 21*' ' + 'Rsp' + 21*' ' + 'Rss')
