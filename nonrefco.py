@@ -106,10 +106,22 @@ epsl = epsilon(param['chil'])
 epsb = epsilon(param['chib'])
 epsv1w = 1
 epsv2w = 1
-epsl1w = epsb[0][:MAXE]
-epsl2w = 1
 epsb1w = epsb[0][:MAXE]
 epsb2w = epsb[0][1::2]
+epl1w = epsl[0][:MAXE]
+epl2w = epsl[0][1::2]
+
+mode = str(param['mode'])
+if mode == "2layer":
+    epsl1w = epsb[0][:MAXE]
+    epsl2w = 1
+    ell1w = "b"
+    ell2w = "v"
+elif mode == "3layer":
+    epsl1w = epsl[0][:MAXE]
+    epsl2w = epsl[0][1::2]
+    ell1w = "l"
+    ell2w = "l"
 
 # wave vectors for 1w and 2w
 kv1w = np.sqrt(epsv1w - (math.sin(thetain) ** 2))
@@ -120,31 +132,40 @@ kl1w = np.sqrt(epsl1w - (math.sin(thetain) ** 2))
 kl2w = np.sqrt(epsl2w - (math.sin(thetain) ** 2))
 
 ## fresnel factors for 1w and 2w, s and p polarizations
-tvls = fresnel("s", "v", "l", "1w")
-tvlp = fresnel("p", "v", "l", "1w")
-tlbs = fresnel("s", "l", "b", "1w")
-tlbp = fresnel("p", "l", "b", "1w")
-Tvls = fresnel("s", "v", "l", "2w")
-Tvlp = fresnel("p", "v", "l", "2w")
-Tlbs = fresnel("s", "l", "b", "2w")
-Tlbp = fresnel("p", "l", "b", "2w")
+tvls = fresnel("s", "v", ell1w, "1w")
+tvlp = fresnel("p", "v", ell1w, "1w")
+tlbs = fresnel("s", ell1w, "b", "1w")
+tlbp = fresnel("p", ell1w, "b", "1w")
+Tvls = fresnel("s", "v", ell2w, "2w")
+Tvlp = fresnel("p", "v", ell2w, "2w")
+Tlbs = fresnel("s", ell2w, "b", "2w")
+Tlbp = fresnel("p", ell2w, "b", "2w")
+## 2w in the bulk
+tvbp = fresnel("p", "v", "b", "1w")
+Tvbp = fresnel("p", "v", "b", "2w")
 
-# loads chi2, converts to cm^2/V, and screens them with layer epsilon
+# loads chi2, converts to m^2/V
 zzz = (tinibascale * pm2tom2 * shgcomp(param['zzz']))
 zxx = (tinibascale * pm2tom2 * shgcomp(param['zxx']))
 xxz = (tinibascale * pm2tom2 * shgcomp(param['xxz']))
 xxx = (tinibascale * pm2tom2 * shgcomp(param['xxx']))
 
 # r factors for different input and output polarizations
-rpp = epsb2w * (math.sin(thetain)/np.sqrt(epsl2w)) * \
-     (epsb1w**2 * (math.sin(thetain)/np.sqrt(epsl2w))**2 * zzz + \
-      epsl1w**2 * kb1w**2 * zxx) - epsl1w * epsl2w * kb1w * kb2w * \
-     (2 * epsb1w * (math.sin(thetain)/np.sqrt(epsl2w)) * xxz + \
-      epsl1w * kb1w * xxx * math.cos(3 * phi))
+rpp = epsb2w * (math.sin(thetain)) * \
+     (epsb1w**2 * (math.sin(thetain))**2 * zzz + \
+                     epsl1w**2 * kb1w**2 * zxx) - \
+     epsl1w * epsl2w * kb1w * kb2w * \
+       (2 * epsb1w * (math.sin(thetain)) * xxz + \
+                           epsl1w * kb1w * xxx * math.cos(3 * phi))
 rps = -(kb1w ** 2) * (epsl1w ** 2) * xxx * math.sin(3 * phi)
-rsp = (epsb2w * (math.sin(thetain)/np.sqrt(epsl2w)) * zxx) - \
+rsp = (epsb2w * (math.sin(thetain)) * zxx) - \
       (epsl2w * kb2w * xxx * math.cos(3 * phi))
 rss = xxx * math.sin(3 * phi)
+## 2w in the bulk
+brpp = ((math.sin(thetain)**3) * zzz) \
+     + ((kb1w**2) * math.sin(thetain) * zxx) \
+     - (2 * kb1w * kb2w * math.sin(thetain) * xxz) \
+     - ((kb1w**2) * kb2w * xxx * math.cos(3 * phi))
 
 # fresnel factors multiplied out for ease of debugging
 gammapp = ((Tvlp * Tlbp)/(epsl2w * np.sqrt(epsb2w))) * \
@@ -152,16 +173,19 @@ gammapp = ((Tvlp * Tlbp)/(epsl2w * np.sqrt(epsb2w))) * \
 gammaps = Tvls * Tlbs * ((tvlp * tlbp)/(epsl1w * np.sqrt(epsb1w)))**2
 gammasp = ((Tvlp * Tlbp)/(epsl2w * np.sqrt(epsb2w))) * (tvls * tlbs)**2
 gammass = Tvls * Tlbs * (tvls * tlbs)**2
+## 2w in the bulk
+bgammapp = (Tvbp * (tvbp**2))/(epsb1w * np.sqrt(epsb2w))
 
 # R factors for different input and output polarizations (in cm^2/W)
 Rpp = scale * m2tocm2 * prefactor * (onee ** 2) * np.absolute(gammapp * rpp)**2
 Rps = scale * m2tocm2 * prefactor * (onee ** 2) * np.absolute(gammaps * rps)**2
 Rsp = scale * m2tocm2 * prefactor * (onee ** 2) * np.absolute(gammasp * rsp)**2
 Rss = scale * m2tocm2 * prefactor * (onee ** 2) * np.absolute(gammass * rss)**2
+bRpp = scale * m2tocm2 * prefactor * (onee ** 2) * np.absolute(bgammapp * brpp)**2
 
 # creates columns for 2w and R factors and writes to file
-nrc = np.column_stack((onee, Rpp, Rps, Rsp, Rss))
+nrc = np.column_stack((onee, Rpp, Rps, Rsp, Rss, bRpp))
 outf = param['output']
-np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
+np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e'),
            delimiter='    ', header='RiF in 1e-20 (cm^2/W)\n\
            2w     Rpp' + 21*' ' + 'Rps' + 21*' ' + 'Rsp' + 21*' ' + 'Rss')
