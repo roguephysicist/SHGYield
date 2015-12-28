@@ -82,8 +82,9 @@ def fresnel(pol, i, j, freq):
         factor = (2 * ki) / (ki + kj)
     return factor
 
-# reads input file
+# reads input file and establishes mode
 param = parse_input()
+mode = str(param['mode'])
 
 # angles
 thetain = math.radians(float(param['theta']))
@@ -101,27 +102,27 @@ tinibascale = 1e6 # for scaling chi in 1e6 (pm^2/V)
 scale = 1e20 # for R in 1e-20 (cm^2/W)
 prefactor = 1 / (2 * eps0 * hbar**2 * lspeed**3 * math.cos(thetain)**2)
 
-# loads chi1 and epsilons
+# creates epsilons from chi1 responses
 epsl = epsilon(param['chil'])
 epsb = epsilon(param['chib'])
+
+# epsilons
 epsv1w = 1
 epsv2w = 1
 epsb1w = epsb[0][:MAXE]
 epsb2w = epsb[0][1::2]
-epl1w = epsl[0][:MAXE]
-epl2w = epsl[0][1::2]
-
-mode = str(param['mode'])
 if mode == "2layer":
     epsl1w = epsb[0][:MAXE]
     epsl2w = 1
-    ell1w = "b"
-    ell2w = "v"
 elif mode == "3layer":
     epsl1w = epsl[0][:MAXE]
     epsl2w = epsl[0][1::2]
-    ell1w = "l"
-    ell2w = "l"
+
+# refraction indices
+nb = np.sqrt(epsb1w)
+Nb = np.sqrt(epsb2w)
+nl = np.sqrt(epsl1w)
+Nl = np.sqrt(epsl2w)
 
 # wave vectors for 1w and 2w
 kv1w = np.sqrt(epsv1w - (math.sin(thetain) ** 2))
@@ -132,6 +133,12 @@ kl1w = np.sqrt(epsl1w - (math.sin(thetain) ** 2))
 kl2w = np.sqrt(epsl2w - (math.sin(thetain) ** 2))
 
 ## fresnel factors for 1w and 2w, s and p polarizations
+if mode == "2layer":
+    ell1w = "b"
+    ell2w = "v"
+elif mode == "3layer":
+    ell1w = "l"
+    ell2w = "l"
 tvls = fresnel("s", "v", ell1w, "1w")
 tvlp = fresnel("p", "v", ell1w, "1w")
 tlbs = fresnel("s", ell1w, "b", "1w")
@@ -140,7 +147,6 @@ Tvls = fresnel("s", "v", ell2w, "2w")
 Tvlp = fresnel("p", "v", ell2w, "2w")
 Tlbs = fresnel("s", ell2w, "b", "2w")
 Tlbp = fresnel("p", ell2w, "b", "2w")
-## 2w in the bulk
 tvbp = fresnel("p", "v", "b", "1w")
 Tvbp = fresnel("p", "v", "b", "2w")
 
@@ -166,15 +172,22 @@ brpp = ((math.sin(thetain)**3) * zzz) \
      + ((kb1w**2) * math.sin(thetain) * zxx) \
      - (2 * kb1w * kb2w * math.sin(thetain) * xxz) \
      - ((kb1w**2) * kb2w * xxx * math.cos(3 * phi))
+## 1w in the vacuum
+vrpp = ((epsb1w**2) * epsb2w * (math.sin(thetain)**3) * zzz) \
+     + (epsb2w * (kb1w**2) * math.sin(thetain) * zxx) \
+     - (2 * epsb1w * kb1w * kb2w * math.sin(thetain) * xxz) \
+     - ((kb1w**2) * kb2w * xxx * math.cos(3 * phi))
 
 # fresnel factors multiplied out for ease of debugging
-gammapp = ((Tvlp * Tlbp)/(epsl2w * np.sqrt(epsb2w))) * \
-          ((tvlp * tlbp)/(epsl1w * np.sqrt(epsb1w)))**2
-gammaps = Tvls * Tlbs * ((tvlp * tlbp)/(epsl1w * np.sqrt(epsb1w)))**2
-gammasp = ((Tvlp * Tlbp)/(epsl2w * np.sqrt(epsb2w))) * (tvls * tlbs)**2
+gammapp = ((Tvlp * Tlbp)/(epsl2w * Nb)) * \
+          ((tvlp * tlbp)/(epsl1w * nb))**2
+gammaps = Tvls * Tlbs * ((tvlp * tlbp)/(epsl1w * nb))**2
+gammasp = ((Tvlp * Tlbp)/(epsl2w * Nb)) * (tvls * tlbs)**2
 gammass = Tvls * Tlbs * (tvls * tlbs)**2
 ## 2w in the bulk
-bgammapp = (Tvbp * (tvbp**2))/(epsb1w * np.sqrt(epsb2w))
+bgammapp = (Tvbp * (tvbp**2))/(epsb1w * Nb)
+## 1w in the vacuum
+vgammapp = (Tvbp/Nb) * (tvbp/nb)**2
 
 # R factors for different input and output polarizations (in cm^2/W)
 Rpp = scale * m2tocm2 * prefactor * (onee ** 2) * np.absolute(gammapp * rpp)**2
@@ -182,10 +195,11 @@ Rps = scale * m2tocm2 * prefactor * (onee ** 2) * np.absolute(gammaps * rps)**2
 Rsp = scale * m2tocm2 * prefactor * (onee ** 2) * np.absolute(gammasp * rsp)**2
 Rss = scale * m2tocm2 * prefactor * (onee ** 2) * np.absolute(gammass * rss)**2
 bRpp = scale * m2tocm2 * prefactor * (onee ** 2) * np.absolute(bgammapp * brpp)**2
+vRpp = scale * m2tocm2 * prefactor * (onee ** 2) * np.absolute(vgammapp * vrpp)**2
 
 # creates columns for 2w and R factors and writes to file
-nrc = np.column_stack((onee, Rpp, Rps, Rsp, Rss, bRpp))
+nrc = np.column_stack((onee, Rpp, Rps, Rsp, Rss, bRpp, vRpp))
 outf = param['output']
-np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e'),
+np.savetxt(outf, nrc, fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e'),
            delimiter='    ', header='RiF in 1e-20 (cm^2/W)\n\
            2w     Rpp' + 21*' ' + 'Rps' + 21*' ' + 'Rsp' + 21*' ' + 'Rss')
