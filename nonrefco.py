@@ -184,9 +184,10 @@ RsP = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
 RsS = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
       np.absolute((np.sqrt(Nl)/nl) * GammasS * rsS)**2
 
+# RUN THESE IN 3 LAYER MODE
 # These are RpP tests in the 2 layer model (hard-coded, independent of mode)
-# that evaluate all fields either in
-# the bulk
+# that evaluates 
+# P(2w) and Ew in the bulk
 tvbp = fresnel("p", "v", "b", "1w")
 Tvbp = fresnel("p", "v", "b", "2w")
 rpPbulk = ((math.sin(THETAIN)**3) * ZZZ) \
@@ -195,19 +196,29 @@ rpPbulk = ((math.sin(THETAIN)**3) * ZZZ) \
         - ((kb1w**2) * kb2w * XXX * math.cos(3 * PHI))
 GammapPbulk = (Tvbp * (tvbp**2))/(epsb1w * Nb)
 RpPbulk = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
-          np.absolute((1/nb) * GammapPbulk * rpPbulk)**2
-# or vacuum
+          np.absolute((np.sqrt(Nb)/nb) * GammapPbulk * rpPbulk)**2
+# P(2w) and Ew in the vacuum
 rpPvacuum = ((epsb1w**2) * epsb2w * (math.sin(THETAIN)**3) * ZZZ) \
           + (epsb2w * (kb1w**2) * math.sin(THETAIN) * ZXX) \
           - (2 * epsb1w * kb1w * kb2w * math.sin(THETAIN) * XXZ) \
           - ((kb1w**2) * kb2w * XXX * math.cos(3 * PHI))
 GammapPvacuum = (Tvbp * (tvbp**2))/(epsb1w * Nb)
 RpPvacuum = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
-            np.absolute((1/nb) * GammapPvacuum * rpPvacuum)**2
+            np.absolute(1 * GammapPvacuum * rpPvacuum)**2
+# P(2w) in l and Ew in the bulk
+rpPlb = (epsb2w * (math.sin(THETAIN)**3) * ZZZ) \
+      + (epsb2w * (kb1w**2) * math.sin(THETAIN) * ZXX) \
+      - (2 * epsl2w * kb1w * kb2w * math.sin(THETAIN) * XXZ) \
+      - (epsl2w * (kb1w**2) * kb2w * XXX * math.cos(3 * PHI))
+GammapPlb = (Tvlp * Tlbp * (tvbp**2))/(epsl2w * epsb1w * Nb)
+RpPlb = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
+            np.absolute((np.sqrt(Nl)/nb) * GammapPvacuum * rpPvacuum)**2
+
+
 
 # creates columns for 2w and R factors and writes to file
-NRC = np.column_stack((ONEE, RpP, RpS, RsP, RsS, RpPbulk, RpPvacuum))
+NRC = np.column_stack((ONEE, RpP, RpS, RsP, RsS, RpPbulk, RpPvacuum, RpPlb))
 OUTF = PARAM['output']
 np.savetxt(OUTF, NRC,
-           fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e'),
+           fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e'),
            delimiter='    ', header='RiF 1e-20 (cm^2/W) 1w RpP RpS RsP RsS')
