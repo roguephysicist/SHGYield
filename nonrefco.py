@@ -22,11 +22,10 @@ from scipy import constants
 
 # max energy
 MAXE = 1000
+ONEE = np.linspace(0.01, 10, MAXE) # 1w energy array
 
+# parses input file specified in command line input
 def parse_input():
-    """
-    Parses input file specified in command line input
-    """
     infile = sys.argv[1]
     params = {}
     targetfile = open(infile)
@@ -40,38 +39,24 @@ def parse_input():
     targetfile.close()
     return params
 
-def epsilon(in_file):
-    """
-    Loads Chi^(1) file, unpacks columns, and creates numpy array.
-    """
+# loads chi1 file, unpacks columns, and creates numpy array
+def epsilon(in_file): 
     data = np.loadtxt(in_file, unpack=True, skiprows=1)
     real = (data[1] + data[3] + data[5])/3 # real average
     imag = (data[2] + data[4] + data[6])/3 # imag average
     coma = real + 1j * imag # complex average
-    comx = data[1] + 1j * data[2] # complex x component
-    comy = data[3] + 1j * data[4] # complex y component
-    comz = data[5] + 1j * data[6] # complex z component
     epsa = 1 + (4 * constants.pi * coma) # epsilon average
-    epsx = 1 + (4 * constants.pi * comx) # epsilon x component
-    epsy = 1 + (4 * constants.pi * comy) # epsilon y component
-    epsz = 1 + (4 * constants.pi * comz) # epsilon z component
-    eps = [epsa, epsx, epsy, epsz]
-    return eps
+    return epsa
 
+# loads chi2 file, unpacks columns, sums columns, and creates numpy array
 def shgcomp(in_file):
-    """
-    Loads shg Chi^(2) files, unpacks columns, sums 1w and 2w for real and
-    imag, and combines into complex numpy array.
-    """
     data = np.loadtxt(in_file, unpack=True, skiprows=1)
     comp = (data[1] + data[3]) + 1j * (data[2] + data[4])
     shg = comp[:MAXE]
     return shg
 
+# most generic fresnel factors
 def fresnel(pol, i, j, freq):
-    """
-    Generic Fresnel factors
-    """
     ki = eval("k" + i + freq)
     kj = eval("k" + j + freq)
     epsi = eval("eps" + i + freq)
@@ -92,7 +77,6 @@ THETAIN = math.radians(float(PARAM['theta']))
 PHI = math.radians(float(PARAM['phi']))
 
 # constants, conversions, and prefactor
-ONEE = np.linspace(0.01, 10, MAXE) # 1w energy array
 HBAR = constants.value("Planck constant over 2 pi in eV s")
 EPS0 = constants.epsilon_0 # (F/m)
 LSPEED = constants.c # (m/s)
@@ -110,14 +94,29 @@ epsb = epsilon(PARAM['chib'])
 # epsilons
 epsv1w = 1
 epsv2w = 1
-epsb1w = epsb[0][:MAXE]
-epsb2w = epsb[0][1::2]
-if MODE == "2layer":
-    epsl1w = epsb[0][:MAXE]
-    epsl2w = 1
-elif MODE == "3layer":
-    epsl1w = epsl[0][:MAXE]
-    epsl2w = epsl[0][1::2]
+epsb1w = epsb[:MAXE]
+epsb2w = epsb[1::2]
+epsl1w = epsl[:MAXE]
+epsl2w = epsl[1::2]
+
+# mode switching, mostly for debugging
+if MODE == "3layer": #case1
+    ell1w = "l"
+    ell2w = "l"
+elif MODE == "2layer": #case2
+    ell1w = "b"
+    ell2w = "v"
+elif MODE == "case3":
+    ell1w = "v"
+    ell2w = "v"
+elif MODE == "case4":
+    ell1w = "b"
+    ell2w = "l"
+elif MODE == "case5":
+    ell1w = "b"
+    ell2w = "b"
+epsl1w = eval("eps" + ell1w + "1w")
+epsl2w = eval("eps" + ell2w + "2w")
 
 # refraction indices
 nb = np.sqrt(epsb1w)
@@ -134,12 +133,6 @@ kl1w = np.sqrt(epsl1w - (math.sin(THETAIN) ** 2))
 kl2w = np.sqrt(epsl2w - (math.sin(THETAIN) ** 2))
 
 ## fresnel factors for 1w and 2w, s and p polarizations
-if MODE == "2layer":
-    ell1w = "b"
-    ell2w = "v"
-elif MODE == "3layer":
-    ell1w = "l"
-    ell2w = "l"
 tvls = fresnel("s", "v", ell1w, "1w")
 tvlp = fresnel("p", "v", ell1w, "1w")
 tlbs = fresnel("s", ell1w, "b", "1w")
@@ -184,39 +177,9 @@ RsP = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
 RsS = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
       np.absolute((np.sqrt(Nl)/nl) * GammasS * rsS)**2
 
-# RUN THESE IN 3 LAYER MODE
-# These are RpP tests that evaluate
-tvbp = fresnel("p", "v", "b", "1w")
-Tvbp = fresnel("p", "v", "b", "2w")
-# P(2w) and Ew in the bulk (Case 5)
-rpPbulk = ((math.sin(THETAIN)**3) * ZZZ) \
-        + ((kb1w**2) * math.sin(THETAIN) * ZXX) \
-        - (2 * kb1w * kb2w * math.sin(THETAIN) * XXZ) \
-        - ((kb1w**2) * kb2w * XXX * math.cos(3 * PHI))
-GammapPbulk = (Tvbp * (tvbp**2))/(epsb1w * Nb)
-RpPbulk = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
-          np.absolute((np.sqrt(Nb)/nb) * GammapPbulk * rpPbulk)**2
-# P(2w) and Ew in the vacuum (Case 3)
-rpPvacuum = ((epsb1w**2) * epsb2w * (math.sin(THETAIN)**3) * ZZZ) \
-          + (epsb2w * (kb1w**2) * math.sin(THETAIN) * ZXX) \
-          - (2 * epsb1w * kb1w * kb2w * math.sin(THETAIN) * XXZ) \
-          - ((kb1w**2) * kb2w * XXX * math.cos(3 * PHI))
-GammapPvacuum = (Tvbp * (tvbp**2))/(epsb1w * Nb)
-RpPvacuum = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
-            np.absolute(1 * GammapPvacuum * rpPvacuum)**2
-# P(2w) in l and Ew in the bulk (Case 4)
-rpPlb = (epsb2w * (math.sin(THETAIN)**3) * ZZZ) \
-      + (epsb2w * (kb1w**2) * math.sin(THETAIN) * ZXX) \
-      - (2 * epsl2w * kb1w * kb2w * math.sin(THETAIN) * XXZ) \
-      - (epsl2w * (kb1w**2) * kb2w * XXX * math.cos(3 * PHI))
-GammapPlb = (Tvlp * Tlbp * (tvbp**2))/(epsl2w * epsb1w * Nb)
-RpPlb = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
-            np.absolute((np.sqrt(Nl)/nb) * GammapPvacuum * rpPvacuum)**2
-
-
 # creates columns for 2w and R factors and writes to file
-NRC = np.column_stack((ONEE, RpP, RpS, RsP, RsS, RpPbulk, RpPvacuum, RpPlb))
+NRC = np.column_stack((ONEE, RpP, RpS, RsP, RsS))
 OUTF = PARAM['output']
 np.savetxt(OUTF, NRC,
-           fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e', '%.14e'),
-           delimiter='    ', header='RiF 1e-20 (cm^2/W) 1w RpP RpS RsP RsS')
+           fmt=('%05.2f', '%.14e', '%.14e', '%.14e', '%.14e'),
+           delimiter='    ', header='RiF 1e-20 (cm^2/W)\n1w RpP RpS RsP RsS')
