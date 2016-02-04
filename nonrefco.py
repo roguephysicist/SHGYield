@@ -185,11 +185,10 @@ RsS = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
       np.absolute((np.sqrt(Nl)/nl) * GammasS * rsS)**2
 
 # RUN THESE IN 3 LAYER MODE
-# These are RpP tests in the 2 layer model (hard-coded, independent of mode)
-# that evaluates 
-# P(2w) and Ew in the bulk
+# These are RpP tests that evaluate
 tvbp = fresnel("p", "v", "b", "1w")
 Tvbp = fresnel("p", "v", "b", "2w")
+# P(2w) and Ew in the bulk (Case 5)
 rpPbulk = ((math.sin(THETAIN)**3) * ZZZ) \
         + ((kb1w**2) * math.sin(THETAIN) * ZXX) \
         - (2 * kb1w * kb2w * math.sin(THETAIN) * XXZ) \
@@ -197,7 +196,7 @@ rpPbulk = ((math.sin(THETAIN)**3) * ZZZ) \
 GammapPbulk = (Tvbp * (tvbp**2))/(epsb1w * Nb)
 RpPbulk = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
           np.absolute((np.sqrt(Nb)/nb) * GammapPbulk * rpPbulk)**2
-# P(2w) and Ew in the vacuum
+# P(2w) and Ew in the vacuum (Case 3)
 rpPvacuum = ((epsb1w**2) * epsb2w * (math.sin(THETAIN)**3) * ZZZ) \
           + (epsb2w * (kb1w**2) * math.sin(THETAIN) * ZXX) \
           - (2 * epsb1w * kb1w * kb2w * math.sin(THETAIN) * XXZ) \
@@ -205,7 +204,7 @@ rpPvacuum = ((epsb1w**2) * epsb2w * (math.sin(THETAIN)**3) * ZZZ) \
 GammapPvacuum = (Tvbp * (tvbp**2))/(epsb1w * Nb)
 RpPvacuum = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
             np.absolute(1 * GammapPvacuum * rpPvacuum)**2
-# P(2w) in l and Ew in the bulk
+# P(2w) in l and Ew in the bulk (Case 4)
 rpPlb = (epsb2w * (math.sin(THETAIN)**3) * ZZZ) \
       + (epsb2w * (kb1w**2) * math.sin(THETAIN) * ZXX) \
       - (2 * epsl2w * kb1w * kb2w * math.sin(THETAIN) * XXZ) \
@@ -213,7 +212,6 @@ rpPlb = (epsb2w * (math.sin(THETAIN)**3) * ZZZ) \
 GammapPlb = (Tvlp * Tlbp * (tvbp**2))/(epsl2w * epsb1w * Nb)
 RpPlb = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
             np.absolute((np.sqrt(Nl)/nb) * GammapPvacuum * rpPvacuum)**2
-
 
 
 # creates columns for 2w and R factors and writes to file
