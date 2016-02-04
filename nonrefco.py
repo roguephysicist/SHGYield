@@ -22,7 +22,7 @@ from scipy import constants
 
 # max energy
 MAXE = 1000
-ONEE = np.linspace(0.01, 10, MAXE) # 1w energy array
+ONEE = np.linspace(0.01, float(MAXE)/100, MAXE) # 1w energy array
 
 # parses input file specified in command line input
 def parse_input():
@@ -95,9 +95,9 @@ epsb = epsilon(PARAM['chib'])
 epsv1w = 1
 epsv2w = 1
 epsb1w = epsb[:MAXE]
-epsb2w = epsb[1::2]
+epsb2w = epsb[1::2][:MAXE]
 epsl1w = epsl[:MAXE]
-epsl2w = epsl[1::2]
+epsl2w = epsl[1::2][:MAXE]
 
 # mode switching, mostly for debugging
 if MODE == "3layer": #case1
