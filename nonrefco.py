@@ -169,13 +169,13 @@ GammasS = Tvls * Tlbs * (tvls * tlbs)**2
 
 # R factors for different input and output polarizations (in cm^2/W)
 RpP = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
-      np.absolute((np.sqrt(Nl)/nl) * GammapP * rpP)**2
+      np.absolute((1/nl) * GammapP * rpP)**2
 RpS = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
-      np.absolute((np.sqrt(Nl)/nl) * GammapS * rpS)**2
+      np.absolute((1/nl) * GammapS * rpS)**2
 RsP = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
-      np.absolute((np.sqrt(Nl)/nl) * GammasP * rsP)**2
+      np.absolute((1/nl) * GammasP * rsP)**2
 RsS = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
-      np.absolute((np.sqrt(Nl)/nl) * GammasS * rsS)**2
+      np.absolute((1/nl) * GammasS * rsS)**2
 
 # creates columns for 2w and R factors and writes to file
 NRC = np.column_stack((ONEE, RpP, RpS, RsP, RsS))
