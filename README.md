@@ -1,31 +1,18 @@
-Nonlinear Reflection Coefficient for Silicon Surfaces
-===========================
+SHG Yield for Semiconductor Surfaces
+====================================
 
-Todo
----------------
+shgyield.py is a python program designed to calculate the nonlinear reflection
+coefficient for semiconductor surfaces. It works in conjunction with the
+matrix elements calculated with ABINIT, an open source ab initio software, and
+TINIBA, our in-house optical calculation software.
 
-1. Read shg-rad.pdf and start documenting the equations that are coded in nonrefco.
-2. Update nonrefco on this branch to reflect new NRC derivation.
-3. Read mejia articles and references to get a feel for NRC concepts.
-4. Compare `rad` directory with mejia publications and extract relevant experimental data.
+The work coded in this software can be found in an upcoming publication and is
+explicitly derived in 'phd-thesis'.
 
+Tested with Anaconda Python.
 
-This repo houses the source code for my research project on the nonlinear
-reflection coefficient for silicon surfaces.
+requirements:
+sys, math, numpy, scipy
 
-The major work are python scripts that calculate the nonlinear reflection
-coeffecient from data calculated with TINIBA and the ABINIT code. TINIBA is
-our in-house optical calculation software and can be found in an adjacent
-repository.
-
-Also included are a variety of plots with necessary source files. All plots
-can be compiled with Gnuplot and LaTeX.
-
-References for this work can be found in:
-* Phys Rev B 48, 11707 (1993)
-* Phys Rev B 66, 195329 (2002)
-* Phys Rev B 67, 165319 (2003)
-* Phys Rev B 74, 075318 (2006)
-* Phys Rev B 80, 155205 (2009)
-* Phys Rev Lett 81, 3781 (1998)
-* Rev Mex Fis 50, 134 (2009)
+usage:
+python shgyield.py <sample.in>

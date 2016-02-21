@@ -1,18 +1,19 @@
-#!/Users/sma/anaconda/bin/python
 """
-nonrefco.py is a python program designed to calculate the Nonlinear reflection
-coefficient for silicon surfaces. It works in conjunction with the matrix
-elements calculated with ABINIT, an open source ab initio software, and
+shgyield.py is a python program designed to calculate the nonlinear reflection
+coefficient for semiconductor surfaces. It works in conjunction with the
+matrix elements calculated with ABINIT, an open source ab initio software, and
 TINIBA, our in-house optical calculation software.
 
-The work codified in this software can be found in Phys.Rev.B66, 195329(2002).
-Please refer to "Strain induced SHG" manuscript (BMS) for equation references
-unless stated otherwise.
+The work coded in this software can be found in an upcoming publication and is
+explicitly derived in 'phd-thesis'.
 
-Experimental gap for bulk Si = 3.4 according to Landolt-Boernstein.
+Tested with Anaconda Python.
 
-For gnuplot:
-abso(w,x,y,z)=sqrt((w+y)**2+(x+z)**2)
+requirements:
+sys, math, numpy, scipy
+
+usage:
+python shgyield.py <sample.in>
 """
 
 import sys
@@ -20,7 +21,7 @@ import math
 import numpy as np
 from scipy import constants
 
-# max energy
+# max energy, assumes range from 0 to 20 with 2001 steps
 MAXE = 1000
 ONEE = np.linspace(0.01, float(MAXE)/100, MAXE) # 1w energy array
 
@@ -106,13 +107,7 @@ if MODE == "3layer": #case1
 elif MODE == "2layer": #case2
     ell1w = "b"
     ell2w = "v"
-elif MODE == "case3":
-    ell1w = "v"
-    ell2w = "v"
-elif MODE == "case4":
-    ell1w = "b"
-    ell2w = "l"
-elif MODE == "case5":
+elif MODE == "bulk":
     ell1w = "b"
     ell2w = "b"
 epsl1w = eval("eps" + ell1w + "1w")

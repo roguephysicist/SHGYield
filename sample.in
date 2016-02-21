@@ -1,7 +1,12 @@
-# Sample input file
-chi: data/chi1
-xxx: data/xxx
-xxz: data/xxz
-zxx: data/zxx
-zzz: data/zzz
-output: sample_out.dat
+# sample input file for calculating reflectance
+# mode can be 3layer, 2layer, or bulk
+mode: 3layer
+theta: 65
+phi: 30
+chib: /path/to/chi1_bulk
+chil: /path/to/chi1_layer
+xxx: /path/to/chi2_xxx
+xxz: /path/to/chi2_xxz
+zxx: /path/to/chi2_zxx
+zzz: /path/to/chi2_zzz
+output: /path/to/output_file
