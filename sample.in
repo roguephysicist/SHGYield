@@ -1,12 +1,12 @@
-# sample input file for calculating reflectance
-# mode can be 3layer, 2layer, or bulk
+# MonoH_MonoH_1x1_111 input file for calculating reflectance
 mode: 3layer
+thickness: 5
 theta: 65
 phi: 30
-chib: /path/to/chi1_bulk
-chil: /path/to/chi1_layer
-xxx: /path/to/chi2_xxx
-xxz: /path/to/chi2_xxz
-zxx: /path/to/chi2_zxx
-zzz: /path/to/chi2_zzz
-output: /path/to/output_file
+chib: data/chi1-vnl.sm_0.05_xx_yy_zz_3107_25-nospin_scissor_0.70_Nc_26
+chil: data/calChi1-vnl.sm_0.05_xx_yy_zz_576_half-slab_12-nospin_scissor_0.70_Nc_103
+xxx: data/shgC.vnl.sm_0.05_xxx_576_half-slab_12-nospin_scissor_0.70_Nc_103
+xxz: data/shgC.vnl.sm_0.05_xxz_576_half-slab_12-nospin_scissor_0.70_Nc_103
+zxx: data/shgC.vnl.sm_0.05_zxx_576_half-slab_12-nospin_scissor_0.70_Nc_103
+zzz: data/shgC.vnl.sm_0.05_zzz_576_half-slab_12-nospin_scissor_0.70_Nc_103
+output: d05.dat
