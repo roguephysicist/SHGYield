@@ -21,11 +21,11 @@ import math
 import numpy as np
 from scipy import constants, ndimage
 
-## debugging variables
+## some variables
 CHI1NORM = 1.2659296143 # Normalization yo
-#THICKNESS = 3.7621659771810236 # In nanometers
-#THICKNESS = 5 # In nanometers
-#D2 = 3.7621659771810236 # Also in nanometers biatch
+#SIGMA = 4.266666666 # broadening (sigma = 0.10 eV)
+SIGMA = 3.19999995 # broadening (sigma = 0.075 eV)
+#SIGMA = 2.133333333 # broadening (sigma = 0.05 eV)
 
 
 #### Functions ####
@@ -101,7 +101,6 @@ MULTIREF = str(PARAM['multiref']) # if multiple reflections are considered
 ## assumes range from 0 to 20 with 2001 steps
 MAXE = 1000
 ONEE = np.linspace(0.01, float(MAXE)/100, MAXE) # 1w energy array
-SIGMA = 4.266666666 # broadening (sigma = 0.10 eV)
 
 
 #### Constants ####
