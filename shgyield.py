@@ -5,10 +5,7 @@ coefficient for semiconductor surfaces. It works in conjunction with the matrix
 elements calculated with ABINIT, an open source ab initio software, and TINIBA,
 our in-house optical calculation software.
 
-The work coded in this software can be found in an upcoming publication and is
-explicitly derived in 'phd-thesis'.
-
-Tested with Anaconda Python.
+Tested with Anaconda Python 4.0.0.
 
 requirements:
 sys, math, numpy, scipy
