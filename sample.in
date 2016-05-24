@@ -1,12 +1,33 @@
-# MonoH_MonoH_1x1_111 input file for calculating reflectance
+#  Sample input file for calculating SSHG yield
 mode: 3layer
-thickness: 5
 theta: 65
 phi: 30
-chib: data/chi1-vnl.sm_0.05_xx_yy_zz_3107_25-nospin_scissor_0.70_Nc_26
-chil: data/calChi1-vnl.sm_0.05_xx_yy_zz_576_half-slab_12-nospin_scissor_0.70_Nc_103
-xxx: data/shgC.vnl.sm_0.05_xxx_576_half-slab_12-nospin_scissor_0.70_Nc_103
-xxz: data/shgC.vnl.sm_0.05_xxz_576_half-slab_12-nospin_scissor_0.70_Nc_103
-zxx: data/shgC.vnl.sm_0.05_zxx_576_half-slab_12-nospin_scissor_0.70_Nc_103
-zzz: data/shgC.vnl.sm_0.05_zzz_576_half-slab_12-nospin_scissor_0.70_Nc_103
-output: d05.dat
+# chi1 normalization and broadening (sigma = 0.10 eV)
+norm: 1.2659296143
+sigma: 4.2666666
+# Multiple reflections
+multiref: yes
+thickness: 10
+depth: 10
+# Components
+chib: ../../../data/SiBulk/chi1-vnl.sm_0.075_xx_yy_zz_3107_25-nospin_scissor_0.70_Nc_26
+chil: ../../../data/Si1x1/calChi1-vnl.sm_0.075_xx_yy_zz_576_half-slab_12-nospin_scissor_0.70_Nc_103
+xxx: ../../../data/Si1x1/shgC.vnl.sm_0.075_xxx_576_half-slab_12-nospin_scissor_0.70_Nc_103
+xxy: ../../../data/Si1x1/shgC.vnl.sm_0.075_xxy_576_half-slab_12-nospin_scissor_0.70_Nc_103
+xxz: ../../../data/Si1x1/shgC.vnl.sm_0.075_xxz_576_half-slab_12-nospin_scissor_0.70_Nc_103
+xyy: ../../../data/Si1x1/shgC.vnl.sm_0.075_xyy_576_half-slab_12-nospin_scissor_0.70_Nc_103
+xyz: ../../../data/Si1x1/shgC.vnl.sm_0.075_xyz_576_half-slab_12-nospin_scissor_0.70_Nc_103
+xzz: ../../../data/Si1x1/shgC.vnl.sm_0.075_xzz_576_half-slab_12-nospin_scissor_0.70_Nc_103
+yxx: ../../../data/Si1x1/shgC.vnl.sm_0.075_yxx_576_half-slab_12-nospin_scissor_0.70_Nc_103
+yxz: ../../../data/Si1x1/shgC.vnl.sm_0.075_yxz_576_half-slab_12-nospin_scissor_0.70_Nc_103
+yyx: ../../../data/Si1x1/shgC.vnl.sm_0.075_yyx_576_half-slab_12-nospin_scissor_0.70_Nc_103
+yyy: ../../../data/Si1x1/shgC.vnl.sm_0.075_yyy_576_half-slab_12-nospin_scissor_0.70_Nc_103
+yyz: ../../../data/Si1x1/shgC.vnl.sm_0.075_yyz_576_half-slab_12-nospin_scissor_0.70_Nc_103
+yzz: ../../../data/Si1x1/shgC.vnl.sm_0.075_yzz_576_half-slab_12-nospin_scissor_0.70_Nc_103
+zxx: ../../../data/Si1x1/shgC.vnl.sm_0.075_zxx_576_half-slab_12-nospin_scissor_0.70_Nc_103
+zxy: ../../../data/Si1x1/shgC.vnl.sm_0.075_zxy_576_half-slab_12-nospin_scissor_0.70_Nc_103
+zxz: ../../../data/Si1x1/shgC.vnl.sm_0.075_zxz_576_half-slab_12-nospin_scissor_0.70_Nc_103
+zyy: ../../../data/Si1x1/shgC.vnl.sm_0.075_zyy_576_half-slab_12-nospin_scissor_0.70_Nc_103
+zzy: ../../../data/Si1x1/shgC.vnl.sm_0.075_zzy_576_half-slab_12-nospin_scissor_0.70_Nc_103
+zzz: ../../../data/Si1x1/shgC.vnl.sm_0.075_zzz_576_half-slab_12-nospin_scissor_0.70_Nc_103
+output: mr.10_10nm.dat
