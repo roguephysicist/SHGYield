@@ -109,7 +109,7 @@ SCALE = 1e20 # for R in 1e-20 (cm^2/W)
 THETA0 = math.radians(float(PARAM['theta'])) # converts theta to radians
 PHI = math.radians(float(PARAM['phi'])) # converts phi to radians
 THICKNESS = float(PARAM['thickness']) # thickness of the thin layer for multiref
-D2 = float(PARAM['depth']) # depth at which we place the polarization sheet
+DEPTH = str(PARAM['depth']) # depth at which we place the polarization sheet
 SIGMA = float(PARAM['sigma']) # standard deviation for gaussian broadening
 CHI1NORM = float(PARAM['norm']) # DEBUG: normalization factor for chi1
 LAMBDA0 = (PLANCK * LSPEED * 1e9)/ONEE # In nanometers
@@ -148,19 +148,19 @@ epsl1w = epsl[:MAXE]
 epsl2w = epsl[1::2][:MAXE]
 
 # mode switching, mostly for debugging
-if MODE == "3layer": #case1
+if MODE == "3-layer":
     ell1w = "l"
     ell2w = "l"
-elif MODE == "2layer": #case2
+elif MODE == "2-layer-fresnel":
     ell1w = "b"
     ell2w = "v"
-elif MODE == "bulk":
+elif MODE == "2-layer-bulk":
     ell1w = "b"
     ell2w = "b"
-elif MODE == "vacuum":
+elif MODE == "2-layer-vacuum":
     ell1w = "v"
     ell2w = "v"
-elif MODE == "hybrid":
+elif MODE == "3-layer-hybrid":
     ell1w = "b"
     ell2w = "l"
 epsl1w = eval("eps" + ell1w + "1w")
@@ -201,37 +201,40 @@ Rlbp = fresnel("r", ell2w, "b", "p", "2w")
 Rlbs = fresnel("r", ell2w, "b", "s", "2w")
 
 #### multiple reflections framework
-varphi = 4 * math.pi * ((ONEE * THICKNESS * 1e-9)/(PLANCK * LSPEED)) * wl1w
-delta = 8 * math.pi * ((ONEE * THICKNESS * 1e-9)/(PLANCK * LSPEED)) * wl2w
-delta0 = 8 * math.pi * ((ONEE * D2 * 1e-9)/(PLANCK * LSPEED)) * wl2w
-
 if MULTIREF == "yes":
+    varphi = 4 * math.pi * ((ONEE * THICKNESS * 1e-9)/(PLANCK * LSPEED)) * wl1w
+    delta = 8 * math.pi * ((ONEE * THICKNESS * 1e-9)/(PLANCK * LSPEED)) * wl2w
+    if DEPTH == "average":
+        RMpav = (Rlbp * np.exp(1j * delta/2))/(1 + (Rvlp * Rlbp * np.exp(1j * delta))) * np.sin(delta/2)/(delta/2)
+        RMsav = (Rlbs * np.exp(1j * delta/2))/(1 + (Rvls * Rlbs * np.exp(1j * delta))) * np.sin(delta/2)/(delta/2)
+        RMplusp = 1 + RMpav
+        RMpluss = 1 + RMsav
+        RMminusp = 1 - RMpav
+        RMminuss = 1 - RMsav
+    else:
+        D2 = float(DEPTH)
+        delta0 = 8 * math.pi * ((ONEE * D2 * 1e-9)/(PLANCK * LSPEED)) * wl2w
+        RMp = (Rlbp * np.exp(1j * delta0))/(1 + (Rvlp * Rlbp * np.exp(1j * delta)))
+        RMs = (Rlbs * np.exp(1j * delta0))/(1 + (Rvls * Rlbs * np.exp(1j * delta)))
+        RMplusp = 1 + RMp
+        RMpluss = 1 + RMs
+        RMminusp = 1 - RMp
+        RMminuss = 1 - RMs    
     rMp = (rlbp * np.exp(1j * varphi))/(1 + (rvlp * rlbp * np.exp(1j * varphi)))
     rMs = (rlbs * np.exp(1j * varphi))/(1 + (rvls * rlbs * np.exp(1j * varphi)))
-    RMp = (Rlbp * np.exp(1j * delta0))/(1 + (Rvlp * Rlbp * np.exp(1j * delta)))
-    RMs = (Rlbs * np.exp(1j * delta0))/(1 + (Rvls * Rlbs * np.exp(1j * delta)))
-    RMpav = (Rlbp * np.exp(1j * delta/2))/\
-            (1 + (Rvlp * Rlbp * np.exp(1j * delta)))\
-            * np.sin(delta/2)/(delta/2)
-    RMsav = (Rlbs * np.exp(1j * delta/2))/\
-            (1 + (Rvls * Rlbs * np.exp(1j * delta)))\
-            * np.sin(delta/2)/(delta/2)
+    rMplusp = 1 + rMp
+    rMpluss = 1 + rMs
+    rMminusp = 1 - rMp
+    rMminuss = 1 - rMs
 elif MULTIREF == "no":
-    rMp = rlbp
-    rMs = rlbs
-    RMp = Rlbp
-    RMs = Rlbs
-    RMpav = Rlbp
-    RMsav = Rlbs
-
-rMplusp = 1 + rMp
-rMpluss = 1 + rMs
-RMplusp = 1 + RMp
-RMpluss = 1 + RMs
-rMminusp = 1 - rMp
-rMminuss = 1 - rMs
-RMminusp = 1 - RMp
-RMminuss = 1 - RMs
+    RMplusp = 1 + Rlbp
+    RMpluss = 1 + Rlbs
+    RMminusp = 1 - Rlbp
+    RMminuss = 1 - Rlbs
+    rMplusp = 1 + rlbp
+    rMpluss = 1 + rlbs
+    rMminusp = 1 - rlbp
+    rMminuss = 1 - rlbs 
 ####
 
 # r factors for different input and output polarizations
