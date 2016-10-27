@@ -1,4 +1,3 @@
-#!/Users/sma/anaconda/bin/python
 """
 shgyield.py is a python program designed to calculate the nonlinear reflection
 coefficient for semiconductor surfaces. It works in conjunction with the matrix
