@@ -8,7 +8,8 @@ TINIBA, our in-house optical calculation software.
 
 The work coded in this software can be found in the following publications:
 
-* Phys Rev B 
+* [Phys. Rev. B 94, 115314](http://journals.aps.org/prb/abstract/10.1103/PhysRevB.94.115314)
+* [Phys. Rev. B 93, 235304](http://journals.aps.org/prb/abstract/10.1103/PhysRevB.93.235304)
 * [arXiv:1604.07722](https://arxiv.org/abs/1604.07722)
 
 All the theory is derived step-by-step in my Ph.D. thesis, which you can find in
