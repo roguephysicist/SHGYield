@@ -2,9 +2,9 @@
 mode: 3-layer
 theta: 65
 phi: 30
-# chi1 normalization and broadening (sigma = 0.10 eV)
+# chi1 normalization and broadening (sigma in eV)
 norm: 1.2659296143
-sigma: 4.2666666666
+sigma: 0.10
 # Multiple reflections
 multiref: yes
 thickness: 10

@@ -13,7 +13,7 @@ usage:
 python shgyield.py <sample.in>
 """
 
-import sys
+# import sys
 import math
 import numpy as np
 from scipy import constants, ndimage
@@ -33,8 +33,9 @@ def parse_input(infile): # parses input file from command line
     targetfile.close()
     return params
 
-def broad(target, sigma): 
-    data = ndimage.filters.gaussian_filter(target, sigma)
+def broad(target, sigma):
+    value = sigma * 42.666666666
+    data = ndimage.filters.gaussian_filter(target, value)
     return data
 
 def savefile(file, freq, val1, val2, val3, val4): # saves to file with header
@@ -82,12 +83,21 @@ def shgyield(gamma, riF): # function for the final yield
     broadened = broad(RiF, SIGMA)
     return broadened
 
+def layer_depth(in_file):
+    data = np.loadtxt(in_file, dtype=float, unpack=True, usecols=(1,), skiprows=1)
+    depth = (data[0] - data[data>=0]) * constants.value("Bohr radius") * 1e9 # nanometers
+    return depth
 
-#### Init ####
-PARAM = parse_input(sys.argv[1]) # parses input file
-MODE = str(PARAM['mode']) # establishes mode
-MULTIREF = str(PARAM['multiref']) # if multiple reflections are considered
 
+#### Input section ####
+MODE = "3-layer"
+theta = 65
+phi = 30
+norm = 1.2659296143
+sigma = 0.075
+# Multiple reflections (values in nanometers)
+MULTIREF = "yes"
+thickness = 10
 
 #### Energy ####
 ## assumes range from 0 to 20 with 2001 steps
@@ -105,40 +115,23 @@ PM2TOM2 = 1e-24 # pm^2 to m^2
 M2TOCM2 = 1e4 # m^2 to cm^2
 TINIBASCALE = 1e6 # for scaling chi2 in 1e6 (pm^2/V)
 SCALE = 1e20 # for R in 1e-20 (cm^2/W)
-THETA0 = math.radians(float(PARAM['theta'])) # converts theta to radians
-PHI = math.radians(float(PARAM['phi'])) # converts phi to radians
-THICKNESS = float(PARAM['thickness']) # thickness of the thin layer for multiref
-DEPTH = str(PARAM['depth']) # depth at which we place the polarization sheet
-SIGMA = float(PARAM['sigma']) # standard deviation for gaussian broadening
-CHI1NORM = float(PARAM['norm']) # DEBUG: normalization factor for chi1
+THETA0 = math.radians(float(theta)) # converts theta to radians
+PHI = math.radians(float(phi)) # converts phi to radians
+THICKNESS = float(thickness) # thickness of the thin layer for in nanometers multiref
+# DEPTH = str(depth) # depth at which we place the polarization sheet
+SIGMA = float(sigma) # standard deviation for gaussian broadening
+CHI1NORM = float(norm) # DEBUG: normalization factor for chi1
 LAMBDA0 = (PLANCK * LSPEED * 1e9)/ONEE # In nanometers
 PREFACTOR = 1 / (2 * EPS0 * HBAR**2 * LSPEED**3 * math.cos(THETA0)**2)
 
 
 #### Math ####
-# loads chi2 components, converts to m^2/V
-XXX = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xxx']))
-XXY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xxy']))
-XXZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xxz']))
-XYY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xyy']))
-XYZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xyz']))
-XZZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xzz']))
-YXX = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yxx']))
-YYX = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yyx']))
-YXZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yxz']))
-YYY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yyy']))
-YYZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yyz']))
-YZZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yzz']))
-ZXX = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zxx']))
-ZXY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zxy']))
-ZXZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zxz']))
-ZYY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zyy']))
-ZZY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zzy']))
-ZZZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zzz']))
 
 # creates epsilons from chi1 responses
-epsl = epsilon(PARAM['chil'], CHI1NORM)
-epsb = epsilon(PARAM['chib'], 1)
+chib = "res/chi1.sm_0.075_xx_yy_zz_3107_25-nospin_scissor_0.70_Nc_26"
+chil = "res/calChi1.sm_0.075_xx_yy_zz_576_half-slab_12-nospin_scissor_0.70_Nc_103"
+epsl = epsilon(chil, CHI1NORM)
+epsb = epsilon(chib, 1)
 epsv1w = 1
 epsv2w = 1
 epsb1w = epsb[:MAXE]
@@ -199,102 +192,155 @@ Rvls = fresnel("r", "v", ell2w, "s", "2w")
 Rlbp = fresnel("r", ell2w, "b", "p", "2w")
 Rlbs = fresnel("r", ell2w, "b", "s", "2w")
 
-#### multiple reflections framework
-if MULTIREF == "yes":
-    varphi = 4 * math.pi * ((ONEE * THICKNESS * 1e-9)/(PLANCK * LSPEED)) * wl1w
-    delta = 8 * math.pi * ((ONEE * THICKNESS * 1e-9)/(PLANCK * LSPEED)) * wl2w
-    if DEPTH == "average":
-        RMpav = (Rlbp * np.exp(1j * delta/2))/(1 + (Rvlp * Rlbp * np.exp(1j * delta))) * np.sin(delta/2)/(delta/2)
-        RMsav = (Rlbs * np.exp(1j * delta/2))/(1 + (Rvls * Rlbs * np.exp(1j * delta))) * np.sin(delta/2)/(delta/2)
-        RMplusp = 1 + RMpav
-        RMpluss = 1 + RMsav
-        RMminusp = 1 - RMpav
-        RMminuss = 1 - RMsav
-    else:
-        D2 = float(DEPTH)
-        delta0 = 8 * math.pi * ((ONEE * D2 * 1e-9)/(PLANCK * LSPEED)) * wl2w
-        RMp = (Rlbp * np.exp(1j * delta0))/(1 + (Rvlp * Rlbp * np.exp(1j * delta)))
-        RMs = (Rlbs * np.exp(1j * delta0))/(1 + (Rvls * Rlbs * np.exp(1j * delta)))
-        RMplusp = 1 + RMp
-        RMpluss = 1 + RMs
-        RMminusp = 1 - RMp
-        RMminuss = 1 - RMs    
-    rMp = (rlbp * np.exp(1j * varphi))/(1 + (rvlp * rlbp * np.exp(1j * varphi)))
-    rMs = (rlbs * np.exp(1j * varphi))/(1 + (rvls * rlbs * np.exp(1j * varphi)))
-    rMplusp = 1 + rMp
-    rMpluss = 1 + rMs
-    rMminusp = 1 - rMp
-    rMminuss = 1 - rMs
-elif MULTIREF == "no":
-    RMplusp = 1 + Rlbp
-    RMpluss = 1 + Rlbs
-    RMminusp = 1 - Rlbp
-    RMminuss = 1 - Rlbs
-    rMplusp = 1 + rlbp
-    rMpluss = 1 + rlbs
-    rMminusp = 1 - rlbp
-    rMminuss = 1 - rlbs 
-####
 
-# r factors for different input and output polarizations
-rMRpP = - (RMminusp * rMminusp**2 * wl1w**2 * wl2w * math.cos(PHI)**3 * XXX) \
-        - (2 * RMminusp * rMminusp**2 * wl1w**2 * wl2w * math.sin(PHI) * math.cos(PHI)**2 * XXY) \
-        - (2 * RMminusp * rMplusp * rMminusp * wl1w * wl2w * math.sin(THETA0) * math.cos(PHI)**2 * XXZ) \
-        - (RMminusp * rMminusp**2 * wl1w**2 * wl2w * math.sin(PHI)**2 * math.cos(PHI) * XYY) \
-        - (2 * RMminusp * rMplusp * rMminusp * wl1w * wl2w * math.sin(THETA0) * math.sin(PHI) * math.cos(PHI) * XYZ) \
-        - (RMminusp * rMplusp**2 * wl2w * math.sin(THETA0)**2 * math.cos(PHI) * XZZ) \
-        - (RMminusp * rMminusp**2 * wl1w**2 * wl2w * math.sin(PHI) * math.cos(PHI)**2 * YXX) \
-        - (2 * RMminusp * rMminusp**2 * wl1w**2 * wl2w * math.sin(PHI)**2 * math.cos(PHI) * YYX) \
-        - (2 * RMminusp * rMplusp * rMminusp * wl1w * wl2w * math.sin(THETA0) * math.sin(PHI) * math.cos(PHI) * YXZ) \
-        - (RMminusp * rMminusp**2 * wl1w**2 * wl2w * math.sin(PHI)**3 * YYY) \
-        - (2 * RMminusp * rMplusp * rMminusp * wl1w * wl2w * math.sin(THETA0) * math.sin(PHI)**2 * YYZ) \
-        - (RMminusp * rMplusp**2 * wl2w * math.sin(THETA0)**2 * math.sin(PHI) * YZZ) \
-        + (RMplusp * rMminusp**2 * wl1w**2 * math.sin(THETA0) * math.cos(PHI)**2 * ZXX) \
-        + (2 * RMplusp * rMplusp * rMminusp * wl1w * math.sin(THETA0)**2 * math.cos(PHI) * ZXZ) \
-        + (2 * RMplusp * rMminusp**2 * wl1w**2 * math.sin(THETA0) * math.sin(PHI) * math.cos(PHI) * ZXY) \
-        + (RMplusp * rMminusp**2 * wl1w**2 * math.sin(THETA0) * math.sin(PHI)**2 * ZYY) \
-        + (2 * RMplusp * rMplusp * rMminusp * wl1w * math.sin(THETA0)**2 * math.sin(PHI) * ZZY) \
-        + (RMplusp * rMplusp**2 * math.sin(PHI)**3 * ZZZ)
-rMRpS = - (rMminusp**2 * wl1w**2 * math.sin(PHI) * math.cos(PHI)**2 * XXX) \
-        - (2 * rMminusp**2 * wl1w**2 * math.sin(PHI)**2 * math.cos(PHI) * XXY) \
-        - (2 * rMplusp * rMminusp * wl1w * math.sin(THETA0) * math.sin(PHI) * math.cos(PHI) * XXZ) \
-        - (rMminusp**2 * wl1w**2 * math.sin(PHI)**3 * XYY) \
-        - (2 * rMplusp * rMminusp * wl1w * math.sin(THETA0) * math.sin(PHI)**2 * XYZ) \
-        - (rMplusp**2 * math.sin(THETA0)**2 * math.sin(PHI) * XZZ) \
-        + (rMminusp**2 * wl1w**2 * math.cos(PHI)**3 * YXX) \
-        + (2 * rMminusp**2 * wl1w**2 * math.sin(PHI) * math.cos(PHI)**2 * YYX) \
-        + (2 * rMplusp * rMminusp * wl1w * math.sin(THETA0) * math.cos(PHI)**2 * YXZ) \
-        + (rMminusp**2 * wl1w**2 * math.sin(PHI)**2 * math.cos(PHI) * YYY) \
-        + (2 * rMplusp * rMminusp * wl1w * math.sin(THETA0) * math.sin(PHI) * math.cos(PHI) * YYZ) \
-        + (rMplusp**2 * math.sin(THETA0)**2 * math.cos(PHI) * YZZ)
-rMRsP = - (RMminusp * wl2w * math.sin(PHI)**2 * math.cos(PHI) * XXX) \
-        + (RMminusp * wl2w * 2 * math.sin(PHI) * math.cos(PHI)**2 * XXY) \
-        - (RMminusp * wl2w * math.cos(PHI)**3 * XYY) \
-        - (RMminusp * wl2w * math.sin(PHI)**3 * YXX) \
-        + (RMminusp * wl2w * 2 * math.sin(PHI)**2 * math.cos(PHI) * YYX) \
-        - (RMminusp * wl2w * math.sin(PHI) * math.cos(PHI)**2 * YYY) \
-        + (RMplusp * math.sin(THETA0) * math.sin(PHI)**2 * ZXX) \
-        - (RMplusp * math.sin(THETA0) * 2 * math.sin(PHI) * math.cos(PHI) * ZXY) \
-        + (RMplusp * math.sin(THETA0) * math.cos(PHI)**2 * ZYY)
-rMRsS = - (math.sin(PHI)**3 * XXX) \
-        + (2 * math.sin(PHI)**2 * math.cos(PHI) * XXY) \
-        - (math.sin(PHI) * math.cos(PHI)**2 * XYY) \
-        + (math.sin(PHI)**2 * math.cos(PHI) * YXX) \
-        + (math.cos(PHI)**3 * YYY) \
-        - (2 * math.sin(PHI) * math.cos(PHI)**2 * YYX)
+sumGammaMRpP = 0
+sumGammaMRpS = 0
+sumGammaMRsP = 0
+sumGammaMRsS = 0
+sumrMRpP = 0
+sumrMRpS = 0
+sumrMRsP = 0
+sumrMRsS = 0
 
-# fresnel factors multiplied out for ease of debugging
-GammaMRpP = (Tvlp/Nl) * (tvlp/nl)**2
-GammaMRpS = Tvls * RMpluss * (tvlp/nl)**2
-GammaMRsP = (Tvlp/Nl) * (tvls * rMpluss)**2
-GammaMRsS = Tvls * RMpluss * (tvls * rMpluss)**2
+LAYERS = layer_depth("front.layers.xy")
+
+for idx, val in enumerate(LAYERS, start=1):
+# for idx in range(1, 26):
+    
+    DEPTH = float(val)
+    # DEPTH = "average"
+    # DEPTH = LAYERS[idx-1]
+    
+    xxx = "res-layers/shgC.sm_0.075_xxx_576_" + str(idx) + "_12-nospin_scissor_0.70_Nc_103"
+    xxz = "res-layers/shgC.sm_0.075_xxz_576_" + str(idx) + "_12-nospin_scissor_0.70_Nc_103"
+    zxx = "res-layers/shgC.sm_0.075_zxx_576_" + str(idx) + "_12-nospin_scissor_0.70_Nc_103"
+    zzz = "res-layers/shgC.sm_0.075_zzz_576_" + str(idx) + "_12-nospin_scissor_0.70_Nc_103"
+    
+    XXX = (TINIBASCALE * PM2TOM2 * shgcomp(xxx))
+    XYY = - XXX
+    YYX = - XXX
+    XXZ = (TINIBASCALE * PM2TOM2 * shgcomp(xxz))
+    YYZ = XXZ
+    ZXX = (TINIBASCALE * PM2TOM2 * shgcomp(zxx))
+    ZYY = ZXX
+    ZZZ = (TINIBASCALE * PM2TOM2 * shgcomp(zzz))
+    XXY = 0
+    XYZ = 0
+    XZZ = 0
+    YXX = 0
+    YXZ = 0
+    YYY = 0
+    YZZ = 0
+    ZXY = 0
+    ZXZ = 0
+    ZZY = 0
+    
+    #### multiple reflections framework
+    if MULTIREF == "yes":
+        varphi = 4 * math.pi * ((ONEE * THICKNESS * 1e-9)/(PLANCK * LSPEED)) * wl1w
+        delta = 8 * math.pi * ((ONEE * THICKNESS * 1e-9)/(PLANCK * LSPEED)) * wl2w
+        if DEPTH == "average":
+            RMpav = (Rlbp * np.exp(1j * delta/2))/(1 + (Rvlp * Rlbp * np.exp(1j * delta))) * np.sin(delta/2)/(delta/2)
+            RMsav = (Rlbs * np.exp(1j * delta/2))/(1 + (Rvls * Rlbs * np.exp(1j * delta))) * np.sin(delta/2)/(delta/2)
+            RMplusp = 1 + RMpav
+            RMpluss = 1 + RMsav
+            RMminusp = 1 - RMpav
+            RMminuss = 1 - RMsav
+        else:
+            D2 = float(DEPTH)
+            delta0 = 8 * math.pi * ((ONEE * D2 * 1e-9)/(PLANCK * LSPEED)) * wl2w
+            RMp = (Rlbp * np.exp(1j * delta0))/(1 + (Rvlp * Rlbp * np.exp(1j * delta)))
+            RMs = (Rlbs * np.exp(1j * delta0))/(1 + (Rvls * Rlbs * np.exp(1j * delta)))
+            RMplusp = 1 + RMp
+            RMpluss = 1 + RMs
+            RMminusp = 1 - RMp
+            RMminuss = 1 - RMs    
+        rMp = (rlbp * np.exp(1j * varphi))/(1 + (rvlp * rlbp * np.exp(1j * varphi)))
+        rMs = (rlbs * np.exp(1j * varphi))/(1 + (rvls * rlbs * np.exp(1j * varphi)))
+        rMplusp = 1 + rMp
+        rMpluss = 1 + rMs
+        rMminusp = 1 - rMp
+        rMminuss = 1 - rMs
+    elif MULTIREF == "no":
+        RMplusp = 1 + Rlbp
+        RMpluss = 1 + Rlbs
+        RMminusp = 1 - Rlbp
+        RMminuss = 1 - Rlbs
+        rMplusp = 1 + rlbp
+        rMpluss = 1 + rlbs
+        rMminusp = 1 - rlbp
+        rMminuss = 1 - rlbs 
+    ####
+    
+    # r factors for different input and output polarizations
+    rMRpP = - (RMminusp * rMminusp**2 * wl1w**2 * wl2w * math.cos(PHI)**3 * XXX) \
+            - (2 * RMminusp * rMminusp**2 * wl1w**2 * wl2w * math.sin(PHI) * math.cos(PHI)**2 * XXY) \
+            - (2 * RMminusp * rMplusp * rMminusp * wl1w * wl2w * math.sin(THETA0) * math.cos(PHI)**2 * XXZ) \
+            - (RMminusp * rMminusp**2 * wl1w**2 * wl2w * math.sin(PHI)**2 * math.cos(PHI) * XYY) \
+            - (2 * RMminusp * rMplusp * rMminusp * wl1w * wl2w * math.sin(THETA0) * math.sin(PHI) * math.cos(PHI) * XYZ) \
+            - (RMminusp * rMplusp**2 * wl2w * math.sin(THETA0)**2 * math.cos(PHI) * XZZ) \
+            - (RMminusp * rMminusp**2 * wl1w**2 * wl2w * math.sin(PHI) * math.cos(PHI)**2 * YXX) \
+            - (2 * RMminusp * rMminusp**2 * wl1w**2 * wl2w * math.sin(PHI)**2 * math.cos(PHI) * YYX) \
+            - (2 * RMminusp * rMplusp * rMminusp * wl1w * wl2w * math.sin(THETA0) * math.sin(PHI) * math.cos(PHI) * YXZ) \
+            - (RMminusp * rMminusp**2 * wl1w**2 * wl2w * math.sin(PHI)**3 * YYY) \
+            - (2 * RMminusp * rMplusp * rMminusp * wl1w * wl2w * math.sin(THETA0) * math.sin(PHI)**2 * YYZ) \
+            - (RMminusp * rMplusp**2 * wl2w * math.sin(THETA0)**2 * math.sin(PHI) * YZZ) \
+            + (RMplusp * rMminusp**2 * wl1w**2 * math.sin(THETA0) * math.cos(PHI)**2 * ZXX) \
+            + (2 * RMplusp * rMplusp * rMminusp * wl1w * math.sin(THETA0)**2 * math.cos(PHI) * ZXZ) \
+            + (2 * RMplusp * rMminusp**2 * wl1w**2 * math.sin(THETA0) * math.sin(PHI) * math.cos(PHI) * ZXY) \
+            + (RMplusp * rMminusp**2 * wl1w**2 * math.sin(THETA0) * math.sin(PHI)**2 * ZYY) \
+            + (2 * RMplusp * rMplusp * rMminusp * wl1w * math.sin(THETA0)**2 * math.sin(PHI) * ZZY) \
+            + (RMplusp * rMplusp**2 * math.sin(PHI)**3 * ZZZ)
+    rMRpS = - (rMminusp**2 * wl1w**2 * math.sin(PHI) * math.cos(PHI)**2 * XXX) \
+            - (2 * rMminusp**2 * wl1w**2 * math.sin(PHI)**2 * math.cos(PHI) * XXY) \
+            - (2 * rMplusp * rMminusp * wl1w * math.sin(THETA0) * math.sin(PHI) * math.cos(PHI) * XXZ) \
+            - (rMminusp**2 * wl1w**2 * math.sin(PHI)**3 * XYY) \
+            - (2 * rMplusp * rMminusp * wl1w * math.sin(THETA0) * math.sin(PHI)**2 * XYZ) \
+            - (rMplusp**2 * math.sin(THETA0)**2 * math.sin(PHI) * XZZ) \
+            + (rMminusp**2 * wl1w**2 * math.cos(PHI)**3 * YXX) \
+            + (2 * rMminusp**2 * wl1w**2 * math.sin(PHI) * math.cos(PHI)**2 * YYX) \
+            + (2 * rMplusp * rMminusp * wl1w * math.sin(THETA0) * math.cos(PHI)**2 * YXZ) \
+            + (rMminusp**2 * wl1w**2 * math.sin(PHI)**2 * math.cos(PHI) * YYY) \
+            + (2 * rMplusp * rMminusp * wl1w * math.sin(THETA0) * math.sin(PHI) * math.cos(PHI) * YYZ) \
+            + (rMplusp**2 * math.sin(THETA0)**2 * math.cos(PHI) * YZZ)
+    rMRsP = - (RMminusp * wl2w * math.sin(PHI)**2 * math.cos(PHI) * XXX) \
+            + (RMminusp * wl2w * 2 * math.sin(PHI) * math.cos(PHI)**2 * XXY) \
+            - (RMminusp * wl2w * math.cos(PHI)**3 * XYY) \
+            - (RMminusp * wl2w * math.sin(PHI)**3 * YXX) \
+            + (RMminusp * wl2w * 2 * math.sin(PHI)**2 * math.cos(PHI) * YYX) \
+            - (RMminusp * wl2w * math.sin(PHI) * math.cos(PHI)**2 * YYY) \
+            + (RMplusp * math.sin(THETA0) * math.sin(PHI)**2 * ZXX) \
+            - (RMplusp * math.sin(THETA0) * 2 * math.sin(PHI) * math.cos(PHI) * ZXY) \
+            + (RMplusp * math.sin(THETA0) * math.cos(PHI)**2 * ZYY)
+    rMRsS = - (math.sin(PHI)**3 * XXX) \
+            + (2 * math.sin(PHI)**2 * math.cos(PHI) * XXY) \
+            - (math.sin(PHI) * math.cos(PHI)**2 * XYY) \
+            + (math.sin(PHI)**2 * math.cos(PHI) * YXX) \
+            + (math.cos(PHI)**3 * YYY) \
+            - (2 * math.sin(PHI) * math.cos(PHI)**2 * YYX)
+    
+    # fresnel factors multiplied out for ease of debugging
+    GammaMRpP = (Tvlp/Nl) * (tvlp/nl)**2
+    GammaMRpS = Tvls * RMpluss * (tvlp/nl)**2
+    GammaMRsP = (Tvlp/Nl) * (tvls * rMpluss)**2
+    GammaMRsS = Tvls * RMpluss * (tvls * rMpluss)**2
+    
+    sumGammaMRpP = sumGammaMRpP + GammaMRpP
+    sumGammaMRpS = sumGammaMRpS + GammaMRpS
+    sumGammaMRsP = sumGammaMRsP + GammaMRsP
+    sumGammaMRsS = sumGammaMRsS + GammaMRsS
+    sumrMRpP = sumrMRpP + rMRpP
+    sumrMRpS = sumrMRpS + rMRpS
+    sumrMRsP = sumrMRsP + rMRsP
+    sumrMRsS = sumrMRsS + rMRsS
 
 # R factors for different input and output polarizations (in cm^2/W)
-RMRpP = shgyield(GammaMRpP, rMRpP)
-RMRpS = shgyield(GammaMRpS, rMRpS)
-RMRsP = shgyield(GammaMRsP, rMRsP)
-RMRsS = shgyield(GammaMRsS, rMRsS)
+RMRpP = shgyield(sumGammaMRpP, sumrMRpP)
+RMRpS = shgyield(sumGammaMRpS, sumrMRpS)
+RMRsP = shgyield(sumGammaMRsP, sumrMRsP)
+RMRsS = shgyield(sumGammaMRsS, sumrMRsS)
 
 
 #### Output ####
-savefile(PARAM['output'], ONEE, RMRpP, RMRpS, RMRsP, RMRsS)
+output = "layered.dat"
+savefile(output, ONEE, RMRpP, RMRpS, RMRsP, RMRsS)
