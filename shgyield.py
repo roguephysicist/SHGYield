@@ -34,7 +34,8 @@ def parse_input(infile): # parses input file from command line
     return params
 
 def broad(target, sigma): 
-    data = ndimage.filters.gaussian_filter(target, sigma)
+    value = sigma * 42.666666666
+    data = ndimage.filters.gaussian_filter(target, value)
     return data
 
 def savefile(file, freq, val1, val2, val3, val4): # saves to file with header
@@ -116,25 +117,45 @@ PREFACTOR = 1 / (2 * EPS0 * HBAR**2 * LSPEED**3 * math.cos(THETA0)**2)
 
 
 #### Math ####
+# TODO: THIS SHOULD BE DONE IN THE INPUT FILE
 # loads chi2 components, converts to m^2/V
 XXX = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xxx']))
-XXY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xxy']))
+XYY = - XXX
+YYX = - XXX
 XXZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xxz']))
-XYY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xyy']))
-XYZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xyz']))
-XZZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xzz']))
-YXX = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yxx']))
-YYX = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yyx']))
-YXZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yxz']))
-YYY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yyy']))
-YYZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yyz']))
-YZZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yzz']))
+YYZ = XXZ
 ZXX = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zxx']))
-ZXY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zxy']))
-ZXZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zxz']))
-ZYY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zyy']))
-ZZY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zzy']))
+ZYY = ZXX
 ZZZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zzz']))
+XXY = 0
+XYZ = 0
+XZZ = 0
+YXX = 0
+YXZ = 0
+YYY = 0
+YZZ = 0
+ZXY = 0
+ZXZ = 0
+ZZY = 0
+
+# XXX = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xxx']))
+# XXY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xxy']))
+# XXZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xxz']))
+# XYY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xyy']))
+# XYZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xyz']))
+# XZZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['xzz']))
+# YXX = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yxx']))
+# YYX = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yyx']))
+# YXZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yxz']))
+# YYY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yyy']))
+# YYZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yyz']))
+# YZZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['yzz']))
+# ZXX = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zxx']))
+# ZXY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zxy']))
+# ZXZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zxz']))
+# ZYY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zyy']))
+# ZZY = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zzy']))
+# ZZZ = (TINIBASCALE * PM2TOM2 * shgcomp(PARAM['zzz']))
 
 # creates epsilons from chi1 responses
 epsl = epsilon(PARAM['chil'], CHI1NORM)
