@@ -1,7 +1,7 @@
 SHG Yield for Semiconductor Surfaces
 ====================================
 
-`shgyield.py` is a python program for calculating the second-harmonic generation (SHG) yield for semiconductor surfaces. 
+SHGYield is a python program for calculating the second-harmonic generation (SHG) yield for semiconductor surfaces.
 
 You will first need the electron density and matrix elements calculated using [ABINIT](http://www.abinit.org), an open source ab-initio software. You can use these to produce the components of the nonlinear susceptibility tensor, either with your own software or using [TINIBA](https://github.com/bemese/tiniba), our own optical response software. All the theory is derived step-by-step in my [Ph.D. thesis](https://github.com/roguephysicist/thesis-phd) and references therein. This software has been used in the following publications:
 
@@ -17,3 +17,10 @@ sys, math, numpy, scipy
 
 usage:
 `python shgyield.py <sample.in>`
+
+License
+------------------------------------
+
+Copyright 2017 Sean M. Anderson and Bernardo S. Mendoza.
+
+SHGYield is free software made available under the BSD-3-Clause License. For details please see the LICENSE file.
