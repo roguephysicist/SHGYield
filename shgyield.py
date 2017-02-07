@@ -97,7 +97,8 @@ norm = 1.2659296143
 sigma = 0.075
 # Multiple reflections (values in nanometers)
 MULTIREF = "yes"
-thickness = 10
+# thickness = 10
+thickness = 3.68698559
 
 #### Energy ####
 ## assumes range from 0 to 20 with 2001 steps
@@ -202,14 +203,13 @@ sumrMRpS = 0
 sumrMRsP = 0
 sumrMRsS = 0
 
+# LAYERS = layer_depth("front.layers.xy") * 2.712242767403927
 LAYERS = layer_depth("front.layers.xy")
 
 for idx, val in enumerate(LAYERS, start=1):
 # for idx in range(1, 26):
     
     DEPTH = float(val)
-    # DEPTH = "average"
-    # DEPTH = LAYERS[idx-1]
     
     xxx = "res-layers/shgC.sm_0.075_xxx_576_" + str(idx) + "_12-nospin_scissor_0.70_Nc_103"
     xxz = "res-layers/shgC.sm_0.075_xxz_576_" + str(idx) + "_12-nospin_scissor_0.70_Nc_103"
@@ -335,12 +335,12 @@ for idx, val in enumerate(LAYERS, start=1):
     sumrMRsS = sumrMRsS + rMRsS
 
 # R factors for different input and output polarizations (in cm^2/W)
-RMRpP = shgyield(sumGammaMRpP, sumrMRpP)
-RMRpS = shgyield(sumGammaMRpS, sumrMRpS)
-RMRsP = shgyield(sumGammaMRsP, sumrMRsP)
-RMRsS = shgyield(sumGammaMRsS, sumrMRsS)
+RMRpP = shgyield(sumGammaMRpP, sumrMRpP) * (1/(len(LAYERS))**2)
+RMRpS = shgyield(sumGammaMRpS, sumrMRpS) * (1/(len(LAYERS))**2)
+RMRsP = shgyield(sumGammaMRsP, sumrMRsP) * (1/(len(LAYERS))**2)
+RMRsS = shgyield(sumGammaMRsS, sumrMRsS) * (1/(len(LAYERS))**2)
 
 
 #### Output ####
-output = "layered.dat"
+output = "layered-test.dat"
 savefile(output, ONEE, RMRpP, RMRpS, RMRsP, RMRsS)
