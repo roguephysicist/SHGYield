@@ -1,19 +1,11 @@
 ---
 title: 'SHGYield'
 tags:
-  - nonlinear
-  - numpy
-  - optics
-  - physics
   - python
-  - scipy
-  - second-harmonic
-  - semiconductor
-  - semiconductor-physics
-  - semiconductor-surfaces
   - shg
-  - solid-state-physics
+  - second-harmonic
   - spectroscopy
+  - semiconductor
   - surfaces
 authors:
  - name: Sean M. Anderson
@@ -25,7 +17,7 @@ authors:
 affiliations:
  - name: Centro de Investigaciones en Óptica, A. C.
    index: 1
-date: 14 February 2016
+date: 07 February 2017
 bibliography: paper.bib
 ---
 
