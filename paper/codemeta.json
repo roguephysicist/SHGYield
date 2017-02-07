@@ -1,0 +1,30 @@
+{
+  "@context": "https://raw.githubusercontent.com/mbjones/codemeta/master/codemeta.jsonld",
+  "@type": "Code",
+  "author": [
+    {
+      "@id": "http://orcid.org/0000-0002-4809-921X",
+      "@type": "Person",
+      "email": "sean.martin.anderson@gmail.com",
+      "name": "Sean M. Anderson",
+      "affiliation": ""
+    },
+    {
+      "@id": "http://orcid.org/0000-0002-8546-0262",
+      "@type": "Person",
+      "email": "bms@cio.mx",
+      "name": "Bernardo S. Mendoza",
+      "affiliation": "Centro de Investigaciones en Óptica, A. C."
+    }
+  ],
+  "identifier": "https://doi.org/10.5281/zenodo.269680",
+  "codeRepository": "https://github.com/roguephysicist/SHGYield",
+  "datePublished": "2017-02-07",
+  "dateModified": "2017-02-07",
+  "dateCreated": "2017-02-07",
+  "description": "SHGYield is a python program for calculating the second-harmonic generation (SHG) yield for semiconductor surfaces.",
+  "keywords": "nonlinear, numpy, optics, physics, python, scipy, second-harmonic, semiconductor, semiconductor-physics, semiconductor-surfaces, shg, solid-state-physics, spectroscopy, surfaces",
+  "license": "BSD",
+  "title": "SHGYield",
+  "version": "v1.0"
+}
