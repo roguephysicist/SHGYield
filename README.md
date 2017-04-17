@@ -17,7 +17,7 @@ References
 
 The complete theory is derived step-by-step in my [Ph.D. thesis](https://github.com/roguephysicist/thesis-phd). This software has been used in the following publications:
 
-* Frontiers in Materials: Thin Solid Films (2017, submitted)
+* [Front. Mater. 4:12 (2017)](https://doi.org/10.3389/fmats.2017.00012)
 * [Phys. Rev. B 94, 115314 (2016)](https://doi.org/10.1103/PhysRevB.94.115314)
 * [Phys. Rev. B 93, 235304 (2016)](https://doi.org/10.1103/PhysRevB.93.235304)
 * [Phys. Rev. B 91, 075302 (2015)](https://doi.org/10.1103/PhysRevB.91.075302)
