@@ -1,33 +1,43 @@
-# MonoH_MonoH_1x1_111 input file for calculating reflectance
-mode: 3-layer
-theta: 65
-phi: 30
-# chi1 normalization and broadening (sigma = 0.10 eV)
-norm: 1.2659296143
-sigma: 0.10
-# Multiple reflections
-multiref: yes
-thickness: 10
-depth: average
-# Components
-chib: sample-data/SiBulk-chi1-xx_yy_zz
-chil: sample-data/SiH1x1-chi1-xx_yy_zz
-xxx: sample-data/SiH1x1-chi2-xxx
-xxy: sample-data/SiH1x1-chi2-xxy
-xxz: sample-data/SiH1x1-chi2-xxz
-xyy: sample-data/SiH1x1-chi2-xyy
-xyz: sample-data/SiH1x1-chi2-xyz
-xzz: sample-data/SiH1x1-chi2-xzz
-yxx: sample-data/SiH1x1-chi2-yxx
-yxz: sample-data/SiH1x1-chi2-yxz
-yyx: sample-data/SiH1x1-chi2-yyx
-yyy: sample-data/SiH1x1-chi2-yyy
-yyz: sample-data/SiH1x1-chi2-yyz
-yzz: sample-data/SiH1x1-chi2-yzz
-zxx: sample-data/SiH1x1-chi2-zxx
-zxy: sample-data/SiH1x1-chi2-zxy
-zxz: sample-data/SiH1x1-chi2-zxz
-zyy: sample-data/SiH1x1-chi2-zyy
-zzy: sample-data/SiH1x1-chi2-zzy
-zzz: sample-data/SiH1x1-chi2-zzz
-output: sample.out
+# Sample input file for calculating SHG yield
+
+# Establish reflectance model, see PRB 93, 235304 (2016).
+# This is mostly deprecated now, so when in doubt just use '3-layer'.
+mode:       3-layer
+
+# Required calculation parameters 
+theta:      65           # angle of incidence in degrees
+phi:        30           # azimuthal angle in degrees
+norm:       1.2659296143 # chi1 normalization factor, see PRB 92, 245308 (2015)
+sigma:      0.10         # gaussian output broadening, sigma = 0.10 eV
+
+# Multiple reflection framework
+multiref:   yes          # if multiple reflections are enabled ('yes' or 'no')
+thickness:  10           # thickness "d" of the thin layer, in nm
+depth:      average      # depth "d2" of the nonlinear polarization, in nm. can
+                         # be a float or 'average'. See Eqs (21) and 22 of 
+                         # PRB 93, 235304 (2016).
+
+## chi1 & chi2 components. Can be path to files, or number (like 0).
+chib:       sample-data/SiBulk-chi1-xx_yy_zz
+chil:       sample-data/SiH1x1-chi1-xx_yy_zz
+xxx:        sample-data/SiH1x1-chi2-xxx
+xxy:        sample-data/SiH1x1-chi2-xxy
+xxz:        sample-data/SiH1x1-chi2-xxz
+xyy:        sample-data/SiH1x1-chi2-xyy
+xyz:        sample-data/SiH1x1-chi2-xyz
+xzz:        sample-data/SiH1x1-chi2-xzz
+yxx:        sample-data/SiH1x1-chi2-yxx
+yxz:        sample-data/SiH1x1-chi2-yxz
+yyx:        sample-data/SiH1x1-chi2-yyx
+yyy:        sample-data/SiH1x1-chi2-yyy
+yyz:        sample-data/SiH1x1-chi2-yyz
+yzz:        sample-data/SiH1x1-chi2-yzz
+zxx:        sample-data/SiH1x1-chi2-zxx
+zxy:        sample-data/SiH1x1-chi2-zxy
+zxz:        sample-data/SiH1x1-chi2-zxz
+zyy:        sample-data/SiH1x1-chi2-zyy
+zzy:        sample-data/SiH1x1-chi2-zzy
+zzz:        sample-data/SiH1x1-chi2-zzz
+
+# Path to desired output file
+output:     sample.out

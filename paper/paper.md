@@ -28,7 +28,7 @@ SHGYield is a python program for calculating the second-harmonic generation (SHG
 # References
 
 * [SHGYield](https://github.com/roguephysicist/SHGYield)
-* Frontiers in Materials: Thin Solid Films (2017, submitted)
+* [Front. Mater. 4:12 (2017)](http://journal.frontiersin.org/article/10.3389/fmats.2017.00012/abstract)
 * [Phys. Rev. B 94, 115314 (2016)](https://doi.org/10.1103/PhysRevB.94.115314)
 * [Phys. Rev. B 93, 235304 (2016)](https://doi.org/10.1103/PhysRevB.93.235304)
 * [Phys. Rev. B 91, 075302 (2015)](https://doi.org/10.1103/PhysRevB.91.075302)
