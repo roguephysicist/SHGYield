@@ -66,7 +66,7 @@ In order to calculate the SHG yield, you must first calculate the linear and non
 
 where a, b, and c are crystallographic directions that depend on how you orient your crystalline structure. We can see that a material can produce a polarization response in direction a from two incident fields (<i>E</i>) in directions b and c, by means of <i>χ</i><sup>abc</sup>.
 
-<b><i>χ</i></b> is a second-order tensor, and thus has 27 possible components (unique combinations of a, b, and c; for instance, aaa, aab, and so on.). Second-harmonic generation implies that the incoming fields are identical (two photons of equal energy in, one photon of double-energy out) so it is also implied that 
+<b><i>χ</i></b> is a third-rank tensor, and thus has 27 possible components (unique combinations of a, b, and c; for instance, aaa, aab, and so on.). Second-harmonic generation implies that the incoming fields are identical (two photons of equal energy in, one photon of double-energy out) so it is also implied that 
 
 <img src="paper/figures/chi2-shg.png" height="25">
 
