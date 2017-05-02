@@ -1,4 +1,4 @@
-# Sample input file for calculating SHG yield
+# Sample input file for calculating SHG yield for the Si(111)(1x1):H surface
 # This is in YAML, so please preserve indentation below!
 
 # Establish reflectance model, see PRB 93, 235304 (2016). Available choices:
@@ -27,8 +27,8 @@ multiref:
 # For information about normalizing, see PRB 92, 245308 (2015). File columns are
 # Energy(1w) Re[chi_xx] Im[chi_xx] Re[chi_yy] Im[chi_yy] Re[chi_zz] Im[chi_zz].
 chi1:
-    chib: sample-data/SiBulk-chi1-xx_yy_zz
-    chil: sample-data/SiH1x1-chi1-xx_yy_zz
+    chib: chi1-linear/SiBulk-chi1-xx_yy_zz
+    chil: chi1-linear/SiH1x1-chi1-xx_yy_zz
     norm: 1.2659296143
 
 # chi2: nonlinear susceptibility tensor 
@@ -42,24 +42,24 @@ chi1:
 #
 # File columns should be organized as Energy(1w) Re[1w] Im[1w] Re[2w] Im[2w].
 chi2:
-    xxx: sample-data/SiH1x1-chi2-xxx
-    xyy: sample-data/SiH1x1-chi2-xyy
-    xzz: sample-data/SiH1x1-chi2-xzz
-    xyz: sample-data/SiH1x1-chi2-xyz
-    xxz: sample-data/SiH1x1-chi2-xxz
-    xxy: sample-data/SiH1x1-chi2-xxy
-    yxx: sample-data/SiH1x1-chi2-yxx
-    yyy: sample-data/SiH1x1-chi2-yyy
-    yzz: sample-data/SiH1x1-chi2-yzz
-    yyz: sample-data/SiH1x1-chi2-yyz
-    yxz: sample-data/SiH1x1-chi2-yxz
-    yxy: sample-data/SiH1x1-chi2-yxy
-    zxx: sample-data/SiH1x1-chi2-zxx
-    zyy: sample-data/SiH1x1-chi2-zyy
-    zzz: sample-data/SiH1x1-chi2-zzz
-    zyz: sample-data/SiH1x1-chi2-zyz
-    zxz: sample-data/SiH1x1-chi2-zxz
-    zxy: sample-data/SiH1x1-chi2-zxy
+    xxx: chi2-nonlinear/SiH1x1-chi2-xxx
+    xyy: chi2-nonlinear/SiH1x1-chi2-xyy
+    xzz: chi2-nonlinear/SiH1x1-chi2-xzz
+    xyz: chi2-nonlinear/SiH1x1-chi2-xyz
+    xxz: chi2-nonlinear/SiH1x1-chi2-xxz
+    xxy: chi2-nonlinear/SiH1x1-chi2-xxy
+    yxx: chi2-nonlinear/SiH1x1-chi2-yxx
+    yyy: chi2-nonlinear/SiH1x1-chi2-yyy
+    yzz: chi2-nonlinear/SiH1x1-chi2-yzz
+    yyz: chi2-nonlinear/SiH1x1-chi2-yyz
+    yxz: chi2-nonlinear/SiH1x1-chi2-yxz
+    yxy: chi2-nonlinear/SiH1x1-chi2-yxy
+    zxx: chi2-nonlinear/SiH1x1-chi2-zxx
+    zyy: chi2-nonlinear/SiH1x1-chi2-zyy
+    zzz: chi2-nonlinear/SiH1x1-chi2-zzz
+    zyz: chi2-nonlinear/SiH1x1-chi2-zyz
+    zxz: chi2-nonlinear/SiH1x1-chi2-zxz
+    zxy: chi2-nonlinear/SiH1x1-chi2-zxy
 
 # Path to desired output file
-output:     sample.out
+output:     si111-shgyield.out

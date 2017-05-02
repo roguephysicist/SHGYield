@@ -1,7 +1,9 @@
 SHG Yield for Semiconductor Surfaces
 ====================================
 
-[![DOI](https://zenodo.org/badge/11697217.svg)](https://zenodo.org/badge/latestdoi/11697217)
+[![Zenodo](https://zenodo.org/badge/11697217.svg)](https://zenodo.org/badge/latestdoi/11697217)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![PyPI](https://img.shields.io/pypi/pyversions/Django.svg)]()
 
 SHGYield is a python program for calculating the surface second-harmonic generation (SSHG) yield (in reflectance) for semiconductor surfaces. 
 
@@ -19,7 +21,7 @@ This program has several potential applications and uses:
 
 For example, the figure below is an overview of the angular dependence of the reflected SHG Yield from the Si(111)(1x1)H surface. Experimentalists will find this very useful, as they can plan the experiment accordingly in order to optimize the output signal strength and polarization.
 
-![An overview of the angular dependence of the SHG Yield for the Si(111)(1x1)H surface](paper/figures/3D-Si1x1.png)
+![An overview of the angular dependence of the SHG Yield for the Si(111)(1x1)H surface](figures/3D-Si1x1.png)
 
 
 References
@@ -46,7 +48,21 @@ Python requirements:
 Usage:
 `python shgyield.py <input.yml>`
 
-A sample input file `input.yml` and data set `sample-data/` are included for your convenience. Both the input file and the program itself are extensively documented.
+You can find a very complete input file inside the `example` directory.
+
+
+Example
+------------------------------------
+
+An example case using the Si(111)(1x1):H surface is included in the `example` directory. It includes a very complete input file, all the components of the susceptibility tensor, and some relevant plots.
+
+Also included is a Jupyter notebook with a short tutorial explaining some the othe theory and how the equations are programmed. This tutorial walks the user through a couple of example calculations using this surface.
+
+
+Testing
+------------------------------------
+
+A test script is included in the `test` directory. Read the `README.md` file in that directory for details.
 
 
 Theory
@@ -62,21 +78,21 @@ In order to calculate the SHG yield, you must first calculate the linear and non
 
 <b><i>χ</i></b> determines the nonlinear polarizability of a material and is responsible for second-harmonic generation. This relationship is expressed as
 
-<img src="paper/figures/polar.png" height="25">
+<img src="figures/polar.png" height="25">
 
 where a, b, and c are crystallographic directions that depend on how you orient your crystalline structure. We can see that a material can produce a polarization response in direction a from two incident fields (<i>E</i>) in directions b and c, by means of <i>χ</i><sup>abc</sup>.
 
 <b><i>χ</i></b> is a third-rank tensor, and thus has 27 possible components (unique combinations of a, b, and c; for instance, aaa, aab, and so on.). Second-harmonic generation implies that the incoming fields are identical (two photons of equal energy in, one photon of double-energy out) so it is also implied that 
 
-<img src="paper/figures/chi2-shg.png" height="25">
+<img src="figures/chi2-shg.png" height="25">
 
 for this particular phenomenon. This reduces 9 of the possible combinations, reducing to 18 unique components. It is very convenient to express the crystallographic directions in terms of *x*, *y*, and *z*; therefore, we can express <b><i>χ</i></b> with all 18 components as
 
-<img src="paper/figures/chi2-full.png" height="90">
+<img src="figures/chi2-full.png" height="90">
 
 Symmetry relations are very important for determining <b><i>χ</i></b>. A given crystal symmetry can greatly reduce the complexity of the problem by eliminating many of the components. For instance, for the (001) face of cubic crystals, we have that
 
-<img src="paper/figures/chi2-001.png" height="90">
+<img src="figures/chi2-001.png" height="90">
 
 which has only 3 independent components. There are many [articles](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.35.1129) and [books](https://books.google.com/books?id=bdFju3af2FsC) with tables and extensive discussion that describe the form that this tensor should have for a given symmetry.
 
@@ -85,11 +101,11 @@ which has only 3 independent components. There are many [articles](https://journ
 
 The case for <i>χ</i><sup>ab</sup>(ω) is considerable simpler. <i>χ</i><sup>ab</sup>(ω) is directly related to the dielectric function of the material
 
-<img src="paper/figures/epsilon.png" height="25">
+<img src="figures/epsilon.png" height="25">
 
 which is directly related to the index of refraction as
 
-<img src="paper/figures/refrac.png" height="45">
+<img src="figures/refrac.png" height="45">
 
 The <i>χ</i><sup>ab</sup>(ω) spectra should obviously have non-zero regions; otherwise, the problem is not very interesting.
 
@@ -118,6 +134,6 @@ There are, however, some codes available, such as [RT-SIESTA](http://monalisa.ph
 License
 ------------------------------------
 
-Copyright 2017 Sean M. Anderson and Bernardo S. Mendoza.
+Copyright 2017 [Sean M. Anderson](mailto:sma@cio.mx) and [Bernardo S. Mendoza](mailto:bms@cio.mx).
 
 SHGYield is free software made available under the BSD-3-Clause License. For details please see the LICENSE file.

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 shgyield.py is a python program designed to calculate the nonlinear reflection
 coefficient for semiconductor surfaces. It works in conjunction with the matrix
@@ -243,7 +244,7 @@ Rlbp = fresnel("r", ell2w, "b", "p", "2w") # Reflection,   2w, layer-bulk,   p
 
 ## Multiple reflections framework. See Eqs. (16), (17), (21), (22), (26),
 ## and (30) of PRB 94, 115314 (2016).
-if PARAM['multiref']['enable']:
+if PARAM['multiref']['enable'] and MODE == '3-layer':
     thickness = PARAM['multiref']['thickness'] # Thickness d of the thin layer \ell
     depth = PARAM['multiref']['depth']         # Depth d2 of the polarization sheet
     varphi = 4 * np.pi * ((ONEE * thickness * 1e-9)/(PLANCK * LSPEED)) * wl1w
@@ -272,7 +273,7 @@ if PARAM['multiref']['enable']:
     rMpluss = 1 + rMs
     rMminusp = 1 - rMp
     rMminuss = 1 - rMs
-elif not PARAM['multiref']['enable']:
+elif not PARAM['multiref']['enable'] or MODE != '3-layer':
     RMplusp = 1 + Rlbp
     RMpluss = 1 + Rlbs
     RMminusp = 1 - Rlbp
