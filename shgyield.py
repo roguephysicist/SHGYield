@@ -187,7 +187,7 @@ for component in all_components:
         value = PARAM['chi2'][component]
         try:
             shg = shgload(value)
-        except (ValueError, FileNotFoundError, OSError, IOError):
+        except (ValueError, OSError, IOError):
             if value == 0:
                 shg = 0
             else:

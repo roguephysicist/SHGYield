@@ -16,7 +16,7 @@ print(48 * '=')
 color1 = '#268bd2'
 color2 = '#dc322f'
 plt.rcParams['font.family'] = 'serif'
-plt.rcParams['mathtext.fontset'] = 'dejavuserif'
+plt.rcParams['mathtext.fontset'] = 'cm'
 
 fig, axes = plt.subplots(2, 2, figsize=(10,6))
 
