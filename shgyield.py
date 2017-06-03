@@ -3,17 +3,14 @@
 shgyield.py is a python program designed to calculate the nonlinear reflection
 coefficient for semiconductor surfaces. It works in conjunction with the matrix
 elements calculated with ABINIT, an open source ab initio software, and TINIBA,
-our in-house optical calculation software.
+our in-house optical calculation software. For a complete overview of the
+theory, see PRB 94, 115314 (2016).
 
-For a complete overview of the theory, see PRB 94, 115314 (2016).
-
-Tested with Anaconda Python 4.0.0.
-
-requirements:
-sys, math, numpy, scipy
+required packages:
+`sys, yaml, numpy, scipy`
 
 usage:
-python shgyield.py <sample.in>
+`python shgyield.py input.yml`
 """
 
 import sys
@@ -62,7 +59,7 @@ def epsilon(in_file, norm):
     real = (data[1] + data[3] + data[5])/3      # real average
     imag = (data[2] + data[4] + data[6])/3      # imag average
     coma = real + 1j * imag                     # complex average
-    epsa = 1 + (4 * constants.pi * coma * norm) # epsilon with normalization
+    epsa = 1 + (4 * np.pi * coma * norm) # epsilon with normalization
     return epsa
 
 def shgload(infile):
@@ -76,24 +73,24 @@ def shgload(infile):
     chi2 = TINIBASCALE * PM2TOM2 * comp[:MAXE]
     return chi2
 
-def fresnel(kind, i, j, pol, freq):
+def freflc(pol, veci, vecj, epsi, epsj):
     '''
-    Generic fresnel factors, see Eq. (13) of PRB 94, 115314 (2016).
+    Generic reflection fresnel factors, see Eq. (13) of PRB 94, 115314 (2016).
     '''
-    wi = eval("w" + i + freq)
-    wj = eval("w" + j + freq)
-    epsi = eval("eps" + i + freq)
-    epsj = eval("eps" + j + freq)
-    if kind == "t":
-        if pol == "p":
-            factor = (2 * wi * np.sqrt(epsi * epsj))/(wi * epsj + wj * epsi)
-        elif pol == "s":
-            factor = (2 * wi)/(wi + wj)
-    elif kind == "r":
-        if pol == "p":
-            factor = ((wi * epsj) - (wj * epsi))/((wi * epsj) + (wj * epsi))
-        elif pol == "s":
-            factor = (wi - wj)/(wi + wj)
+    if pol == "p":
+        factor = ((veci * epsj) - (vecj * epsi))/((veci * epsj) + (vecj * epsi))
+    elif pol == "s":
+        factor = (veci - vecj)/(veci + vecj)
+    return factor
+
+def ftrans(pol, veci, vecj, epsi, epsj):
+    '''
+    Generic transmission fresnel factors, see Eq. (13) of PRB 94, 115314 (2016).
+    '''
+    if pol == "p":
+        factor = (2 * veci * np.sqrt(epsi * epsj))/(veci * epsj + vecj * epsi)
+    elif pol == "s":
+        factor = (2 * veci)/(veci + vecj)
     return factor
 
 def shgyield(gamma, riF):
@@ -101,8 +98,7 @@ def shgyield(gamma, riF):
     Calculates the final broadened SHG yield, ready to be written to file.
     See Eq. (38) of PRB 94, 115314 (2016).
     '''
-    RiF = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * \
-                    np.absolute((1/nl) * gamma * riF)**2
+    RiF = SCALE * M2TOCM2 * PREFACTOR * (ONEE ** 2) * np.absolute((1/nl) * gamma * riF)**2
     broadened = broad(RiF, SIGMA)
     return broadened
 
@@ -131,40 +127,36 @@ SCALE = 1e20                                 # Final yield in 1e-20 (cm^2/W)
 THETA0 = np.radians(PARAM['parameters']['theta']) # Converts theta to radians
 PHI = np.radians(PARAM['parameters']['phi']) # Converts phi to radians
 SIGMA = PARAM['parameters']['sigma'] * 128/3 # Std. dev. for gaussian broadening
-LAMBDA0 = (PLANCK * LSPEED * 1e9)/ONEE       # Energy range expressed in nm
 PREFACTOR = 1/(2 * EPS0 * HBAR**2 * LSPEED**3 * np.cos(THETA0)**2)
 
 
 ## Linear responses: chi1 and epsilons
 CHI1NORM = PARAM['chi1']['norm']                # Normalization for layered chi1
-epsl = epsilon(PARAM['chi1']['chil'], CHI1NORM) # Epsilon from chi1, layered, normalized
 epsb = epsilon(PARAM['chi1']['chib'], 1)        # Epsilon from chi1, bulk
 epsv1w = 1                              # Epsilon for vacuum = 1
 epsv2w = 1                              # Epsilon for vacuum = 1
 epsb1w = epsb[:MAXE]                    # Epsilon for bulk, 1w
 epsb2w = epsb[1::2][:MAXE]              # Epsilon for bulk, 2w
-epsl1w = epsl[:MAXE]                    # Epsilon for layer, 1w
-epsl2w = epsl[1::2][:MAXE]              # Epsilon for layer, 2w
 
 
 ## Reflection model, see PRB 93, 235304 (2016).
-if MODE == "3-layer":
-    ell1w = "l"
-    ell2w = "l"
-elif MODE == "2-layer-fresnel":
-    ell1w = "b"
-    ell2w = "v"
-elif MODE == "2-layer-bulk":
-    ell1w = "b"
-    ell2w = "b"
-elif MODE == "2-layer-vacuum":
-    ell1w = "v"
-    ell2w = "v"
-elif MODE == "3-layer-hybrid":
-    ell1w = "b"
-    ell2w = "l"
-epsl1w = eval("eps" + ell1w + "1w")
-epsl2w = eval("eps" + ell2w + "2w")
+if MODE == "3-layer": # The incident fields and SHG both occur in the thin layer (l)
+    epsl = epsilon(PARAM['chi1']['chil'], CHI1NORM) # Epsilon from chi1, layered, normalized
+    epsl1w = epsl[:MAXE] # Epsilon for layer, 1w
+    epsl2w = epsl[1::2][:MAXE] # Epsilon for layer, 2w
+elif MODE == "2-layer-fresnel": # The incident fields in bulk, SHG in vacuum
+    epsl1w = epsb1w
+    epsl2w = epsv2w
+elif MODE == "2-layer-bulk": # Both incident fields and SHG in bulk
+    epsl1w = epsb1w
+    epsl2w = epsb2w
+elif MODE == "2-layer-vacuum": # Both incident fields and SHG in vacuum
+    epsl1w = epsv2w
+    epsl2w = epsv2w
+elif MODE == "3-layer-hybrid": # Incident field in bulk, SHG in thin layer (l)
+    epsl = epsilon(PARAM['chi1']['chil'], CHI1NORM) # Epsilon from chi1, layered, normalized
+    epsl1w = epsb1w
+    epsl2w = epsl[1::2][:MAXE] # Epsilon for layer, 2w
 
 
 ## Nonlinear responses: chi2 components to be used in the formulas below.
@@ -224,22 +216,22 @@ wl2w = np.sqrt(epsl2w - (np.sin(THETA0)**2)) # Wave vector for layer, 2w
 
 ## Fresnel factors for 1w and 2w, s and p polarizations. See Eqs. (13) and (14)
 ## of PRB 94, 115314 (2016).
-tvls = fresnel("t", "v", ell1w, "s", "1w") # Transmission, 1w, vacuum-layer, s
-tvlp = fresnel("t", "v", ell1w, "p", "1w") # Transmission, 1w, vacuum-layer, p
-tlbs = fresnel("t", ell1w, "b", "s", "1w") # Transmission, 1w, layer-bulk,   s
-tlbp = fresnel("t", ell1w, "b", "p", "1w") # Transmission, 1w, layer-bulk,   p
-Tvls = fresnel("t", "v", ell2w, "s", "2w") # Transmission, 2w, vacuum-layer, s
-Tvlp = fresnel("t", "v", ell2w, "p", "2w") # Transmission, 2w, vacuum-layer, p
-Tlbs = fresnel("t", ell2w, "b", "s", "2w") # Transmission, 2w, layer-bulk,   s
-Tlbp = fresnel("t", ell2w, "b", "p", "2w") # Transmission, 2w, layer-bulk,   p
-rvls = fresnel("r", "v", ell1w, "s", "1w") # Reflection,   1w, vacuum-layer, s
-rvlp = fresnel("r", "v", ell1w, "p", "1w") # Reflection,   1w, vacuum-layer, p
-rlbs = fresnel("r", ell1w, "b", "s", "1w") # Reflection,   1w, layer-bulk,   s
-rlbp = fresnel("r", ell1w, "b", "p", "1w") # Reflection,   1w, layer-bulk,   p
-Rvls = fresnel("r", "v", ell2w, "s", "2w") # Reflection,   2w, vacuum-layer, s
-Rvlp = fresnel("r", "v", ell2w, "p", "2w") # Reflection,   2w, vacuum-layer, p
-Rlbs = fresnel("r", ell2w, "b", "s", "2w") # Reflection,   2w, layer-bulk,   s
-Rlbp = fresnel("r", ell2w, "b", "p", "2w") # Reflection,   2w, layer-bulk,   p
+tvls = ftrans("s", wv1w, wl1w, epsv1w, epsl1w) # Transmission, 1w, vacuum-layer, s
+tvlp = ftrans("p", wv1w, wl1w, epsv1w, epsl1w) # Transmission, 1w, vacuum-layer, p
+tlbs = ftrans("s", wl1w, wb1w, epsl1w, epsb1w) # Transmission, 1w, layer-bulk,   s
+tlbp = ftrans("p", wl1w, wb1w, epsl1w, epsb1w) # Transmission, 1w, layer-bulk,   p
+Tvls = ftrans("s", wv2w, wl2w, epsv2w, epsl2w) # Transmission, 2w, vacuum-layer, s
+Tvlp = ftrans("p", wv2w, wl2w, epsv2w, epsl2w) # Transmission, 2w, vacuum-layer, p
+Tlbs = ftrans("s", wl2w, wb2w, epsl2w, epsb2w) # Transmission, 2w, layer-bulk,   s
+Tlbp = ftrans("p", wl2w, wb2w, epsl2w, epsb2w) # Transmission, 2w, layer-bulk,   p
+rvls = freflc("s", wv1w, wl1w, epsv1w, epsl1w) # Reflection,   1w, vacuum-layer, s
+rvlp = freflc("p", wv1w, wl1w, epsv1w, epsl1w) # Reflection,   1w, vacuum-layer, p
+rlbs = freflc("s", wl1w, wb1w, epsl1w, epsb1w) # Reflection,   1w, layer-bulk,   s
+rlbp = freflc("p", wl1w, wb1w, epsl1w, epsb1w) # Reflection,   1w, layer-bulk,   p
+Rvls = freflc("s", wv2w, wl2w, epsv2w, epsl2w) # Reflection,   2w, vacuum-layer, s
+Rvlp = freflc("p", wv2w, wl2w, epsv2w, epsl2w) # Reflection,   2w, vacuum-layer, p
+Rlbs = freflc("s", wl2w, wb2w, epsl2w, epsb2w) # Reflection,   2w, layer-bulk,   s
+Rlbp = freflc("p", wl2w, wb2w, epsl2w, epsb2w) # Reflection,   2w, layer-bulk,   p
 
 
 ## Multiple reflections framework. See Eqs. (16), (17), (21), (22), (26),
