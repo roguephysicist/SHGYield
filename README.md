@@ -51,12 +51,12 @@ Usage:
 You can find a very complete input file inside the `example` directory.
 
 
-Example
+Example and tutorial
 ------------------------------------
 
-An example case using the Si(111)(1x1):H surface is included in the `example` directory. It includes a very complete input file, all the components of the susceptibility tensor, and some reference data and relevant plots.
+An example case using the Si(111)(1x1):H surface is included in the `example` directory. It includes a very complete input file, all the components of the susceptibility tensor, and some reference data with relevant plots.
 
-Also included is a Jupyter notebook with a short tutorial explaining some the othe theory and how the equations are programmed. This tutorial walks the user through a couple of example calculations using this surface.
+Also included is a Jupyter notebook with a brief but thorough tutorial that explains some the of the theory and how the equations are coded. This tutorial walks the user through the battery of calculations required for the SSHG yield for this surface.
 
 
 Testing
@@ -68,7 +68,7 @@ A test script is included in the `tests` directory, and can be run automatically
 Theory
 ------------------------------------
 
-In summary, SHGYield.py produces the SHG radiation (in reflectance) produced from a semiconductor surface. It requires the susceptibility tensors that can be calculated as explained below. The theory is developed considering a reflectance model with three distinct regions that allows the user to readily simulate the SHG response of thin-films over bulk substrates, or of any crystalline surface with any symmetry considerations (see my previous reply to this thread). 
+SHGYield.py produces the SHG radiation (in reflectance) produced from a semiconductor surface. It requires the susceptibility tensors that can be calculated as explained below. The theory is developed considering a reflectance model with three distinct regions that allows the user to readily simulate the SHG response of thin-films over bulk substrates, or of any crystalline surface with any symmetry considerations. 
 
 In order to calculate the SHG yield, you must first calculate the linear and nonlinear susceptibility tensor (<b><i>χ</i></b>(−2ω; ω, ω), <b><i>χ</i></b> for short) for the material of interest. The theory surrounding this problem is still being developed, and there are many ways to go about it. We leave it to the reader to find the best method for their particular problem. As an example, we use [ABINIT](http://www.abinit.org) to calculate the electron density/wavefunction/energies and then [TINIBA](https://github.com/bemese/tiniba) to calculate the relevant matrix elements and the <b><i>χ</i></b> tensor components. The exact method that we use is derived in full detail in [Phys. Rev. B 91, 075302 (2015)](https://doi.org/10.1103/PhysRevB.91.075302). The program does NOT care how you have produced the susceptibility tensors; you can use different frameworks (such as MBPT, DFT-LDA, TDDFT, etc.) for producing the linear and nonlinear susceptibility tensors. 
 

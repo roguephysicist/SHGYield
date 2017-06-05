@@ -46,7 +46,7 @@ def savefile(file, freq, val1, val2, val3, val4):
                header='RiF 1e-20 (cm^2/W)\n1w(eV) RpP'+15*" "+\
                       'RpS'+15*" "+'RsP'+15*" "+'RsS')
 
-def epsilon(in_file, norm):
+def epsload(in_file, norm):
     '''
     Reads calculated chi1 file, that is organized as
     Energy(1w) Re[chi_xx] Im[chi_xx] Re[chi_yy] Im[chi_yy] Re[chi_zz] Im[chi_zz].
@@ -132,7 +132,7 @@ PREFACTOR = 1/(2 * EPS0 * HBAR**2 * LSPEED**3 * np.cos(THETA0)**2)
 
 ## Linear responses: chi1 and epsilons
 CHI1NORM = PARAM['chi1']['norm']                # Normalization for layered chi1
-epsb = epsilon(PARAM['chi1']['chib'], 1)        # Epsilon from chi1, bulk
+epsb = epsload(PARAM['chi1']['chib'], 1)        # Epsilon from chi1, bulk
 epsv1w = 1                              # Epsilon for vacuum = 1
 epsv2w = 1                              # Epsilon for vacuum = 1
 epsb1w = epsb[:MAXE]                    # Epsilon for bulk, 1w
@@ -141,7 +141,7 @@ epsb2w = epsb[1::2][:MAXE]              # Epsilon for bulk, 2w
 
 ## Reflection model, see PRB 93, 235304 (2016).
 if MODE == "3-layer": # The incident fields and SHG both occur in the thin layer (l)
-    epsl = epsilon(PARAM['chi1']['chil'], CHI1NORM) # Epsilon from chi1, layered, normalized
+    epsl = epsload(PARAM['chi1']['chil'], CHI1NORM) # Epsilon from chi1, layered, normalized
     epsl1w = epsl[:MAXE] # Epsilon for layer, 1w
     epsl2w = epsl[1::2][:MAXE] # Epsilon for layer, 2w
 elif MODE == "2-layer-fresnel": # The incident fields in bulk, SHG in vacuum
@@ -154,7 +154,7 @@ elif MODE == "2-layer-vacuum": # Both incident fields and SHG in vacuum
     epsl1w = epsv2w
     epsl2w = epsv2w
 elif MODE == "3-layer-hybrid": # Incident field in bulk, SHG in thin layer (l)
-    epsl = epsilon(PARAM['chi1']['chil'], CHI1NORM) # Epsilon from chi1, layered, normalized
+    epsl = epsload(PARAM['chi1']['chil'], CHI1NORM) # Epsilon from chi1, layered, normalized
     epsl1w = epsb1w
     epsl2w = epsl[1::2][:MAXE] # Epsilon for layer, 2w
 
