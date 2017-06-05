@@ -21,7 +21,7 @@ This program has several potential applications and uses:
 
 For example, the figure below is an overview of the angular dependence of the reflected SHG Yield from the Si(111)(1x1)H surface. Experimentalists will find this very useful, as they can plan the experiment accordingly in order to optimize the output signal strength and polarization.
 
-![An overview of the angular dependence of the SHG Yield for the Si(111)(1x1)H surface](figures/3D-Si1x1.png)
+![An overview of the angular dependence of the SHG Yield for the Si(111)(1x1)H surface](example/figures/3D-Si1x1.png)
 
 
 References
@@ -78,21 +78,21 @@ In order to calculate the SHG yield, you must first calculate the linear and non
 
 <b><i>χ</i></b> determines the nonlinear polarizability of a material and is responsible for second-harmonic generation. This relationship is expressed as
 
-<img src="figures/polar.png" height="25">
+<img src="example/figures/polar.png" height="25">
 
 where a, b, and c are crystallographic directions that depend on how you orient your crystalline structure. We can see that a material can produce a polarization response in direction a from two incident fields (<i>E</i>) in directions b and c, by means of <i>χ</i><sup>abc</sup>.
 
 <b><i>χ</i></b> is a third-rank tensor, and thus has 27 possible components (unique combinations of a, b, and c; for instance, aaa, aab, and so on.). Second-harmonic generation implies that the incoming fields are identical (two photons of equal energy in, one photon of double-energy out) so it is also implied that 
 
-<img src="figures/chi2-shg.png" height="25">
+<img src="example/figures/chi2-shg.png" height="25">
 
 for this particular phenomenon. This reduces 9 of the possible combinations, reducing to 18 unique components. It is very convenient to express the crystallographic directions in terms of *x*, *y*, and *z*; therefore, we can express <b><i>χ</i></b> with all 18 components as
 
-<img src="figures/chi2-full.png" height="90">
+<img src="example/figures/chi2-full.png" height="90">
 
 Symmetry relations are very important for determining <b><i>χ</i></b>. A given crystal symmetry can greatly reduce the complexity of the problem by eliminating many of the components. For instance, for the (001) face of cubic crystals, we have that
 
-<img src="figures/chi2-001.png" height="90">
+<img src="example/figures/chi2-001.png" height="90">
 
 which has only 3 independent components. There are many [articles](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.35.1129) and [books](https://books.google.com/books?id=bdFju3af2FsC) with tables and extensive discussion that describe the form that this tensor should have for a given symmetry.
 
@@ -101,11 +101,11 @@ which has only 3 independent components. There are many [articles](https://journ
 
 The case for <i>χ</i><sup>ab</sup>(ω) is considerable simpler. <i>χ</i><sup>ab</sup>(ω) is directly related to the dielectric function of the material
 
-<img src="figures/epsilon.png" height="25">
+<img src="example/figures/epsilon.png" height="25">
 
 which is directly related to the index of refraction as
 
-<img src="figures/refrac.png" height="45">
+<img src="example/figures/refrac.png" height="45">
 
 The <i>χ</i><sup>ab</sup>(ω) spectra should obviously have non-zero regions; otherwise, the problem is not very interesting.
 
