@@ -21,6 +21,10 @@ date: 07 February 2017
 bibliography: paper.bib
 ---
 
+---
+nocite: | 
+  @andersonFMATS17, @andersonPRB16b, @andersonPRB16a, @andersonPRB15, @andersonARXIV16, @andersonthesis
+
 # Summary
 
 `SHGYield.py` is a python program for calculating the surface second-harmonic generation (SSHG) yield (in reflectance) for semiconductor surfaces. 
@@ -40,11 +44,4 @@ For example, the figure below is an overview of the angular dependence of the re
 
 # References
 
-The complete theory is derived step-by-step in [Phys. Rev. B 94, 115314 (2016)](https://doi.org/10.1103/PhysRevB.94.115314). This software has been developed and used in the following publications:
-
-* [Front. Mater. 4:12 (2017)](https://doi.org/10.3389/fmats.2017.00012)
-* [Phys. Rev. B 94, 115314 (2016)](https://doi.org/10.1103/PhysRevB.94.115314)
-* [Phys. Rev. B 93, 235304 (2016)](https://doi.org/10.1103/PhysRevB.93.235304)
-* [Phys. Rev. B 91, 075302 (2015)](https://doi.org/10.1103/PhysRevB.91.075302)
-* [arXiv:1604.07722 (2016)](https://arxiv.org/abs/1604.07722)
-* [Theoretical Optical Second-Harmonic Calculations for Surfaces (2016)](https://doi.org/10.13140/RG.2.2.35619.66082)
+The complete theory is derived step-by-step in Ref. [@andersonPRB16b]. This software has been developed and used in the following publications:
