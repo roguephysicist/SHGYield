@@ -1,7 +1,8 @@
 SHG Yield for Semiconductor Surfaces
 ====================================
 
-[![Zenodo](https://zenodo.org/badge/11697217.svg)](https://zenodo.org/badge/latestdoi/11697217)
+[![JOSS](http://joss.theoj.org/papers/10.21105/joss.00242/status.svg)](http://dx.doi.org/10.21105/joss.00242)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.803483.svg)](https://doi.org/10.5281/zenodo.803483)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![PyPI](https://img.shields.io/pypi/pyversions/Django.svg)]()
 
