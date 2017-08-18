@@ -126,7 +126,7 @@ TINIBASCALE = 1e6                            # Scaling chi2 in 1e6 (pm^2/V)
 SCALE = 1e20                                 # Final yield in 1e-20 (cm^2/W)
 THETA0 = np.radians(PARAM['parameters']['theta']) # Converts theta to radians
 PHI = np.radians(PARAM['parameters']['phi']) # Converts phi to radians
-SIGMA = PARAM['parameters']['sigma'] * 128/3 # Std. dev. for gaussian broadening
+SIGMA = PARAM['parameters']['sigma']         # Std. dev. for gaussian broadening
 PREFACTOR = 1/(2 * EPS0 * HBAR**2 * LSPEED**3 * np.cos(THETA0)**2)
 
 
