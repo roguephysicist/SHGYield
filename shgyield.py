@@ -6,6 +6,9 @@ elements calculated with ABINIT, an open source ab initio software, and TINIBA,
 our in-house optical calculation software. For a complete overview of the
 theory, see PRB 94, 115314 (2016).
 
+TODO:
+Make an epsilon spline so there is no need to halve energy range.
+
 required packages:
 `sys, yaml, numpy, scipy`
 
