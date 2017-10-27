@@ -33,7 +33,7 @@ set tmargin at screen TOP
 set bmargin at screen TOP-DIV+SEP
 set lmargin at screen LEFT
 set rmargin at screen LEFT+DIV-SEP
-p 'si111-shgyield.out' u (2*$1):2 t 'R_{pP}' lw 2 lc rgb "#2aa198" w l
+p 'si111-reference.out' u (2*$1):2 t 'R_{pP}' lw 2 lc rgb "#2aa198" w l
 
 unset xlabel
 set format x ''
@@ -44,7 +44,7 @@ set tmargin at screen TOP
 set bmargin at screen TOP-DIV+SEP
 set lmargin at screen LEFT+DIV+SEP
 set rmargin at screen LEFT+2*DIV
-p 'si111-shgyield.out' u (2*$1):3 t 'R_{pS}' lw 2 lc rgb "#dc322f" w l
+p 'si111-reference.out' u (2*$1):3 t 'R_{pS}' lw 2 lc rgb "#dc322f" w l
 
 set xlabel "Two-photon energy (eV)" 
 set format x '%.1f'
@@ -55,7 +55,7 @@ set tmargin at screen TOP-DIV-SEP
 set bmargin at screen TOP-2*DIV
 set lmargin at screen LEFT
 set rmargin at screen LEFT+DIV-SEP
-p 'si111-shgyield.out' u (2*$1):4 t 'R_{sP}' lw 2 lc rgb "#6c71c4" w l
+p 'si111-reference.out' u (2*$1):4 t 'R_{sP}' lw 2 lc rgb "#6c71c4" w l
 
 set xlabel "Two-photon energy (eV)" 
 set format x '%.1f'
@@ -66,7 +66,7 @@ set tmargin at screen TOP-DIV-SEP
 set bmargin at screen TOP-2*DIV
 set lmargin at screen LEFT+DIV+SEP
 set rmargin at screen LEFT+2*DIV
-p 'si111-shgyield.out' u (2*$1):5 t 'R_{sS}' lw 2 lc rgb "#859900" w l
+p 'si111-reference.out' u (2*$1):5 t 'R_{sS}' lw 2 lc rgb "#859900" w l
 
 unset multiplot
 
