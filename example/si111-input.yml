@@ -21,7 +21,7 @@ parameters:
     theta: 65           # angle of incidence in degrees
     phi:   30           # azimuthal angle, or range of angles in degrees
     # phi:   [0, 360, 1]  # azimuthal angle, or range of angles in degrees
-    sigma: 4.26666666   # the sigma parameter of the gaussian function in samples;
+    sigma: 5            # the sigma parameter of the gaussian function in samples;
                         # for data sampled every 0.01 eV, a value of 5 means that 
                         # sigma = 0.05 eV.
 

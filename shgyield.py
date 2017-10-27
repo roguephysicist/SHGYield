@@ -243,7 +243,7 @@ def shgyield(pol, azimuth):
     Calculates the final broadened SHG yield, ready to be written to file.
     See Eq. (38) of PRB 94, 115314 (2016).
     '''
-    RiF = SCALE * M2TOCM2 * PREFACTOR * (ENERGY ** 2) * \
+    RiF = M2TOCM2 * PREFACTOR * (ENERGY ** 2) * \
           np.absolute((1/INDICES['nl']) * GAMMA[pol] * rfactors(azimuth)[pol])**2
     broadened = broad(RiF, SIGMA)
     return broadened
@@ -298,7 +298,6 @@ LSPEED = constants.c                         # Speed of light in m/s
 PM2TOM2 = 1e-24                              # Convert from pm^2 to m^2
 M2TOCM2 = 1e4                                # Convert from m^2 to cm^2
 TINIBASCALE = 1e6                            # Scaling chi2 in 1e6 (pm^2/V)
-SCALE = 1e20                                 # Final yield in 1e-20 (cm^2/W)
 THETA0 = np.radians(PARAM['parameters']['theta']) # Converts theta to radians
 SIGMA = PARAM['parameters']['sigma']         # Std. dev. for gaussian broadening
 PREFACTOR = 1/(2 * EPS0 * HBAR**2 * LSPEED**3 * np.cos(THETA0)**2)
@@ -306,15 +305,15 @@ PREFACTOR = 1/(2 * EPS0 * HBAR**2 * LSPEED**3 * np.cos(THETA0)**2)
 
 ## Linear responses: chi1 and epsilons
 CHI1NORM = PARAM['chi1']['norm']            # Normalization for layered chi1
-epsb = epsload(PARAM['chi1']['chib'], 1)    # Epsilon from chi1, bulk
+EPSB = epsload(PARAM['chi1']['chib'], 1)    # Epsilon from chi1, bulk
 
-EPS = {'1w': {'v': 1, 'b': epsb[0]}, '2w': {'v': 1, 'b': epsb[1]}}
+EPS = {'1w': {'v': 1, 'b': EPSB[0]}, '2w': {'v': 1, 'b': EPSB[1]}}
 
 ## Reflection model, see PRB 93, 235304 (2016).
 if MODE == "3-layer": # The incident fields and SHG both occur in the thin layer (l)
-    epsl = epsload(PARAM['chi1']['chil'], CHI1NORM) # Epsilon from chi1, layered, normalized
-    EPS['1w']['l'] = epsl[0]
-    EPS['2w']['l'] = epsl[1]
+    EPSL = epsload(PARAM['chi1']['chil'], CHI1NORM) # Epsilon from chi1, layered, normalized
+    EPS['1w']['l'] = EPSL[0]
+    EPS['2w']['l'] = EPSL[1]
 elif MODE == "2-layer-fresnel": # The incident fields in bulk, SHG in vacuum
     EPS['1w']['l'] = EPS['1w']['b']
     EPS['2w']['l'] = EPS['2w']['v']
@@ -325,9 +324,9 @@ elif MODE == "2-layer-vacuum": # Both incident fields and SHG in vacuum
     EPS['1w']['l'] = EPS['2w']['v']
     EPS['2w']['l'] = EPS['2w']['v']
 elif MODE == "3-layer-hybrid": # Incident field in bulk, SHG in thin layer (l)
-    epsl = epsload(PARAM['chi1']['chil'], CHI1NORM) # Epsilon from chi1, layered, normalized
+    EPSL = epsload(PARAM['chi1']['chil'], CHI1NORM) # Epsilon from chi1, layered, normalized
     EPS['1w']['l'] = EPS['1w']['b']
-    EPS['2w']['l'] = epsl[1]                        # Epsilon for layer, 2w
+    EPS['2w']['l'] = EPSL[1]                        # Epsilon for layer, 2w
 
 
 ## Nonlinear responses: chi2 components to be used in the formulas below.
@@ -374,34 +373,34 @@ INDICES = {'nl': np.sqrt(EPS['1w']['l']), 'Nl': np.sqrt(EPS['2w']['l'])}
 ## Multiple reflections framework. See Eqs. (16), (17), (21), (22), (26),
 ## and (30) of PRB 94, 115314 (2016).
 if PARAM['multiref']['enable'] and MODE == '3-layer':
-    thickness = PARAM['multiref']['thickness'] # Thickness d of the thin layer \ell
-    depth = PARAM['multiref']['depth']         # Depth d2 of the polarization sheet
-    varphi = 4 * np.pi * ((ENERGY * thickness * 1e-9)/(PLANCK * LSPEED)) * wvec(EPS['1w']['l'])
-    delta = 8 * np.pi * ((ENERGY * thickness * 1e-9)/(PLANCK * LSPEED)) * wvec(EPS['2w']['l'])
-    if depth == "average":
-        RMp = (frefp(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * delta/2)) \
+    THICKNESS = PARAM['multiref']['thickness'] # Thickness d of the thin layer \ell
+    DEPTH = PARAM['multiref']['depth']         # Depth d2 of the polarization sheet
+    VARPHI = 4 * np.pi * ((ENERGY * THICKNESS * 1e-9)/(PLANCK * LSPEED)) * wvec(EPS['1w']['l'])
+    DELTA = 8 * np.pi * ((ENERGY * THICKNESS * 1e-9)/(PLANCK * LSPEED)) * wvec(EPS['2w']['l'])
+    if DEPTH == "average":
+        RMp = (frefp(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * DELTA/2)) \
             / (1 + (frefp(EPS['2w']['v'], EPS['2w']['l']) \
-                 * frefp(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * delta))) \
-            * np.sin(delta/2)/(delta/2)
-        RMs = (frefs(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * delta/2)) \
+                 * frefp(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * DELTA))) \
+            * np.sin(DELTA/2)/(DELTA/2)
+        RMs = (frefs(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * DELTA/2)) \
             / (1 + (frefs(EPS['2w']['v'], EPS['2w']['l']) \
-                 * frefs(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * delta))) \
-            * np.sin(delta/2)/(delta/2)
+                 * frefs(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * DELTA))) \
+            * np.sin(DELTA/2)/(DELTA/2)
     else:
-        D2 = float(depth)
-        delta0 = 8 * np.pi * ((ENERGY * D2 * 1e-9)/(PLANCK * LSPEED)) * wvec(EPS['2w']['l'])
-        RMp = (frefp(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * delta0)) \
+        D2 = float(DEPTH)
+        DELTA0 = 8 * np.pi * ((ENERGY * D2 * 1e-9)/(PLANCK * LSPEED)) * wvec(EPS['2w']['l'])
+        RMp = (frefp(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * DELTA0)) \
             / (1 + (frefp(EPS['2w']['v'], EPS['2w']['l']) \
-                 * frefp(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * delta)))
-        RMs = (frefs(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * delta0)) \
+                 * frefp(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * DELTA)))
+        RMs = (frefs(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * DELTA0)) \
             / (1 + (frefs(EPS['2w']['v'], EPS['2w']['l']) \
-                 * frefs(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * delta)))
-    rMp = (frefp(EPS['1w']['l'], EPS['1w']['b']) * np.exp(1j * varphi)) \
+                 * frefs(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * DELTA)))
+    rMp = (frefp(EPS['1w']['l'], EPS['1w']['b']) * np.exp(1j * VARPHI)) \
         / (1 + (frefp(EPS['1w']['v'], EPS['1w']['l']) \
-             * frefp(EPS['1w']['l'], EPS['1w']['b']) * np.exp(1j * varphi)))
-    rMs = (frefs(EPS['1w']['l'], EPS['1w']['b']) * np.exp(1j * varphi)) \
+             * frefp(EPS['1w']['l'], EPS['1w']['b']) * np.exp(1j * VARPHI)))
+    rMs = (frefs(EPS['1w']['l'], EPS['1w']['b']) * np.exp(1j * VARPHI)) \
         / (1 + (frefs(EPS['1w']['v'], EPS['1w']['l']) \
-             * frefs(EPS['1w']['l'], EPS['1w']['b']) * np.exp(1j * varphi)))
+             * frefs(EPS['1w']['l'], EPS['1w']['b']) * np.exp(1j * VARPHI)))
     RMplusp = 1 + RMp
     RMpluss = 1 + RMs
     RMminusp = 1 - RMp
@@ -436,7 +435,9 @@ GAMMA = {'pP': (ftranp(EPS['2w']['v'], EPS['2w']['l'])/INDICES['Nl']) * \
 ## See Eqs. (44) and (38) of PRB 94, 115314 (2016).
 DATA = []
 for phi in PHI:
-    YIELD = formatdata(ENERGY, shgyield('pP', phi), shgyield('pS', phi), shgyield('sP', phi), shgyield('sS', phi), phi)
+    YIELD = formatdata(ENERGY,
+                       shgyield('pP', phi), shgyield('pS', phi),
+                       shgyield('sP', phi), shgyield('sS', phi), phi)
     DATA.append(YIELD)
 
 FINAL = np.concatenate(DATA)
