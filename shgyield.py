@@ -270,7 +270,7 @@ def savefile(file, data):
     '''
     np.savetxt(file, data, fmt=('%05.2f', '%.8e', '%.8e', '%.8e', '%.8e', '%05.1f'),
                delimiter='    ',
-               header='RiF 1e-20 (cm^2/W)\n1w(eV) RpP'+15*" "+\
+               header='RiF (cm^2/W)\n1w(eV) RpP'+15*" "+\
                       'RpS'+15*" "+'RsP'+15*" "+'RsS'+15*" "+'phi(deg)')
 
 ## Initialization: Parse input file, establish relevant modes.
