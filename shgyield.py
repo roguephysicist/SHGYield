@@ -8,7 +8,8 @@ theory, see PRB 94, 115314 (2016).
 
 TODO:
 * Dict comprehension to reduce array creation
-* Consider switching over to matrix expressions for 'rpP', 'rpS', 'rsP', and 'rsS'
+* Switch to matrix expressions
+* Add broadening for input components
 
 required packages:
 `sys, yaml, numpy, scipy`
