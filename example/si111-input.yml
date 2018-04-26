@@ -72,6 +72,9 @@ chi2:
     zyz: chi2-nonlinear/SiH1x1-chi2-zyz
     zxz: chi2-nonlinear/SiH1x1-chi2-zxz
     zxy: chi2-nonlinear/SiH1x1-chi2-zxy
+    norm: 1     # CHI2 normalization, if required
+    scale: 1e6  # Necessary if your program includes a scaling factor
+                # This will eventually be deprecated! NOT NEEDED FOR BULK CALCULATION!!!
 
 # Path to desired output file
 output:     si111-shgyield.out

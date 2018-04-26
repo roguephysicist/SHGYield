@@ -58,7 +58,7 @@ def epsload(in_file, norm):
     eps2w = 1 + (4 * np.pi * chi2w)
     return eps1w, eps2w
 
-def shgload(infile):
+def shgload(infile, norm):
     '''
     Loads chi^{abc} listed in the input file, with the following columns:
     Energy(1w) Re[1w] Im[1w] Re[2w] Im[2w]. Sums 1w and 2w real and imaginary
@@ -68,12 +68,12 @@ def shgload(infile):
     range or value. Returns numpy array with the appropriate scale and units.
     '''
     freq, re1w, im1w, re2w, im2w = np.loadtxt(infile, unpack=True)
-    real = re1w + re2w
-    imag = im1w + im2w
+    real = (re1w + re2w) * norm
+    imag = (im1w + im2w) * norm
     respl = InterpolatedUnivariateSpline(freq, real, ext=2)
     imspl = InterpolatedUnivariateSpline(freq, imag, ext=2)
     comp = respl(ENERGY) + 1j * imspl(ENERGY)
-    chi2 = TINIBASCALE * PM2TOM2 * comp
+    chi2 = SCALE * PM2TOM2 * comp
     return chi2
 
 def wvec(eps):
@@ -94,7 +94,8 @@ def frefp(epsi, epsj):
     '''
     Generic reflection fresnel factors, see Eqs. (13) and (14) of PRB 94, 115314 (2016).
     '''
-    factor = ((wvec(epsi) * epsj) - (wvec(epsj) * epsi))/((wvec(epsi) * epsj) + (wvec(epsj) * epsi))
+    factor = ((wvec(epsi) * epsj) - (wvec(epsj) * epsi))/\
+             ((wvec(epsi) * epsj) + (wvec(epsj) * epsi))
     return factor
 
 def ftrans(epsi, epsj):
@@ -108,7 +109,8 @@ def ftranp(epsi, epsj):
     '''
     p-polarized transmission fresnel factors, see Eqs. (13) and (14) of PRB 94, 115314 (2016).
     '''
-    factor = (2 * wvec(epsi) * np.sqrt(epsi * epsj))/(wvec(epsi) * epsj + wvec(epsj) * epsi)
+    factor = (2 * wvec(epsi) * np.sqrt(epsi * epsj))/\
+             (wvec(epsi) * epsj + wvec(epsj) * epsi)
     return factor
 
 def rfactors(azimuth):
@@ -298,7 +300,7 @@ EPS0 = constants.epsilon_0                   # \epsilon_{0} in F/m
 LSPEED = constants.c                         # Speed of light in m/s
 PM2TOM2 = 1e-24                              # Convert from pm^2 to m^2
 M2TOCM2 = 1e4                                # Convert from m^2 to cm^2
-TINIBASCALE = 1                            # Scaling chi2 in 1e6 (pm^2/V)
+SCALE = float(PARAM['chi2']['scale'])        # if a scaling factor is included (pm^2/V)
 THETA0 = np.radians(PARAM['parameters']['theta']) # Converts theta to radians
 SIGMA = PARAM['parameters']['sigma']         # Std. dev. for gaussian broadening
 PREFACTOR = 1/(2 * EPS0 * HBAR**2 * LSPEED**3 * np.cos(THETA0)**2)
@@ -340,6 +342,7 @@ elif MODE == "3-layer-hybrid": # Incident field in bulk, SHG in thin layer (l)
 ##
 ## The end result is a dictionary (CHI2) with the component name as the 'key',
 ## and a numpy array with the component data as the 'value'.
+CHI2NORM = PARAM['chi2']['norm']            # Normalization for chi2
 CHI2 = {}
 CHI2_EQUIV = {}
 ALL_COMPONENTS = ['xxx', 'xyy', 'xzz', 'xyz', 'xxz', 'xxy',
@@ -349,7 +352,7 @@ for component in ALL_COMPONENTS:
     if component in PARAM['chi2']:
         value = PARAM['chi2'][component]
         try:
-            shg = shgload(value)
+            shg = shgload(value, CHI2NORM)
         except (ValueError, OSError, IOError):
             if value == 0:
                 shg = 0
