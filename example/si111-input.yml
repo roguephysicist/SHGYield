@@ -42,7 +42,8 @@ chi1:
     chib: chi1-linear/SiBulk-chi1-xx_yy_zz
     chil: chi1-linear/SiH1x1-chi1-xx_yy_zz
     norm: 1.2659296143
-
+    sigma: 5    # sigma for broadening, in samples (5*0.01 eV steps = 0.05 eV)
+    
 # chi2: nonlinear susceptibility tensor 
 # Components should be in separate files, and listed separately. Symmetry 
 # relations can be represented here. There are 4 options for each component:
@@ -72,9 +73,11 @@ chi2:
     zyz: chi2-nonlinear/SiH1x1-chi2-zyz
     zxz: chi2-nonlinear/SiH1x1-chi2-zxz
     zxy: chi2-nonlinear/SiH1x1-chi2-zxy
-    norm: 1     # CHI2 normalization, if required
+    norm: 1     # CHI2 normalization; for bulk: acellz * 52.9177249 for pm^{2}/V
+                #                     for surface: 1
     scale: 1e6  # Necessary if your program includes a scaling factor
                 # This will eventually be deprecated! NOT NEEDED FOR BULK CALCULATION!!!
+    sigma: 5    # sigma for broadening, in samples (5*0.01 eV steps = 0.05 eV)
 
 # Path to desired output file
 output:     si111-shgyield.out

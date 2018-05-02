@@ -48,8 +48,8 @@ def epsload(in_file, norm):
     and returns numpy arrays with the 1w and 2w epsilons.
     '''
     freq, rexx, imxx, reyy, imyy, rezz, imzz = np.loadtxt(in_file, unpack=True)
-    real = ((rexx + reyy + rezz)/3) * norm      # real average
-    imag = ((imxx + imyy + imzz)/3) * norm      # imag average
+    real = broad(((rexx + reyy + rezz)/3) * norm, PARAM['chi1']['sigma']) # real average
+    imag = broad(((imxx + imyy + imzz)/3) * norm, PARAM['chi1']['sigma']) # imag average
     respl = InterpolatedUnivariateSpline(freq, real, ext=2)
     imspl = InterpolatedUnivariateSpline(freq, imag, ext=2)
     chi1w = respl(ENERGY) + 1j * imspl(ENERGY)  # complex average, 1w
@@ -68,8 +68,8 @@ def shgload(infile, norm):
     range or value. Returns numpy array with the appropriate scale and units.
     '''
     freq, re1w, im1w, re2w, im2w = np.loadtxt(infile, unpack=True)
-    real = (re1w + re2w) * norm
-    imag = (im1w + im2w) * norm
+    real = broad((re1w + re2w) * norm, PARAM['chi2']['sigma'])
+    imag = broad((im1w + im2w) * norm, PARAM['chi2']['sigma'])
     respl = InterpolatedUnivariateSpline(freq, real, ext=2)
     imspl = InterpolatedUnivariateSpline(freq, imag, ext=2)
     comp = respl(ENERGY) + 1j * imspl(ENERGY)
@@ -271,7 +271,7 @@ def savefile(file, data):
     Saves specified dataset to file with the following columns:
     Energy(1w)    R_{pP}    R_{pS}    R_{sP}    R_{sS}
     '''
-    np.savetxt(file, data, fmt=('%05.2f', '%.8e', '%.8e', '%.8e', '%.8e', '%05.1f'),
+    np.savetxt(file, data, fmt=('%07.4f', '%.8e', '%.8e', '%.8e', '%.8e', '%05.1f'),
                delimiter='    ',
                header='RiF (cm^2/W)\n1w(eV) RpP'+15*" "+\
                       'RpS'+15*" "+'RsP'+15*" "+'RsS'+15*" "+'phi(deg)')
@@ -308,7 +308,12 @@ PREFACTOR = 1/(2 * EPS0 * HBAR**2 * LSPEED**3 * np.cos(THETA0)**2)
 
 ## Linear responses: chi1 and epsilons
 CHI1NORM = PARAM['chi1']['norm']            # Normalization for layered chi1
-EPSB = epsload(PARAM['chi1']['chib'], 1)    # Epsilon from chi1, bulk
+
+try:
+    EPSB = epsload(PARAM['chi1']['chib'], 1)    # Epsilon from chi1, bulk
+except (ValueError, OSError, IOError):
+    if isinstance(PARAM['chi1']['chib'], int) or isinstance(PARAM['chi1']['chib'], float):
+        EPSB = (PARAM['chi1']['chib'].real, PARAM['chi1']['chib'].imag)
 
 EPS = {'1w': {'v': 1, 'b': EPSB[0]}, '2w': {'v': 1, 'b': EPSB[1]}}
 
