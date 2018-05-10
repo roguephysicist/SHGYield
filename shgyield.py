@@ -24,8 +24,8 @@ import numpy as np
 from scipy import constants, ndimage
 from scipy.interpolate import InterpolatedUnivariateSpline
 
-# Avoids some overflow and divide-by-zero issues
-np.seterr(divide='ignore', invalid='ignore', over='ignore')
+np.seterr(divide='ignore', invalid='ignore', over='ignore') # ignores overflow and divide-by-zero
+
 
 def parse_input(infile):
     '''
@@ -36,7 +36,8 @@ def parse_input(infile):
         params = yaml.load(data_file)
     return params
 
-def epsload(in_file, norm):
+
+def epsload(infile, norm):
     '''
     Reads calculated chi1 file, that is organized as Energy(1w) Re[chi_xx]
     Im[chi_xx] Re[chi_yy] Im[chi_yy] Re[chi_zz] Im[chi_zz]. Normalizes chi1
@@ -47,7 +48,7 @@ def epsload(in_file, norm):
     input energy range or value. Finally, converts to epsilon = 1 + 4*pi*chi1,
     and returns numpy arrays with the 1w and 2w epsilons.
     '''
-    freq, rexx, imxx, reyy, imyy, rezz, imzz = np.loadtxt(in_file, unpack=True)
+    freq, rexx, imxx, reyy, imyy, rezz, imzz = np.loadtxt(infile, unpack=True)
     real = broad(((rexx + reyy + rezz)/3) * norm, PARAM['chi1']['sigma']) # real average
     imag = broad(((imxx + imyy + imzz)/3) * norm, PARAM['chi1']['sigma']) # imag average
     respl = InterpolatedUnivariateSpline(freq, real, ext=2)
@@ -57,6 +58,7 @@ def epsload(in_file, norm):
     eps1w = 1 + (4 * np.pi * chi1w)
     eps2w = 1 + (4 * np.pi * chi2w)
     return eps1w, eps2w
+
 
 def shgload(infile, norm):
     '''
@@ -76,6 +78,7 @@ def shgload(infile, norm):
     chi2 = SCALE * PM2TOM2 * comp
     return chi2
 
+
 def wvec(eps):
     '''
     Wave vector, where w = sqrt[epsilon - sin(theta)^2].
@@ -83,12 +86,14 @@ def wvec(eps):
     wavevector = np.sqrt(eps - (np.sin(THETA0)**2))
     return wavevector
 
+
 def frefs(epsi, epsj):
     '''
     Generic reflection fresnel factors, see Eqs. (13) and (14) of PRB 94, 115314 (2016).
     '''
     factor = (wvec(epsi) - wvec(epsj))/(wvec(epsi) + wvec(epsj))
     return factor
+
 
 def frefp(epsi, epsj):
     '''
@@ -98,12 +103,14 @@ def frefp(epsi, epsj):
              ((wvec(epsi) * epsj) + (wvec(epsj) * epsi))
     return factor
 
+
 def ftrans(epsi, epsj):
     '''
     s-polarized transmission fresnel factors , see Eqs. (13) and (14) of PRB 94, 115314 (2016).
     '''
     factor = (2 * wvec(epsi))/(wvec(epsi) + wvec(epsj))
     return factor
+
 
 def ftranp(epsi, epsj):
     '''
@@ -113,143 +120,168 @@ def ftranp(epsi, epsj):
              (wvec(epsi) * epsj + wvec(epsj) * epsi)
     return factor
 
-def rfactors(azimuth):
+
+def mrc(fres1, fres2, phase1, phase2, rem):
+    '''
+    Multiple reflection coefficient, see Eqs. (18) and (21) of PRB 94, 115314 (2016).
+    '''
+    coeff = (fres1 * np.exp(1j * phase1)) / (1 + (fres2 * fres1 * np.exp(1j * phase2))) * rem
+    return coeff
+
+
+def rad_pp(phi):
     '''
     r factors for different input and output polarizations. See Eqs. (50), (55),
     (60), and (65) of PRB 94, 115314 (2016). Returns rpP, rpS, rsP, and rsS.
     '''
-    phi = np.radians(azimuth) # Converts phi to radians
+    pre = (ftranp(EPS['2w']['v'], EPS['2w']['l'])/INDEX['Nl']) * \
+          (ftranp(EPS['1w']['v'], EPS['1w']['l'])/INDEX['nl'])**2
     ### r_{pP}
-    rpP = - (RMminusp * rMminusp**2 \
+    rpp = - (FRES['2w']['p-'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 * wvec(EPS['2w']['l']) \
             * np.cos(phi)**3 * CHI2['xxx']) \
-          - (2 * RMminusp * rMminusp**2 \
+          - (2 * FRES['2w']['p-'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 * wvec(EPS['2w']['l']) \
             * np.sin(phi) * np.cos(phi)**2 * CHI2['xxy']) \
-          - (2 * RMminusp * rMplusp * rMminusp \
+          - (2 * FRES['2w']['p-'] * FRES['1w']['p+'] * FRES['1w']['p-'] \
             * wvec(EPS['1w']['l']) * wvec(EPS['2w']['l']) \
             * np.sin(THETA0) * np.cos(phi)**2 * CHI2['xxz']) \
-          - (RMminusp * rMminusp**2 \
+          - (FRES['2w']['p-'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 * wvec(EPS['2w']['l']) \
             * np.sin(phi)**2 * np.cos(phi) * CHI2['xyy']) \
-          - (2 * RMminusp * rMplusp * rMminusp \
+          - (2 * FRES['2w']['p-'] * FRES['1w']['p+'] * FRES['1w']['p-'] \
             * wvec(EPS['1w']['l']) * wvec(EPS['2w']['l']) \
             * np.sin(THETA0) * np.sin(phi) * np.cos(phi) * CHI2['xyz']) \
-          - (RMminusp * rMplusp**2 \
+          - (FRES['2w']['p-'] * FRES['1w']['p+']**2 \
             * wvec(EPS['2w']['l']) \
             * np.sin(THETA0)**2 * np.cos(phi) * CHI2['xzz']) \
-          - (RMminusp * rMminusp**2 \
+          - (FRES['2w']['p-'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 * wvec(EPS['2w']['l']) \
             * np.sin(phi) * np.cos(phi)**2 * CHI2['yxx']) \
-          - (2 * RMminusp * rMminusp**2 \
+          - (2 * FRES['2w']['p-'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 * wvec(EPS['2w']['l']) \
             * np.sin(phi)**2 * np.cos(phi) * CHI2['yxy']) \
-          - (2 * RMminusp * rMplusp * rMminusp \
+          - (2 * FRES['2w']['p-'] * FRES['1w']['p+'] * FRES['1w']['p-'] \
             * wvec(EPS['1w']['l']) * wvec(EPS['2w']['l']) \
             * np.sin(THETA0) * np.sin(phi) * np.cos(phi) * CHI2['yxz']) \
-          - (RMminusp * rMminusp**2 \
+          - (FRES['2w']['p-'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 * wvec(EPS['2w']['l']) \
             * np.sin(phi)**3 * CHI2['yyy']) \
-          - (2 * RMminusp * rMplusp * rMminusp \
+          - (2 * FRES['2w']['p-'] * FRES['1w']['p+'] * FRES['1w']['p-'] \
             * wvec(EPS['1w']['l']) * wvec(EPS['2w']['l']) \
             * np.sin(THETA0) * np.sin(phi)**2 * CHI2['yyz']) \
-          - (RMminusp * rMplusp**2 \
+          - (FRES['2w']['p-'] * FRES['1w']['p+']**2 \
             * wvec(EPS['2w']['l']) \
             * np.sin(THETA0)**2 * np.sin(phi) * CHI2['yzz']) \
-          + (RMplusp * rMminusp**2 \
+          + (FRES['2w']['p+'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 \
             * np.sin(THETA0) * np.cos(phi)**2 * CHI2['zxx']) \
-          + (2 * RMplusp * rMplusp * rMminusp \
+          + (2 * FRES['2w']['p+'] * FRES['1w']['p+'] * FRES['1w']['p-'] \
             * wvec(EPS['1w']['l']) \
             * np.sin(THETA0)**2 * np.cos(phi) * CHI2['zxz']) \
-          + (2 * RMplusp * rMminusp**2 \
+          + (2 * FRES['2w']['p+'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 \
             * np.sin(THETA0) * np.sin(phi) * np.cos(phi) * CHI2['zxy']) \
-          + (RMplusp * rMminusp**2 \
+          + (FRES['2w']['p+'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 \
             * np.sin(THETA0) * np.sin(phi)**2 * CHI2['zyy']) \
-          + (2 * RMplusp * rMplusp * rMminusp \
+          + (2 * FRES['2w']['p+'] * FRES['1w']['p+'] * FRES['1w']['p-'] \
             * wvec(EPS['1w']['l']) \
             * np.sin(THETA0)**2 * np.sin(phi) * CHI2['zyz']) \
-          + (RMplusp * rMplusp**2 * np.sin(phi)**3 * CHI2['zzz'])
+          + (FRES['2w']['p+'] * FRES['1w']['p+']**2 * np.sin(phi)**3 * CHI2['zzz'])
+    return pre*rpp
+
+
+def rad_ps(phi):
+    '''
+    r factors for different input and output polarizations. See Eqs. (50), (55),
+    (60), and (65) of PRB 94, 115314 (2016). Returns rpP, rpS, rsP, and rsS.
+    '''
+    pre = (ftrans(EPS['2w']['v'], EPS['2w']['l']) * FRES['2w']['s+']) * \
+          (ftranp(EPS['1w']['v'], EPS['1w']['l'])/INDEX['nl'])**2
     ### r_{pS}
-    rpS = - (rMminusp**2 \
-            * wvec(EPS['1w']['l'])**2 \
+    rps = - (FRES['1w']['p-']**2 * wvec(EPS['1w']['l'])**2 \
             * np.sin(phi) * np.cos(phi)**2 * CHI2['xxx']) \
-          - (2 * rMminusp**2 \
-            * wvec(EPS['1w']['l'])**2 \
+          - (2 * FRES['1w']['p-']**2 * wvec(EPS['1w']['l'])**2 \
             * np.sin(phi)**2 * np.cos(phi) * CHI2['xxy']) \
-          - (2 * rMplusp * rMminusp \
-            * wvec(EPS['1w']['l']) \
+          - (2 * FRES['1w']['p+'] * FRES['1w']['p-'] * wvec(EPS['1w']['l']) \
             * np.sin(THETA0) * np.sin(phi) * np.cos(phi) * CHI2['xxz']) \
-          - (rMminusp**2 \
-            * wvec(EPS['1w']['l'])**2 \
+          - (FRES['1w']['p-']**2 * wvec(EPS['1w']['l'])**2 \
             * np.sin(phi)**3 * CHI2['xyy']) \
-          - (2 * rMplusp * rMminusp \
-            * wvec(EPS['1w']['l']) \
+          - (2 * FRES['1w']['p+'] * FRES['1w']['p-'] * wvec(EPS['1w']['l']) \
             * np.sin(THETA0) * np.sin(phi)**2 * CHI2['xyz']) \
-          - (rMplusp**2 \
+          - (FRES['1w']['p+']**2 \
             * np.sin(THETA0)**2 * np.sin(phi) * CHI2['xzz']) \
-          + (rMminusp**2 \
-            * wvec(EPS['1w']['l'])**2 * np.cos(phi)**3 * CHI2['yxx']) \
-          + (2 * rMminusp**2 \
-            * wvec(EPS['1w']['l'])**2 \
+          + (FRES['1w']['p-']**2 * wvec(EPS['1w']['l'])**2 \
+            * np.cos(phi)**3 * CHI2['yxx']) \
+          + (2 * FRES['1w']['p-']**2 * wvec(EPS['1w']['l'])**2 \
             * np.sin(phi) * np.cos(phi)**2 * CHI2['yxy']) \
-          + (2 * rMplusp * rMminusp \
-            * wvec(EPS['1w']['l']) \
+          + (2 * FRES['1w']['p+'] * FRES['1w']['p-'] * wvec(EPS['1w']['l']) \
             * np.sin(THETA0) * np.cos(phi)**2 * CHI2['yxz']) \
-          + (rMminusp**2 \
-            * wvec(EPS['1w']['l'])**2 \
+          + (FRES['1w']['p-']**2 * wvec(EPS['1w']['l'])**2 \
             * np.sin(phi)**2 * np.cos(phi) * CHI2['yyy']) \
-          + (2 * rMplusp * rMminusp \
-            * wvec(EPS['1w']['l']) \
+          + (2 * FRES['1w']['p+'] * FRES['1w']['p-'] * wvec(EPS['1w']['l']) \
             * np.sin(THETA0) * np.sin(phi) * np.cos(phi) * CHI2['yyz']) \
-          + (rMplusp**2 \
+          + (FRES['1w']['p+']**2 \
             * np.sin(THETA0)**2 * np.cos(phi) * CHI2['yzz'])
+    return pre*rps
+
+
+def rad_sp(phi):
+    '''
+    r factors for different input and output polarizations. See Eqs. (50), (55),
+    (60), and (65) of PRB 94, 115314 (2016). Returns rpP, rpS, rsP, and rsS.
+    '''
+    pre = (ftranp(EPS['2w']['v'], EPS['2w']['l'])/INDEX['Nl']) * \
+          (ftrans(EPS['1w']['v'], EPS['1w']['l']) * FRES['1w']['s+'])**2
     ### r_{sP}
-    rsP = - (RMminusp \
-            * wvec(EPS['2w']['l']) \
+    rsp = - (FRES['2w']['p-'] * wvec(EPS['2w']['l']) \
             * np.sin(phi)**2 * np.cos(phi) * CHI2['xxx']) \
-          + (RMminusp \
-            * wvec(EPS['2w']['l']) \
+          + (FRES['2w']['p-'] * wvec(EPS['2w']['l']) \
             * 2 * np.sin(phi) * np.cos(phi)**2 * CHI2['xxy']) \
-          - (RMminusp \
-            * wvec(EPS['2w']['l']) \
+          - (FRES['2w']['p-'] * wvec(EPS['2w']['l']) \
             * np.cos(phi)**3 * CHI2['xyy']) \
-          - (RMminusp \
-            * wvec(EPS['2w']['l']) \
+          - (FRES['2w']['p-'] * wvec(EPS['2w']['l']) \
             * np.sin(phi)**3 * CHI2['yxx']) \
-          + (RMminusp \
-            * wvec(EPS['2w']['l']) \
+          + (FRES['2w']['p-'] * wvec(EPS['2w']['l']) \
             * 2 * np.sin(phi)**2 * np.cos(phi) * CHI2['yxy']) \
-          - (RMminusp \
-            * wvec(EPS['2w']['l']) \
+          - (FRES['2w']['p-'] * wvec(EPS['2w']['l']) \
             * np.sin(phi) * np.cos(phi)**2 * CHI2['yyy']) \
-          + (RMplusp \
+          + (FRES['2w']['p+'] \
             * np.sin(THETA0) * np.sin(phi)**2 * CHI2['zxx']) \
-          - (RMplusp \
+          - (FRES['2w']['p+'] \
             * np.sin(THETA0) * 2 * np.sin(phi) * np.cos(phi) * CHI2['zxy']) \
-          + (RMplusp \
+          + (FRES['2w']['p+'] \
             * np.sin(THETA0) * np.cos(phi)**2 * CHI2['zyy'])
+    return pre*rsp
+
+
+def rad_ss(phi):
+    '''
+    r factors for different input and output polarizations. See Eqs. (50), (55),
+    (60), and (65) of PRB 94, 115314 (2016). Returns rpP, rpS, rsP, and rsS.
+    '''
+    pre = (ftrans(EPS['2w']['v'], EPS['2w']['l']) * FRES['2w']['s+']) * \
+          (ftrans(EPS['1w']['v'], EPS['1w']['l']) * FRES['1w']['s+'])**2
     ### r_{sS}
-    rsS = - (np.sin(phi)**3 * CHI2['xxx']) \
+    rss = - (np.sin(phi)**3 * CHI2['xxx']) \
           + (2 * np.sin(phi)**2 * np.cos(phi) * CHI2['xxy']) \
           - (np.sin(phi) * np.cos(phi)**2 * CHI2['xyy']) \
           + (np.sin(phi)**2 * np.cos(phi) * CHI2['yxx']) \
           + (np.cos(phi)**3 * CHI2['yyy']) \
           - (2 * np.sin(phi) * np.cos(phi)**2 * CHI2['yxy'])
-    radiation = {'pP': rpP, 'pS': rpS, 'sP': rsP, 'sS': rsS}
-    return radiation
+    return pre*rss
 
-def shgyield(pol, azimuth):
+
+def shgyield(factor):
     '''
     Calculates the final broadened SHG yield, ready to be written to file.
     See Eq. (38) of PRB 94, 115314 (2016).
     '''
-    RiF = M2TOCM2 * PREFACTOR * (ENERGY ** 2) * \
-          np.absolute((1/INDICES['nl']) * GAMMA[pol] * rfactors(azimuth)[pol])**2
-    broadened = broad(RiF, SIGMA)
+    rif = M2TOCM2 * PREFACTOR * (ENERGY ** 2) * np.absolute((1/INDEX['nl']) * factor)**2
+    broadened = broad(rif, SIGMA)
     return broadened
+
 
 def broad(target, sigma):
     '''
@@ -258,13 +290,6 @@ def broad(target, sigma):
     data = ndimage.filters.gaussian_filter(target, sigma)
     return data
 
-def formatdata(ener, rpp, rps, rsp, rss, azimuth):
-    '''
-    Formats the data in a convenient manner.
-    '''
-    phiarr = np.full_like(ener, azimuth)
-    data = np.column_stack((ener, rpp, rps, rsp, rss, phiarr))
-    return data
 
 def savefile(file, data):
     '''
@@ -275,6 +300,14 @@ def savefile(file, data):
                delimiter='    ',
                header='RiF (cm^2/W)\n1w(eV)   RpP'+15*" "+\
                       'RpS'+15*" "+'RsP'+15*" "+'RsS'+15*" "+'phi(deg)')
+
+
+
+
+
+################################################################################
+########################### BEGIN INITIALIZATION ###############################
+################################################################################
 
 ## Initialization: Parse input file, establish relevant modes.
 PARAM = parse_input(sys.argv[1])    # Parses input file
@@ -305,16 +338,22 @@ THETA0 = np.radians(PARAM['parameters']['theta']) # Converts theta to radians
 SIGMA = PARAM['parameters']['sigma']         # Std. dev. for gaussian broadening
 PREFACTOR = 1/(2 * EPS0 * HBAR**2 * LSPEED**3 * np.cos(THETA0)**2)
 
+################################################################################
+############################# END INITIALIZATION ###############################
+################################################################################
+
+
+################################################################################
+######################### BEGIN LINEAR RESPONSES ###############################
+################################################################################
 
 ## Linear responses: chi1 and epsilons
 CHI1NORM = PARAM['chi1']['norm']            # Normalization for layered chi1
-
 try:
     EPSB = epsload(PARAM['chi1']['chib'], 1)    # Epsilon from chi1, bulk
 except (ValueError, OSError, IOError):
-    if isinstance(PARAM['chi1']['chib'], int) or isinstance(PARAM['chi1']['chib'], float):
+    if isinstance(PARAM['chi1']['chib'], (float, int)):
         EPSB = (PARAM['chi1']['chib'].real, PARAM['chi1']['chib'].imag)
-
 EPS = {'1w': {'v': 1, 'b': EPSB[0]}, '2w': {'v': 1, 'b': EPSB[1]}}
 
 ## Reflection model, see PRB 93, 235304 (2016).
@@ -336,6 +375,68 @@ elif MODE == "3-layer-hybrid": # Incident field in bulk, SHG in thin layer (l)
     EPS['1w']['l'] = EPS['1w']['b']
     EPS['2w']['l'] = EPSL[1]                        # Epsilon for layer, 2w
 
+## Indices of refraction for 1w (n) and 2w (N), where n = sqrt{epsilon}
+# INDEX = {key: np.sqrt(value) for key, value in EPS.items()}
+INDEX = {'nl': np.sqrt(EPS['1w']['l']), 'Nl': np.sqrt(EPS['2w']['l'])}
+
+################################################################################
+########################### END LINEAR RESPONSES ###############################
+################################################################################
+
+
+################################################################################
+########################## BEGIN FRESNEL COEFFS ################################
+################################################################################
+
+## Fresnel factors and multiple reflections framework. See Eqs. (16), (17),
+## (21), (22), (26), and (30) of PRB 94, 115314 (2016).
+FRES = {'2w' : {'p' : {'lb' : frefp(EPS['2w']['l'], EPS['2w']['b']),
+                       'vl' : frefp(EPS['2w']['v'], EPS['2w']['l'])},
+                's' : {'lb' : frefs(EPS['2w']['l'], EPS['2w']['b']),
+                       'vl' : frefs(EPS['2w']['v'], EPS['2w']['l'])}},
+        '1w' : {'p' : {'lb' : frefp(EPS['1w']['l'], EPS['1w']['b']),
+                       'vl' : frefp(EPS['1w']['v'], EPS['1w']['l'])},
+                's' : {'lb' : frefs(EPS['1w']['l'], EPS['1w']['b']),
+                       'vl' : frefs(EPS['1w']['v'], EPS['1w']['l'])}}}
+
+## Multiple reflections
+if PARAM['multiref']['enable'] and MODE == '3-layer':
+    THICKNESS = PARAM['multiref']['thickness'] # Thickness d of the thin layer \ell
+    DEPTH = PARAM['multiref']['depth']         # Depth d2 of the polarization sheet
+    if DEPTH == "average":
+        DELTA = 8*np.pi * ((ENERGY * THICKNESS * 1e-9)/(PLANCK * LSPEED)) * wvec(EPS['2w']['l'])
+        FRES['2w']['p'] = mrc(FRES['2w']['p']['lb'], FRES['2w']['p']['vl'], DELTA/2, DELTA, np.sin(DELTA/2)/(DELTA/2))
+        FRES['2w']['s'] = mrc(FRES['2w']['s']['lb'], FRES['2w']['s']['vl'], DELTA/2, DELTA, np.sin(DELTA/2)/(DELTA/2))
+    else:
+        DELTA = 8*np.pi * ((ENERGY * float(DEPTH) * 1e-9)/(PLANCK * LSPEED)) * wvec(EPS['2w']['l'])
+        FRES['2w']['p'] = mrc(FRES['2w']['p']['lb'], FRES['2w']['p']['vl'], DELTA, DELTA, 1)
+        FRES['2w']['s'] = mrc(FRES['2w']['s']['lb'], FRES['2w']['s']['vl'], DELTA, DELTA, 1)
+    VARPHI = 4 * np.pi * ((ENERGY * THICKNESS * 1e-9)/(PLANCK * LSPEED)) * wvec(EPS['1w']['l'])
+    FRES['1w']['p'] = mrc(FRES['1w']['p']['lb'], FRES['1w']['p']['vl'], VARPHI, VARPHI, 1)
+    FRES['1w']['s'] = mrc(FRES['1w']['s']['lb'], FRES['1w']['s']['vl'], VARPHI, VARPHI, 1)
+elif not PARAM['multiref']['enable'] or MODE != '3-layer':
+    FRES['2w']['p'] = FRES['2w']['p']['lb']
+    FRES['2w']['s'] = FRES['2w']['s']['lb']
+    FRES['1w']['p'] = FRES['1w']['p']['lb']
+    FRES['1w']['s'] = FRES['1w']['s']['lb']
+## Final Fresnel factors with multiple reflection
+FRES = {'2w' : {'p+' : 1 + FRES['2w']['p'],
+                's+' : 1 + FRES['2w']['s'],
+                'p-' : 1 - FRES['2w']['p'],
+                's-' : 1 - FRES['2w']['s']},
+        '1w' : {'p+' : 1 + FRES['1w']['p'],
+                's+' : 1 + FRES['1w']['s'],
+                'p-' : 1 - FRES['1w']['p'],
+                's-' : 1 - FRES['1w']['s']}}
+
+################################################################################
+############################ END FRESNEL COEFFS ################################
+################################################################################
+
+
+################################################################################
+####################### BEGIN NONLINEAR RESPONSES ##############################
+################################################################################
 
 ## Nonlinear responses: chi2 components to be used in the formulas below.
 ## There are 18 possible components for SHG. We have 4 scenarios regarding the
@@ -373,81 +474,29 @@ for key, value in CHI2_EQUIV.items():
         CHI2[key] = CHI2[equivalence[0]]
     elif not equivalence[0]:
         CHI2[key] = -1 * CHI2[equivalence[1]]
+### CHANGE EQUIVALENCE STUFF TO A FUNCTION, FOR DICT COMPREHENSION DIRECTLY
+
+################################################################################
+######################### END NONLINEAR RESPONSES ##############################
+################################################################################
 
 
-## Indices of refraction for 1w (n) and 2w (N), where n = sqrt{epsilon}
-# INDICES = {key: np.sqrt(value) for key, value in EPS.items()}
-INDICES = {'nl': np.sqrt(EPS['1w']['l']), 'Nl': np.sqrt(EPS['2w']['l'])}
-
-## Multiple reflections framework. See Eqs. (16), (17), (21), (22), (26),
-## and (30) of PRB 94, 115314 (2016).
-if PARAM['multiref']['enable'] and MODE == '3-layer':
-    THICKNESS = PARAM['multiref']['thickness'] # Thickness d of the thin layer \ell
-    DEPTH = PARAM['multiref']['depth']         # Depth d2 of the polarization sheet
-    VARPHI = 4 * np.pi * ((ENERGY * THICKNESS * 1e-9)/(PLANCK * LSPEED)) * wvec(EPS['1w']['l'])
-    DELTA = 8 * np.pi * ((ENERGY * THICKNESS * 1e-9)/(PLANCK * LSPEED)) * wvec(EPS['2w']['l'])
-    if DEPTH == "average":
-        RMp = (frefp(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * DELTA/2)) \
-            / (1 + (frefp(EPS['2w']['v'], EPS['2w']['l']) \
-                 * frefp(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * DELTA))) \
-            * np.sin(DELTA/2)/(DELTA/2)
-        RMs = (frefs(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * DELTA/2)) \
-            / (1 + (frefs(EPS['2w']['v'], EPS['2w']['l']) \
-                 * frefs(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * DELTA))) \
-            * np.sin(DELTA/2)/(DELTA/2)
-    else:
-        D2 = float(DEPTH)
-        DELTA0 = 8 * np.pi * ((ENERGY * D2 * 1e-9)/(PLANCK * LSPEED)) * wvec(EPS['2w']['l'])
-        RMp = (frefp(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * DELTA0)) \
-            / (1 + (frefp(EPS['2w']['v'], EPS['2w']['l']) \
-                 * frefp(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * DELTA)))
-        RMs = (frefs(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * DELTA0)) \
-            / (1 + (frefs(EPS['2w']['v'], EPS['2w']['l']) \
-                 * frefs(EPS['2w']['l'], EPS['2w']['b']) * np.exp(1j * DELTA)))
-    rMp = (frefp(EPS['1w']['l'], EPS['1w']['b']) * np.exp(1j * VARPHI)) \
-        / (1 + (frefp(EPS['1w']['v'], EPS['1w']['l']) \
-             * frefp(EPS['1w']['l'], EPS['1w']['b']) * np.exp(1j * VARPHI)))
-    rMs = (frefs(EPS['1w']['l'], EPS['1w']['b']) * np.exp(1j * VARPHI)) \
-        / (1 + (frefs(EPS['1w']['v'], EPS['1w']['l']) \
-             * frefs(EPS['1w']['l'], EPS['1w']['b']) * np.exp(1j * VARPHI)))
-    RMplusp = 1 + RMp
-    RMpluss = 1 + RMs
-    RMminusp = 1 - RMp
-    RMminuss = 1 - RMs
-    rMplusp = 1 + rMp
-    rMpluss = 1 + rMs
-    rMminusp = 1 - rMp
-    rMminuss = 1 - rMs
-elif not PARAM['multiref']['enable'] or MODE != '3-layer':
-    RMplusp = 1 + frefp(EPS['2w']['l'], EPS['2w']['b'])
-    RMpluss = 1 + frefs(EPS['2w']['l'], EPS['2w']['b'])
-    RMminusp = 1 - frefp(EPS['2w']['l'], EPS['2w']['b'])
-    RMminuss = 1 - frefs(EPS['2w']['l'], EPS['2w']['b'])
-    rMplusp = 1 + frefp(EPS['1w']['l'], EPS['1w']['b'])
-    rMpluss = 1 + frefs(EPS['1w']['l'], EPS['1w']['b'])
-    rMminusp = 1 - frefp(EPS['1w']['l'], EPS['1w']['b'])
-    rMminuss = 1 - frefs(EPS['1w']['l'], EPS['1w']['b'])
-
-
-## Gamma prefactor for different polarizations. See Eqs. (49), (54), (59), (64)
-## of PRB 94, 115314 (2016).
-GAMMA = {'pP': (ftranp(EPS['2w']['v'], EPS['2w']['l'])/INDICES['Nl']) * \
-               (ftranp(EPS['1w']['v'], EPS['1w']['l'])/INDICES['nl'])**2,
-         'pS': (ftrans(EPS['2w']['v'], EPS['2w']['l']) * RMpluss) * \
-               (ftranp(EPS['1w']['v'], EPS['1w']['l'])/INDICES['nl'])**2,
-         'sP': (ftranp(EPS['2w']['v'], EPS['2w']['l'])/INDICES['Nl']) * \
-               (ftrans(EPS['1w']['v'], EPS['1w']['l']) * rMpluss)**2,
-         'sS': (ftrans(EPS['2w']['v'], EPS['2w']['l']) * RMpluss) * \
-               (ftrans(EPS['1w']['v'], EPS['1w']['l']) * rMpluss)**2}
+################################################################################
+######################## BEGIN FINAL SSHG YIELD ################################
+################################################################################
 
 ## Final SHG yield for different input and output polarizations (in cm^2/W).
 ## See Eqs. (44) and (38) of PRB 94, 115314 (2016).
 DATA = []
-for phi in PHI:
-    YIELD = formatdata(ENERGY,
-                       shgyield('pP', phi), shgyield('pS', phi),
-                       shgyield('sP', phi), shgyield('sS', phi), phi)
-    DATA.append(YIELD)
+for azimuth in PHI:
+    angle = np.radians(azimuth) # Converts phi to radians
+    rfactors = {'pP': rad_pp(angle), 'pS': rad_ps(angle), 'sP': rad_sp(angle), 'sS': rad_ss(angle)}
+    shg = {key: shgyield(val) for key, val in rfactors.items()}
+    DATA.append(np.column_stack((ENERGY, shg['pP'], shg['pS'], shg['sP'], shg['sS'], np.full_like(ENERGY, angle))))
 
 FINAL = np.concatenate(DATA)
 savefile(PARAM['output'], FINAL)
+
+################################################################################
+########################## END FINAL SSHG YIELD ################################
+################################################################################
