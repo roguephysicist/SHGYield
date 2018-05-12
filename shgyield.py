@@ -139,56 +139,56 @@ def rad_pp(phi):
     ### r_{pP}
     rpp = - (FRES['2w']['p-'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 * wvec(EPS['2w']['l']) \
-            * np.cos(phi)**3 * CHI2['xxx']) \
+            * np.cos(phi)**3 * CHI2R['XXX']) \
           - (2 * FRES['2w']['p-'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 * wvec(EPS['2w']['l']) \
-            * np.sin(phi) * np.cos(phi)**2 * CHI2['xxy']) \
+            * np.sin(phi) * np.cos(phi)**2 * CHI2R['XXY']) \
           - (2 * FRES['2w']['p-'] * FRES['1w']['p+'] * FRES['1w']['p-'] \
             * wvec(EPS['1w']['l']) * wvec(EPS['2w']['l']) \
-            * np.sin(THETA0) * np.cos(phi)**2 * CHI2['xxz']) \
+            * np.sin(THETA0) * np.cos(phi)**2 * CHI2R['XXZ']) \
           - (FRES['2w']['p-'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 * wvec(EPS['2w']['l']) \
-            * np.sin(phi)**2 * np.cos(phi) * CHI2['xyy']) \
+            * np.sin(phi)**2 * np.cos(phi) * CHI2R['XYY']) \
           - (2 * FRES['2w']['p-'] * FRES['1w']['p+'] * FRES['1w']['p-'] \
             * wvec(EPS['1w']['l']) * wvec(EPS['2w']['l']) \
-            * np.sin(THETA0) * np.sin(phi) * np.cos(phi) * CHI2['xyz']) \
+            * np.sin(THETA0) * np.sin(phi) * np.cos(phi) * CHI2R['XYZ']) \
           - (FRES['2w']['p-'] * FRES['1w']['p+']**2 \
             * wvec(EPS['2w']['l']) \
-            * np.sin(THETA0)**2 * np.cos(phi) * CHI2['xzz']) \
+            * np.sin(THETA0)**2 * np.cos(phi) * CHI2R['XZZ']) \
           - (FRES['2w']['p-'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 * wvec(EPS['2w']['l']) \
-            * np.sin(phi) * np.cos(phi)**2 * CHI2['yxx']) \
+            * np.sin(phi) * np.cos(phi)**2 * CHI2R['YXX']) \
           - (2 * FRES['2w']['p-'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 * wvec(EPS['2w']['l']) \
-            * np.sin(phi)**2 * np.cos(phi) * CHI2['yxy']) \
+            * np.sin(phi)**2 * np.cos(phi) * CHI2R['YXY']) \
           - (2 * FRES['2w']['p-'] * FRES['1w']['p+'] * FRES['1w']['p-'] \
             * wvec(EPS['1w']['l']) * wvec(EPS['2w']['l']) \
-            * np.sin(THETA0) * np.sin(phi) * np.cos(phi) * CHI2['yxz']) \
+            * np.sin(THETA0) * np.sin(phi) * np.cos(phi) * CHI2R['YXZ']) \
           - (FRES['2w']['p-'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 * wvec(EPS['2w']['l']) \
-            * np.sin(phi)**3 * CHI2['yyy']) \
+            * np.sin(phi)**3 * CHI2R['YYY']) \
           - (2 * FRES['2w']['p-'] * FRES['1w']['p+'] * FRES['1w']['p-'] \
             * wvec(EPS['1w']['l']) * wvec(EPS['2w']['l']) \
-            * np.sin(THETA0) * np.sin(phi)**2 * CHI2['yyz']) \
+            * np.sin(THETA0) * np.sin(phi)**2 * CHI2R['YYZ']) \
           - (FRES['2w']['p-'] * FRES['1w']['p+']**2 \
             * wvec(EPS['2w']['l']) \
-            * np.sin(THETA0)**2 * np.sin(phi) * CHI2['yzz']) \
+            * np.sin(THETA0)**2 * np.sin(phi) * CHI2R['YZZ']) \
           + (FRES['2w']['p+'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 \
-            * np.sin(THETA0) * np.cos(phi)**2 * CHI2['zxx']) \
+            * np.sin(THETA0) * np.cos(phi)**2 * CHI2R['ZXX']) \
           + (2 * FRES['2w']['p+'] * FRES['1w']['p+'] * FRES['1w']['p-'] \
             * wvec(EPS['1w']['l']) \
-            * np.sin(THETA0)**2 * np.cos(phi) * CHI2['zxz']) \
+            * np.sin(THETA0)**2 * np.cos(phi) * CHI2R['ZXZ']) \
           + (2 * FRES['2w']['p+'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 \
-            * np.sin(THETA0) * np.sin(phi) * np.cos(phi) * CHI2['zxy']) \
+            * np.sin(THETA0) * np.sin(phi) * np.cos(phi) * CHI2R['ZXY']) \
           + (FRES['2w']['p+'] * FRES['1w']['p-']**2 \
             * wvec(EPS['1w']['l'])**2 \
-            * np.sin(THETA0) * np.sin(phi)**2 * CHI2['zyy']) \
+            * np.sin(THETA0) * np.sin(phi)**2 * CHI2R['ZYY']) \
           + (2 * FRES['2w']['p+'] * FRES['1w']['p+'] * FRES['1w']['p-'] \
             * wvec(EPS['1w']['l']) \
-            * np.sin(THETA0)**2 * np.sin(phi) * CHI2['zyz']) \
-          + (FRES['2w']['p+'] * FRES['1w']['p+']**2 * np.sin(phi)**3 * CHI2['zzz'])
+            * np.sin(THETA0)**2 * np.sin(phi) * CHI2R['ZYZ']) \
+          + (FRES['2w']['p+'] * FRES['1w']['p+']**2 * np.sin(phi)**3 * CHI2R['ZZZ'])
     return pre*rpp
 
 
@@ -201,29 +201,29 @@ def rad_ps(phi):
           (ftranp(EPS['1w']['v'], EPS['1w']['l'])/INDEX['nl'])**2
     ### r_{pS}
     rps = - (FRES['1w']['p-']**2 * wvec(EPS['1w']['l'])**2 \
-            * np.sin(phi) * np.cos(phi)**2 * CHI2['xxx']) \
+            * np.sin(phi) * np.cos(phi)**2 * CHI2R['XXX']) \
           - (2 * FRES['1w']['p-']**2 * wvec(EPS['1w']['l'])**2 \
-            * np.sin(phi)**2 * np.cos(phi) * CHI2['xxy']) \
+            * np.sin(phi)**2 * np.cos(phi) * CHI2R['XXY']) \
           - (2 * FRES['1w']['p+'] * FRES['1w']['p-'] * wvec(EPS['1w']['l']) \
-            * np.sin(THETA0) * np.sin(phi) * np.cos(phi) * CHI2['xxz']) \
+            * np.sin(THETA0) * np.sin(phi) * np.cos(phi) * CHI2R['XXZ']) \
           - (FRES['1w']['p-']**2 * wvec(EPS['1w']['l'])**2 \
-            * np.sin(phi)**3 * CHI2['xyy']) \
+            * np.sin(phi)**3 * CHI2R['XYY']) \
           - (2 * FRES['1w']['p+'] * FRES['1w']['p-'] * wvec(EPS['1w']['l']) \
-            * np.sin(THETA0) * np.sin(phi)**2 * CHI2['xyz']) \
+            * np.sin(THETA0) * np.sin(phi)**2 * CHI2R['XYZ']) \
           - (FRES['1w']['p+']**2 \
-            * np.sin(THETA0)**2 * np.sin(phi) * CHI2['xzz']) \
+            * np.sin(THETA0)**2 * np.sin(phi) * CHI2R['XZZ']) \
           + (FRES['1w']['p-']**2 * wvec(EPS['1w']['l'])**2 \
-            * np.cos(phi)**3 * CHI2['yxx']) \
+            * np.cos(phi)**3 * CHI2R['YXX']) \
           + (2 * FRES['1w']['p-']**2 * wvec(EPS['1w']['l'])**2 \
-            * np.sin(phi) * np.cos(phi)**2 * CHI2['yxy']) \
+            * np.sin(phi) * np.cos(phi)**2 * CHI2R['YXY']) \
           + (2 * FRES['1w']['p+'] * FRES['1w']['p-'] * wvec(EPS['1w']['l']) \
-            * np.sin(THETA0) * np.cos(phi)**2 * CHI2['yxz']) \
+            * np.sin(THETA0) * np.cos(phi)**2 * CHI2R['YXZ']) \
           + (FRES['1w']['p-']**2 * wvec(EPS['1w']['l'])**2 \
-            * np.sin(phi)**2 * np.cos(phi) * CHI2['yyy']) \
+            * np.sin(phi)**2 * np.cos(phi) * CHI2R['YYY']) \
           + (2 * FRES['1w']['p+'] * FRES['1w']['p-'] * wvec(EPS['1w']['l']) \
-            * np.sin(THETA0) * np.sin(phi) * np.cos(phi) * CHI2['yyz']) \
+            * np.sin(THETA0) * np.sin(phi) * np.cos(phi) * CHI2R['YYZ']) \
           + (FRES['1w']['p+']**2 \
-            * np.sin(THETA0)**2 * np.cos(phi) * CHI2['yzz'])
+            * np.sin(THETA0)**2 * np.cos(phi) * CHI2R['YZZ'])
     return pre*rps
 
 
@@ -236,23 +236,23 @@ def rad_sp(phi):
           (ftrans(EPS['1w']['v'], EPS['1w']['l']) * FRES['1w']['s+'])**2
     ### r_{sP}
     rsp = - (FRES['2w']['p-'] * wvec(EPS['2w']['l']) \
-            * np.sin(phi)**2 * np.cos(phi) * CHI2['xxx']) \
+            * np.sin(phi)**2 * np.cos(phi) * CHI2R['XXX']) \
           + (FRES['2w']['p-'] * wvec(EPS['2w']['l']) \
-            * 2 * np.sin(phi) * np.cos(phi)**2 * CHI2['xxy']) \
+            * 2 * np.sin(phi) * np.cos(phi)**2 * CHI2R['XXY']) \
           - (FRES['2w']['p-'] * wvec(EPS['2w']['l']) \
-            * np.cos(phi)**3 * CHI2['xyy']) \
+            * np.cos(phi)**3 * CHI2R['XYY']) \
           - (FRES['2w']['p-'] * wvec(EPS['2w']['l']) \
-            * np.sin(phi)**3 * CHI2['yxx']) \
+            * np.sin(phi)**3 * CHI2R['YXX']) \
           + (FRES['2w']['p-'] * wvec(EPS['2w']['l']) \
-            * 2 * np.sin(phi)**2 * np.cos(phi) * CHI2['yxy']) \
+            * 2 * np.sin(phi)**2 * np.cos(phi) * CHI2R['YXY']) \
           - (FRES['2w']['p-'] * wvec(EPS['2w']['l']) \
-            * np.sin(phi) * np.cos(phi)**2 * CHI2['yyy']) \
+            * np.sin(phi) * np.cos(phi)**2 * CHI2R['YYY']) \
           + (FRES['2w']['p+'] \
-            * np.sin(THETA0) * np.sin(phi)**2 * CHI2['zxx']) \
+            * np.sin(THETA0) * np.sin(phi)**2 * CHI2R['ZXX']) \
           - (FRES['2w']['p+'] \
-            * np.sin(THETA0) * 2 * np.sin(phi) * np.cos(phi) * CHI2['zxy']) \
+            * np.sin(THETA0) * 2 * np.sin(phi) * np.cos(phi) * CHI2R['ZXY']) \
           + (FRES['2w']['p+'] \
-            * np.sin(THETA0) * np.cos(phi)**2 * CHI2['zyy'])
+            * np.sin(THETA0) * np.cos(phi)**2 * CHI2R['ZYY'])
     return pre*rsp
 
 
@@ -264,12 +264,12 @@ def rad_ss(phi):
     pre = (ftrans(EPS['2w']['v'], EPS['2w']['l']) * FRES['2w']['s+']) * \
           (ftrans(EPS['1w']['v'], EPS['1w']['l']) * FRES['1w']['s+'])**2
     ### r_{sS}
-    rss = - (np.sin(phi)**3 * CHI2['xxx']) \
-          + (2 * np.sin(phi)**2 * np.cos(phi) * CHI2['xxy']) \
-          - (np.sin(phi) * np.cos(phi)**2 * CHI2['xyy']) \
-          + (np.sin(phi)**2 * np.cos(phi) * CHI2['yxx']) \
-          + (np.cos(phi)**3 * CHI2['yyy']) \
-          - (2 * np.sin(phi) * np.cos(phi)**2 * CHI2['yxy'])
+    rss = - (np.sin(phi)**3 * CHI2R['XXX']) \
+          + (2 * np.sin(phi)**2 * np.cos(phi) * CHI2R['XXY']) \
+          - (np.sin(phi) * np.cos(phi)**2 * CHI2R['XYY']) \
+          + (np.sin(phi)**2 * np.cos(phi) * CHI2R['YXX']) \
+          + (np.cos(phi)**3 * CHI2R['YYY']) \
+          - (2 * np.sin(phi) * np.cos(phi)**2 * CHI2R['YXY'])
     return pre*rss
 
 
@@ -335,6 +335,7 @@ PM2TOM2 = 1e-24                              # Convert from pm^2 to m^2
 M2TOCM2 = 1e4                                # Convert from m^2 to cm^2
 SCALE = float(PARAM['chi2']['scale'])        # if a scaling factor is included (pm^2/V)
 THETA0 = np.radians(PARAM['parameters']['theta']) # Converts theta to radians
+GAMMA = np.radians(PARAM['parameters']['gamma'])  # converts gamma to radians
 SIGMA = PARAM['parameters']['sigma']         # Std. dev. for gaussian broadening
 PREFACTOR = 1/(2 * EPS0 * HBAR**2 * LSPEED**3 * np.cos(THETA0)**2)
 
@@ -474,7 +475,38 @@ for key, value in CHI2_EQUIV.items():
         CHI2[key] = CHI2[equivalence[0]]
     elif not equivalence[0]:
         CHI2[key] = -1 * CHI2[equivalence[1]]
-### CHANGE EQUIVALENCE STUFF TO A FUNCTION, FOR DICT COMPREHENSION DIRECTLY
+
+## Rotated chi2 components, that will be used to calculate the radiation.
+CHI2R = {
+    'XXX' : + np.sin(GAMMA)**3*CHI2['xxx'] + np.sin(GAMMA)*np.cos(GAMMA)**2*CHI2['xyy'] - 2*np.sin(GAMMA)**2*np.cos(GAMMA)*CHI2['xxy'] \
+            - np.sin(GAMMA)**2*np.cos(GAMMA)*CHI2['yxx'] - np.cos(GAMMA)**3*CHI2['yyy'] + 2*np.sin(GAMMA)*np.cos(GAMMA)**2*CHI2['yxy'],
+    'XYY' : + np.sin(GAMMA)*np.cos(GAMMA)**2*CHI2['xxx'] + np.sin(GAMMA)**3*CHI2['xyy'] + 2*np.sin(GAMMA)**2*np.cos(GAMMA)*CHI2['xxy'] \
+            - np.cos(GAMMA)**3*CHI2['yxx'] - np.sin(GAMMA)**2*np.cos(GAMMA)*CHI2['yyy'] - 2*np.sin(GAMMA)*np.cos(GAMMA)**2*CHI2['yxy'],
+    'XZZ' : + np.sin(GAMMA)*CHI2['xzz'] - np.cos(GAMMA)*CHI2['yzz'],
+    'XYZ' : + np.sin(GAMMA)**2*CHI2['xyz'] + np.sin(GAMMA)*np.cos(GAMMA)*CHI2['xxz'] \
+            - np.sin(GAMMA)*np.cos(GAMMA)*CHI2['yyz'] - np.cos(GAMMA)**2*CHI2['yxz'],
+    'XXZ' : - np.sin(GAMMA)*np.cos(GAMMA)*CHI2['xyz'] + np.sin(GAMMA)**2*CHI2['xxz'] \
+            + np.cos(GAMMA)**2*CHI2['yyz'] - np.sin(GAMMA)*np.cos(GAMMA)*CHI2['yxz'],
+    'XXY' : + np.sin(GAMMA)**2*np.cos(GAMMA)*CHI2['xxx'] - np.sin(GAMMA)**2*np.cos(GAMMA)*CHI2['xyy'] + (np.sin(GAMMA)**3 - np.sin(GAMMA)*np.cos(GAMMA)**2)*CHI2['xxy'] \
+            - np.sin(GAMMA)*np.cos(GAMMA)**2*CHI2['yxx'] - np.sin(GAMMA)*np.cos(GAMMA)**2*CHI2['yyy'] + (np.cos(GAMMA)**3 - np.sin(GAMMA)**2*np.cos(GAMMA))*CHI2['yxy'],
+    'YXX' : + np.sin(GAMMA)**2*np.cos(GAMMA)*CHI2['xxx'] + np.cos(GAMMA)**3*CHI2['xyy'] - 2*np.sin(GAMMA)*np.cos(GAMMA)**2*CHI2['xxy'] \
+            + np.sin(GAMMA)**3*CHI2['yxx'] + np.sin(GAMMA)*np.cos(GAMMA)**2*CHI2['yyy'] - 2*np.sin(GAMMA)**2*np.cos(GAMMA)*CHI2['yxy'],
+    'YYY' : + np.cos(GAMMA)**3*CHI2['xxx'] + np.sin(GAMMA)**2*np.cos(GAMMA)*CHI2['xyy'] + 2*np.sin(GAMMA)*np.cos(GAMMA)**2*CHI2['xxy'] \
+            + np.sin(GAMMA)*np.cos(GAMMA)**2*CHI2['yxx'] + np.sin(GAMMA)**3*CHI2['yyy'] + 2*np.sin(GAMMA)**2*np.cos(GAMMA)*CHI2['yxy'],
+    'YZZ' : + np.cos(GAMMA)*CHI2['xzz'] + np.sin(GAMMA)*CHI2['yzz'],
+    'YYZ' : + np.sin(GAMMA)*np.cos(GAMMA)*CHI2['xyz'] + np.cos(GAMMA)**2*CHI2['xxz'] \
+            + np.sin(GAMMA)**2*CHI2['yyz'] + np.sin(GAMMA)*np.cos(GAMMA)*CHI2['yxz'],
+    'YXZ' : - np.cos(GAMMA)**2*CHI2['xyz'] + np.sin(GAMMA)*np.cos(GAMMA)*CHI2['xxz'] \
+            - np.sin(GAMMA)*np.cos(GAMMA)*CHI2['yyz'] + np.sin(GAMMA)**2*CHI2['yxz'],
+    'YXY' : + np.sin(GAMMA)*np.cos(GAMMA)**2*CHI2['xxx'] - np.sin(GAMMA)*np.cos(GAMMA)**2*CHI2['xyy'] - (np.cos(GAMMA)**3 - np.sin(GAMMA)**2*np.cos(GAMMA))*CHI2['xxy'] \
+            + np.sin(GAMMA)**2*np.cos(GAMMA)*CHI2['yxx'] - np.sin(GAMMA)**2*np.cos(GAMMA)*CHI2['yyy'] + (np.sin(GAMMA)**3 - np.sin(GAMMA)*np.cos(GAMMA)**2)*CHI2['yxy'],
+    'ZXX' : + np.sin(GAMMA)**2*CHI2['zxx'] + np.cos(GAMMA)**2*CHI2['zyy'] - 2*np.sin(GAMMA)*np.cos(GAMMA)*CHI2['zxy'],
+    'ZYY' : + np.cos(GAMMA)**2*CHI2['zxx'] + np.sin(GAMMA)**2*CHI2['zyy'] + 2*np.sin(GAMMA)*np.cos(GAMMA)*CHI2['zxy'],
+    'ZZZ' : + CHI2['zzz'],
+    'ZYZ' : + np.sin(GAMMA)*CHI2['zyz'] + np.cos(GAMMA)*CHI2['zxz'],
+    'ZXZ' : - np.cos(GAMMA)*CHI2['zyz'] + np.sin(GAMMA)*CHI2['zxz'],
+    'ZXY' : + np.sin(GAMMA)*np.cos(GAMMA)*CHI2['zxx'] - np.sin(GAMMA)*np.cos(GAMMA)*CHI2['zyy'] - np.cos(2*GAMMA)*CHI2['zxy']
+}
 
 ################################################################################
 ######################### END NONLINEAR RESPONSES ##############################

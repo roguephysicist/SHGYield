@@ -18,6 +18,7 @@ energy:     [1.25, 2.5, 126]    # from 1.25 to 2.5 eV. in 126 steps (0.01 eV)
 
 # Required calculation parameters
 parameters:
+    gamma: 90           # rotation for CHI2 in degrees; 90 is equal to no rotation.
     theta: 65           # angle of incidence in degrees
     phi:   30           # azimuthal angle, or range of angles in degrees
     # phi:   [0, 360, 1]  # azimuthal angle, or range of angles in degrees
