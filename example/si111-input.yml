@@ -38,11 +38,19 @@ multiref:
 # chi1: linear susceptibility tensor.
 # Paths to files for chib (bulk) and chil (layered), and normalization of chil.
 # For information about normalizing, see PRB 92, 245308 (2015). File columns are
-# Energy(1w) Re[chi_xx] Im[chi_xx] Re[chi_yy] Im[chi_yy] Re[chi_zz] Im[chi_zz].
+# Energy(1w) Re[chi] Im[chi].
 chi1:
-    chib: chi1-linear/SiBulk-chi1-xx_yy_zz
-    chil: chi1-linear/SiH1x1-chi1-xx_yy_zz
-    norm: 1.2659296143
+    bulk: 
+        xx: chi1-linear/SiBulk-chi1-xx  # bulk chi1^{xx}
+        yy: chi1-linear/SiBulk-chi1-yy  # bulk chi1^{yy}
+        zz: chi1-linear/SiBulk-chi1-zz  # bulk chi1^{zz}
+        avg: [xx, yy, zz]               # bulk avg chi1
+    layer:
+        xx: chi1-linear/SiH1x1-chi1-xx  # layered chi1^{xx}
+        yy: chi1-linear/SiH1x1-chi1-yy  # layered chi1^{yy}
+        zz: chi1-linear/SiH1x1-chi1-zz  # layered chi1^{zz}
+        avg: [xx, yy, zz]               # layered avg chi1
+    norm: 1.2659296143                  # layered chi1 normalization
     sigma: 0    # sigma for broadening, in samples (5*0.01 eV steps = 0.05 eV)
     
 # chi2: nonlinear susceptibility tensor 
