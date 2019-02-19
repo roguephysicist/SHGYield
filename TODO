@@ -1,0 +1,31 @@
+# To-do for SHGYield.py
+
+## Main Program
+
+
+
+
+## GUI
+
+The GUI should be divided into three distinct elements (tabs?):
+1. Loading the necessary material information. The user should first decide
+   between either the 2-layer or 3-layer models, as these describe most cases.
+   Other models will be deprecated. Once the model is established, the user must
+   define the pertinent physical quantities, i.e. index of refraction, epsilon,
+   or susceptibility tensors. The user should be able to load several cases,
+   that will be subsequently processed and plotted.
+2. Displaying the relevant susceptibility tensors, epsilon, etc. The user should
+   have the option to change the symmetries, disregard tensor components, and
+   averaging over various components. The user will be able to vary the rotation
+   angle that will rotate the entire tensor, and will also be able to change the
+   broadening and see the effect on the tensor components. Selection of which
+   components, parts (real and imaginary), and cases should all be possible via
+   the interface.
+3. 
+
+
+## I/O Options
+
+CONSIDER PRE-PROCESSING INTO NETCDF FILES
+
+1. The program should be able to output NetCDF files with all the necessary data. These files could be parsed in order to extract the susceptibility components, calculation data, etc. or can be loaded again with the program which could potentially save time.
