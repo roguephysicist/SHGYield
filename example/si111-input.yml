@@ -2,9 +2,7 @@
 # This is in YAML, so please preserve indentation below!
 
 # Establish reflectance model, see PRB 93, 235304 (2016). Available choices:
-# 3-layer, 2-layer-fresnel, 2-layer-bulk, 2-layer-vacuum, and 3-layer-hybrid.
-# Anything other than '3-layer' will exclude multiple reflections. When in 
-# doubt, use '3-layer'.
+# 3-layer or 2-layer. Only '3-layer' will include multiple reflections.
 mode:       3-layer
 
 # Establish the 1w energy range or value over which you wish to calculate the
@@ -13,15 +11,14 @@ mode:       3-layer
 # the calculated range of your chi1 (for 1w and 2w!) and chi2 (only 1w) files,
 # otherwise the splines will attempt to extrapolate and fail. Some examples:
 # energy:     [0.00, 10.0, 1001]  # from 0 to 10 eV, in 1001 steps (0.01 eV)
-energy:     [1.25, 2.5, 126]    # from 1.25 to 2.5 eV. in 126 steps (0.01 eV)
-# energy:     1.7
+energy_spectra: [1.25, 2.5, 126]    # from 1.25 to 2.5 eV, in 126 steps (0.01 eV)
+energy_polar:   1.7
 
 # Required calculation parameters
 parameters:
     gamma: 90           # rotation for CHI2 in degrees; 90 is equal to no rotation.
     theta: 65           # angle of incidence in degrees
     phi:   30           # azimuthal angle, or range of angles in degrees
-    # phi:   [0, 360, 1]  # azimuthal angle, or range of angles in degrees
     sigma: 5            # the sigma parameter of the gaussian function in samples;
                         # for data sampled every 0.01 eV, a value of 5 means that 
                         # sigma = 0.05 eV.
