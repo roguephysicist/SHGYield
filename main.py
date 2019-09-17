@@ -2,17 +2,16 @@
 
 '''
 todo:
-* error bars
 * scissors?
 
-* Include every symmetry group (see Popov) into menus
-* Develop GUI to ingest and pre-process data, provide initial values, etc.
-* Allow for saving all data and parameters to NetCDF file
-
-* Develop SHG functions into class for ease of use
+* Allow for saving all data and parameters to NetCDF file, and final data to txt
+* Develop SHG functions into class
 * Improve rotation function and avoid running unless changed
 * Improve spline function and avoid running unless changed
 * Convert to absolute broadening to avoid trouble with polar plots
+
+* Develop GUI to ingest and pre-process data, provide initial values, etc.
+* Include every symmetry group (see Popov) into menus
 '''
 
 import numpy as np
@@ -38,6 +37,8 @@ class CustomWidget(QtGui.QWidget):
         self.ui.setupUi(self)
 
         self.scale = 1e20
+
+        self.colors = ['k', '#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf']
 
         self.marker = {
             'pen': None,
@@ -111,10 +112,8 @@ class CustomWidget(QtGui.QWidget):
         self.ui.box_energy_polar.setMaximum(self.erng.max())
         self.ui.box_energy_polar.setSingleStep(self.einc)
 
-
-
         # plots for experimental data, that do not change or need calculations
-        deco = 1
+        deco = 0
         for case, measurement in experiment.items():
             for kind, values in measurement.items():
                 for polarization, data in values.items():
@@ -124,22 +123,28 @@ class CustomWidget(QtGui.QWidget):
                             pen = None,
                             symbol = deco,
                             symbolSize = 5,
-                            symbolBrush = pg.mkBrush(deco),
+                            symbolBrush = pg.mkBrush(color=self.colors[deco]),
                             symbolPen = pg.mkPen('k', width=0.5),
                             name = case)
                     elif kind == 'spect':
+                        if 'stdev' in data.keys():
+                            self.widgets['tab_' + polarization]['exp_' + kind].addItem(pg.ErrorBarItem(
+                                x = data['energy'],
+                                y = data['data']*self.scale,
+                                height = data['stdev'],
+                                pen = pg.mkPen(color=self.colors[deco], width=1)))
                         self.widgets['tab_' + polarization]['exp_' + kind].plot(
                             x = data['energy'],
                             y = data['data']*self.scale,
                             pen = None,
                             symbol = deco,
                             symbolSize = 5,
-                            symbolBrush = pg.mkBrush(deco),
+                            symbolBrush = pg.mkBrush(color=self.colors[deco]),
                             symbolPen = pg.mkPen('k', width=0.5),
                             name = case)
             deco += 1
 
-        deco = 1
+        deco = 0
         self.test = {}
         for case in MATERIAL.keys():
             self.polar = shg.shgyield(energy =    self.ui.box_energy_polar.value(),
@@ -173,13 +178,13 @@ class CustomWidget(QtGui.QWidget):
 
             self.test[case] = {
                 pol: {
-                    'test1': self.widgets['tab_polar'][pol].plot(self.trans_polar(self.polar['phi'], self.polar[pol]*self.scale), pen=pg.mkPen(deco, width=1.5), name=case),
+                    'test1': self.widgets['tab_polar'][pol].plot(self.trans_polar(self.polar['phi'], self.polar[pol]*self.scale), pen=pg.mkPen(color=self.colors[deco], width=1.5), name=case),
                     'test2': self.widgets['tab_polar'][pol].plot(self.trans_polar2(self.spect['phi'], self.polar[pol][self.pidx][0]*self.scale), **self.marker),
-                    'test3': self.widgets['tab_spect'][pol].plot(x = self.spect['energy'], y = self.spect[pol]*self.scale, pen=pg.mkPen(deco, width=1.5), name=case),
+                    'test3': self.widgets['tab_spect'][pol].plot(x = self.spect['energy'], y = self.spect[pol]*self.scale, pen=pg.mkPen(color=self.colors[deco], width=1.5), name=case),
                     'test4': self.widgets['tab_spect'][pol].plot(x = [self.polar['energy']], y = [self.spect[pol][self.eidx][0]*self.scale], **self.marker),
-                    'test5': self.widgets['tab_' + pol]['thr_polar'].plot(self.trans_polar(self.polar['phi'], self.polar[pol]*self.scale), pen=pg.mkPen(deco, width=1.5), name=case),
+                    'test5': self.widgets['tab_' + pol]['thr_polar'].plot(self.trans_polar(self.polar['phi'], self.polar[pol]*self.scale), pen=pg.mkPen(color=self.colors[deco], width=1.5), name=case),
                     'test6': self.widgets['tab_' + pol]['thr_polar'].plot(self.trans_polar2(self.spect['phi'], self.polar[pol][self.pidx][0]*self.scale), **self.marker),
-                    'test7': self.widgets['tab_' + pol]['thr_spect'].plot(x = self.spect['energy'], y = self.spect[pol]*self.scale, pen=pg.mkPen(deco, width=1.5), name=case),
+                    'test7': self.widgets['tab_' + pol]['thr_spect'].plot(x = self.spect['energy'], y = self.spect[pol]*self.scale, pen=pg.mkPen(color=self.colors[deco], width=1.5), name=case),
                     'test8': self.widgets['tab_' + pol]['thr_spect'].plot(x = [self.polar['energy']], y = [self.spect[pol][self.eidx][0]*self.scale], **self.marker)
                 } for pol in ['pp', 'sp', 'ps', 'ss']
             } 
@@ -392,7 +397,7 @@ EXP = {
             # 'ss': {
             #     'energy': exp_e,
             #     'phi': 30,
-            #     'data': exp_rpp
+            #     'data': exp_rss
             # }
         }
     }
