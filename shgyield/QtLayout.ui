@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1199</width>
-    <height>600</height>
+    <width>1400</width>
+    <height>700</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -243,12 +243,18 @@
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QGroupBox" name="groupBox">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="title">
          <string>Material</string>
         </property>
         <layout class="QFormLayout" name="formLayout_4">
          <item row="2" column="0">
           <widget class="QLabel" name="label_8">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>Multiple reflections:</string>
            </property>
@@ -256,6 +262,9 @@
          </item>
          <item row="2" column="1">
           <widget class="QCheckBox" name="multiple_reflections">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -266,6 +275,9 @@
          </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_9">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>Model:</string>
            </property>
@@ -273,6 +285,9 @@
          </item>
          <item row="0" column="1">
           <widget class="QComboBox" name="layers">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <item>
             <property name="text">
              <string>3 Layer</string>
@@ -287,18 +302,30 @@
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="label_12">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>Thickness:</string>
            </property>
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QDoubleSpinBox" name="doubleSpinBox">
+          <widget class="QDoubleSpinBox" name="box_thickness">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="suffix">
             <string> nm</string>
            </property>
+           <property name="maximum">
+            <double>1000.000000000000000</double>
+           </property>
            <property name="singleStep">
             <double>0.010000000000000</double>
+           </property>
+           <property name="value">
+            <double>10.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -311,6 +338,29 @@
          <string>Energy</string>
         </property>
         <layout class="QFormLayout" name="formLayout">
+         <item row="0" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_7">
+           <item>
+            <widget class="QDoubleSpinBox" name="box_energy_polar">
+             <property name="suffix">
+              <string> eV</string>
+             </property>
+             <property name="minimum">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>99.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>1.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>1.700000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label">
            <property name="text">
@@ -318,24 +368,11 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QDoubleSpinBox" name="box_energy_polar">
-           <property name="suffix">
-            <string> eV</string>
-           </property>
-           <property name="minimum">
-            <double>1.250000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>2.500000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.010000000000000</double>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_10">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>Spectra Min:</string>
            </property>
@@ -343,11 +380,17 @@
          </item>
          <item row="1" column="1">
           <widget class="QDoubleSpinBox" name="box_energy_spect_min">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="suffix">
             <string> eV</string>
            </property>
+           <property name="minimum">
+            <double>0.000000000000000</double>
+           </property>
            <property name="maximum">
-            <double>10.000000000000000</double>
+            <double>20.000000000000000</double>
            </property>
            <property name="singleStep">
             <double>0.010000000000000</double>
@@ -356,6 +399,9 @@
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_11">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>Spectra Max:</string>
            </property>
@@ -363,6 +409,9 @@
          </item>
          <item row="2" column="1">
           <widget class="QDoubleSpinBox" name="box_energy_spect_max">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="suffix">
             <string> eV</string>
            </property>
@@ -371,6 +420,9 @@
            </property>
            <property name="singleStep">
             <double>0.010000000000000</double>
+           </property>
+           <property name="value">
+            <double>5.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -400,6 +452,9 @@
              <property name="maximum">
               <number>90</number>
              </property>
+             <property name="value">
+              <number>65</number>
+             </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -419,6 +474,9 @@
              <property name="maximum">
               <number>90</number>
              </property>
+             <property name="value">
+              <number>65</number>
+             </property>
             </widget>
            </item>
           </layout>
@@ -437,6 +495,9 @@
              <property name="maximum">
               <number>360</number>
              </property>
+             <property name="value">
+              <number>30</number>
+             </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -449,6 +510,9 @@
              </property>
              <property name="maximum">
               <number>360</number>
+             </property>
+             <property name="value">
+              <number>30</number>
              </property>
             </widget>
            </item>
@@ -576,6 +640,9 @@
              <property name="maximum">
               <number>50</number>
              </property>
+             <property name="value">
+              <number>5</number>
+             </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -585,6 +652,9 @@
             <widget class="QSpinBox" name="box_broad_out">
              <property name="maximum">
               <number>50</number>
+             </property>
+             <property name="value">
+              <number>5</number>
              </property>
             </widget>
            </item>
@@ -614,12 +684,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1118</x>
-     <y>328</y>
+     <x>1358</x>
+     <y>395</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1085</x>
-     <y>331</y>
+     <x>1287</x>
+     <y>394</y>
     </hint>
    </hints>
   </connection>
@@ -630,12 +700,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1038</x>
-     <y>330</y>
+     <x>1287</x>
+     <y>394</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1122</x>
-     <y>338</y>
+     <x>1358</x>
+     <y>395</y>
     </hint>
    </hints>
   </connection>
@@ -646,12 +716,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1065</x>
-     <y>358</y>
+     <x>1287</x>
+     <y>430</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1124</x>
-     <y>367</y>
+     <x>1357</x>
+     <y>431</y>
     </hint>
    </hints>
   </connection>
@@ -662,12 +732,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1123</x>
-     <y>358</y>
+     <x>1357</x>
+     <y>431</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1072</x>
-     <y>363</y>
+     <x>1287</x>
+     <y>430</y>
     </hint>
    </hints>
   </connection>
@@ -678,12 +748,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1058</x>
-     <y>398</y>
+     <x>1287</x>
+     <y>466</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1119</x>
-     <y>399</y>
+     <x>1357</x>
+     <y>467</y>
     </hint>
    </hints>
   </connection>
@@ -694,12 +764,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1129</x>
-     <y>465</y>
+     <x>1331</x>
+     <y>542</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1100</x>
-     <y>466</y>
+     <x>1275</x>
+     <y>541</y>
     </hint>
    </hints>
   </connection>
@@ -710,12 +780,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1130</x>
-     <y>389</y>
+     <x>1357</x>
+     <y>467</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1077</x>
-     <y>391</y>
+     <x>1287</x>
+     <y>466</y>
     </hint>
    </hints>
   </connection>
@@ -726,12 +796,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1097</x>
-     <y>471</y>
+     <x>1275</x>
+     <y>541</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1129</x>
-     <y>478</y>
+     <x>1331</x>
+     <y>542</y>
     </hint>
    </hints>
   </connection>
@@ -742,12 +812,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1145</x>
-     <y>509</y>
+     <x>1331</x>
+     <y>588</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1111</x>
-     <y>509</y>
+     <x>1275</x>
+     <y>587</y>
     </hint>
    </hints>
   </connection>
@@ -758,12 +828,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1022</x>
-     <y>505</y>
+     <x>1275</x>
+     <y>587</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1136</x>
-     <y>509</y>
+     <x>1331</x>
+     <y>588</y>
     </hint>
    </hints>
   </connection>
@@ -774,12 +844,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1130</x>
-     <y>542</y>
+     <x>1331</x>
+     <y>634</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1109</x>
-     <y>545</y>
+     <x>1275</x>
+     <y>633</y>
     </hint>
    </hints>
   </connection>
@@ -790,12 +860,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1017</x>
-     <y>550</y>
+     <x>1275</x>
+     <y>633</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1139</x>
-     <y>544</y>
+     <x>1331</x>
+     <y>634</y>
     </hint>
    </hints>
   </connection>

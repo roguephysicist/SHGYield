@@ -167,8 +167,10 @@ def mrc2w(energy, eps0, fres1, fres2, theta, thick, mref):
     2w multiple reflection coefficient, see Eq. (18) of PRB 94, 115314 (2016).
     '''
     if mref:
-        delta = 8*np.pi * ((energy * thick * 1e-9)/(constants.value("Planck constant in eV s") * constants.c)) * wvec(eps0, theta) 
-        return (fres1 * np.exp(1j * (delta/2)))/(1 + (fres2 * fres1 * np.exp(1j * delta))) * np.sinc(delta/2)
+        delta = 8*np.pi * ((energy * thick * 1e-9)/\
+                (constants.value("Planck constant in eV s") * constants.c)) * wvec(eps0, theta) 
+        return (fres1 * np.exp(1j * (delta/2)))/\
+               (1 + (fres2 * fres1 * np.exp(1j * delta))) * np.sinc(delta/2)
     elif not mref:
         return fres1
 
@@ -178,8 +180,10 @@ def mrc1w(energy, eps0, fres1, fres2, theta, thick, mref):
     1w multiple reflection coefficient, see Eq. (21) of PRB 94, 115314 (2016).
     '''
     if mref:
-        varphi = 4*np.pi * ((energy * thick * 1e-9)/(constants.value("Planck constant in eV s") * constants.c)) * wvec(eps0, theta)
-        return (fres1 * np.exp(1j * varphi))/(1 + (fres2 * fres1 * np.exp(1j * varphi)))
+        varphi = 4*np.pi * ((energy * thick * 1e-9)/\
+                 (constants.value("Planck constant in eV s") * constants.c)) * wvec(eps0, theta)
+        return (fres1 * np.exp(1j * varphi))/\
+               (1 + (fres2 * fres1 * np.exp(1j * varphi)))
     elif not mref:
         return fres1
 
