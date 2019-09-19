@@ -447,13 +447,13 @@
            <item>
             <widget class="QSlider" name="sld_angle_theta">
              <property name="minimum">
-              <number>-90</number>
+              <number>0</number>
              </property>
              <property name="maximum">
               <number>90</number>
              </property>
              <property name="value">
-              <number>65</number>
+              <number>0</number>
              </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -463,19 +463,19 @@
            <item>
             <widget class="QSpinBox" name="box_angle_theta">
              <property name="suffix">
-              <string>° </string>
+              <string>°  </string>
              </property>
              <property name="prefix">
               <string/>
              </property>
              <property name="minimum">
-              <number>-90</number>
+              <number>0</number>
              </property>
              <property name="maximum">
               <number>90</number>
              </property>
              <property name="value">
-              <number>65</number>
+              <number>0</number>
              </property>
             </widget>
            </item>
@@ -496,7 +496,7 @@
               <number>360</number>
              </property>
              <property name="value">
-              <number>30</number>
+              <number>0</number>
              </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -512,7 +512,7 @@
               <number>360</number>
              </property>
              <property name="value">
-              <number>30</number>
+              <number>0</number>
              </property>
             </widget>
            </item>
@@ -641,7 +641,7 @@
               <number>50</number>
              </property>
              <property name="value">
-              <number>5</number>
+              <number>0</number>
              </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -654,7 +654,7 @@
               <number>50</number>
              </property>
              <property name="value">
-              <number>5</number>
+              <number>0</number>
              </property>
             </widget>
            </item>
