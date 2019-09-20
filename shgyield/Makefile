@@ -1,10 +1,16 @@
 PYUI=pyuic5
-NAME=QtLayout
+NAME_LAYOUT=QtLayout
+NAME_PARAM=InputParameter
 
-.PHONY: layout
+all : layout input_param
+
+.PHONY: all 
 
 layout:
-	$(PYUI) $(NAME).ui -o $(NAME).py
+	$(PYUI) $(NAME_LAYOUT).ui -o $(NAME_LAYOUT).py
+
+input_param:
+	$(PYUI) $(NAME_PARAM).ui -o $(NAME_PARAM).py
 
 clean:
 	rm -f $(NAME).py
