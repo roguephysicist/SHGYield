@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>1400</width>
-    <height>700</height>
+    <height>703</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -242,7 +242,7 @@
     <widget class="QWidget" name="widget" native="true">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QGroupBox" name="groupBox">
+       <widget class="QGroupBox" name="group_material">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -333,38 +333,34 @@
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupBox">
+       <widget class="QGroupBox" name="group_energy">
         <property name="title">
          <string>Energy</string>
         </property>
         <layout class="QFormLayout" name="formLayout">
-         <item row="0" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_7">
-           <item>
-            <widget class="QDoubleSpinBox" name="box_energy_polar">
-             <property name="suffix">
-              <string> eV</string>
-             </property>
-             <property name="minimum">
-              <double>0.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>99.000000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>1.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>1.700000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label">
            <property name="text">
             <string>RA-SHG:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QDoubleSpinBox" name="box_energy_polar">
+           <property name="suffix">
+            <string> eV</string>
+           </property>
+           <property name="minimum">
+            <double>0.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>99.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>1.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.700000000000000</double>
            </property>
           </widget>
          </item>
@@ -430,7 +426,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupBox_2">
+       <widget class="QGroupBox" name="group_angles">
         <property name="title">
          <string>Angles</string>
         </property>
@@ -559,7 +555,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupBox_3">
+       <widget class="QGroupBox" name="group_broad">
         <property name="title">
          <string>Broadening</string>
         </property>
@@ -661,6 +657,14 @@
           </layout>
          </item>
         </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="group_gap">
+        <property name="title">
+         <string>Gap</string>
+        </property>
+        <layout class="QGridLayout" name="grid_gap"/>
        </widget>
       </item>
      </layout>

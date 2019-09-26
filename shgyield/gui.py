@@ -1,7 +1,7 @@
 import numpy as np
 import pyqtgraph as pg
 
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 import shgyield.shg as shg
 from shgyield.QtLayout import Ui_CustomWidget
@@ -15,13 +15,14 @@ pg.setConfigOption('useWeave', True)
 
 class CustomWidget(QtGui.QWidget):
 
-    def __init__(self, espect, epolar, experiment, material, scale, parent=None):
+    def __init__(self, params, espect, epolar, experiment, material, scale, parent=None):
         super(CustomWidget, self).__init__(parent=parent)
 
         # set up the form class as a `ui` attribute
         self.ui = Ui_CustomWidget()
         self.ui.setupUi(self)
 
+        self.params = params
         self.scale = scale
         self.experiment = experiment
         self.material = material
@@ -92,6 +93,30 @@ class CustomWidget(QtGui.QWidget):
                     pg.InfiniteLine(angle = ang, pen = pg.mkPen(color=0.8, width=0.5, style=QtCore.Qt.DashLine)))
 
         # calculation time!
+
+        loc = 0
+        self.gapgui = {}
+        for case in self.material.keys():
+            self.gapgui['label_gap_' + case] = QtWidgets.QLabel(self.ui.group_gap)
+            self.gapgui['label_gap_' + case].setObjectName('label_gap_' + case)
+            self.gapgui['label_gap_' + case].setText(case)
+
+            self.gapgui['box_gap_' + case] = QtWidgets.QDoubleSpinBox(self.ui.group_gap)
+            self.gapgui['box_gap_' + case].setObjectName('box_gap_' + case)
+            self.gapgui['box_gap_' + case].setSingleStep(0.01)
+            self.gapgui['box_gap_' + case].setSuffix(" eV")
+            self.gapgui['box_gap_' + case].setMaximum(self.material[case]['gap']['rng'].max())
+            self.gapgui['box_gap_' + case].setMinimum(self.material[case]['gap']['rng'].min())
+
+            self.gapgui['box_gap_' + case].setValue(self.material[case]['gap']['gw'])
+
+            self.ui.grid_gap.addWidget(self.gapgui['label_gap_' + case], loc, 0, 1, 1)
+            self.ui.grid_gap.addWidget(self.gapgui['box_gap_' + case], loc, 1, 1, 1)
+
+            self.gapgui['box_gap_' + case].valueChanged.connect(self.update_plot)
+            self.gapgui['box_gap_' + case].valueChanged.connect(self.update_plot)
+            loc += 1
+
         # init: energy
         self.einc = 0.01
         self.epolar = epolar
@@ -103,6 +128,12 @@ class CustomWidget(QtGui.QWidget):
         self.ui.box_energy_polar.setMinimum(self.erng.min())
         self.ui.box_energy_polar.setMaximum(self.erng.max())
         self.ui.box_energy_polar.setSingleStep(self.einc)
+
+        self.ui.sld_angle_theta.setValue(self.params['theta'])
+        self.ui.sld_angle_phi.setValue(self.params['phi'])
+        self.ui.sld_broad_eps.setValue(self.params['broad']['eps'])
+        self.ui.sld_broad_chi.setValue(self.params['broad']['chi'])
+        self.ui.sld_broad_out.setValue(self.params['broad']['out'])
 
         # plots for experimental data, that do not change or need calculations
         deco = 0
@@ -140,27 +171,27 @@ class CustomWidget(QtGui.QWidget):
         self.test = {}
         for case in self.material.keys():
             self.polar = shg.shgyield(energy =    self.ui.box_energy_polar.value(),
-                                      eps_m1 =    self.material[case]['eps']['m1'],
-                                      eps_m2 =    self.material[case]['eps']['m2'],
-                                      eps_m3 =    self.material[case]['eps']['m3'],
-                                      chi2 =      self.material[case]['chi2'],
+                                      eps_m1 =    self.material[case]['medium 1']['eps'],
+                                      eps_m2 =    self.material[case]['medium 2']['{:4.2f}'.format(self.gapgui['box_gap_' + case].value())]['eps'],
+                                      eps_m3 =    self.material[case]['medium 3']['eps'],
+                                      chi2 =      self.material[case]['medium 2']['{:4.2f}'.format(self.gapgui['box_gap_' + case].value())]['chi2'],
                                       theta =     self.ui.sld_angle_theta.value(),
                                       phi =       np.arange(0, 361),
                                       gamma =     self.ui.sld_angle_gamma.value(),
-                                      thick =     self.material[case]['thickness'],
+                                      thick =     self.material[case]['lslab'],
                                       sigma_eps = self.ui.sld_broad_eps.value(),
                                       sigma_chi = self.ui.sld_broad_chi.value(),
                                       sigma_out = 0)
 
             self.spect = shg.shgyield(energy =    self.erng,
-                                      eps_m1 =    self.material[case]['eps']['m1'],
-                                      eps_m2 =    self.material[case]['eps']['m2'],
-                                      eps_m3 =    self.material[case]['eps']['m3'],
-                                      chi2 =      self.material[case]['chi2'],
+                                      eps_m1 =    self.material[case]['medium 1']['eps'],
+                                      eps_m2 =    self.material[case]['medium 2']['{:4.2f}'.format(self.gapgui['box_gap_' + case].value())]['eps'],
+                                      eps_m3 =    self.material[case]['medium 3']['eps'],
+                                      chi2 =      self.material[case]['medium 2']['{:4.2f}'.format(self.gapgui['box_gap_' + case].value())]['chi2'],
                                       theta =     self.ui.sld_angle_theta.value(),
                                       phi =       self.ui.sld_angle_phi.value(),
                                       gamma =     self.ui.sld_angle_gamma.value(),
-                                      thick =     self.material[case]['thickness'],
+                                      thick =     self.material[case]['lslab'],
                                       sigma_eps = self.ui.sld_broad_eps.value(),
                                       sigma_chi = self.ui.sld_broad_chi.value(),
                                       sigma_out = self.ui.sld_broad_out.value())
@@ -231,27 +262,27 @@ class CustomWidget(QtGui.QWidget):
     def update_plot(self):
         for case in self.material.keys():
             polar = shg.shgyield(energy =    self.ui.box_energy_polar.value(),
-                                 eps_m1 =    self.material[case]['eps']['m1'],
-                                 eps_m2 =    self.material[case]['eps']['m2'],
-                                 eps_m3 =    self.material[case]['eps']['m3'],
-                                 chi2 =      self.material[case]['chi2'],
+                                 eps_m1 =    self.material[case]['medium 1']['eps'],
+                                 eps_m2 =    self.material[case]['medium 2']['{:4.2f}'.format(self.gapgui['box_gap_' + case].value())]['eps'],
+                                 eps_m3 =    self.material[case]['medium 3']['eps'],
+                                 chi2 =      self.material[case]['medium 2']['{:4.2f}'.format(self.gapgui['box_gap_' + case].value())]['chi2'],
                                  theta =     self.ui.sld_angle_theta.value(),
                                  phi =       np.arange(0, 361),
                                  gamma =     self.ui.sld_angle_gamma.value(),
-                                 thick =     self.material[case]['thickness'],
+                                 thick =     self.material[case]['lslab'],
                                  sigma_eps = self.ui.sld_broad_eps.value(),
                                  sigma_chi = self.ui.sld_broad_chi.value(),
                                  sigma_out = 0)
 
             spect = shg.shgyield(energy =    self.erng,
-                                 eps_m1 =    self.material[case]['eps']['m1'],
-                                 eps_m2 =    self.material[case]['eps']['m2'],
-                                 eps_m3 =    self.material[case]['eps']['m3'],
-                                 chi2 =      self.material[case]['chi2'],
+                                 eps_m1 =    self.material[case]['medium 1']['eps'],
+                                 eps_m2 =    self.material[case]['medium 2']['{:4.2f}'.format(self.gapgui['box_gap_' + case].value())]['eps'],
+                                 eps_m3 =    self.material[case]['medium 3']['eps'],
+                                 chi2 =      self.material[case]['medium 2']['{:4.2f}'.format(self.gapgui['box_gap_' + case].value())]['chi2'],
                                  theta =     self.ui.sld_angle_theta.value(),
                                  phi =       self.ui.sld_angle_phi.value(),
                                  gamma =     self.ui.sld_angle_gamma.value(),
-                                 thick =     self.material[case]['thickness'],
+                                 thick =     self.material[case]['lslab'],
                                  sigma_eps = self.ui.sld_broad_eps.value(),
                                  sigma_chi = self.ui.sld_broad_chi.value(),
                                  sigma_out = self.ui.sld_broad_out.value())

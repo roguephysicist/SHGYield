@@ -2,7 +2,6 @@
 
 '''
 todo:
-* scissors?
 * SHG: SOME Nv=1 INSTANCES ARE HARDCODED, NEED TO GO BACK AND CHANGE
 * Allow for saving all data and parameters to NetCDF file, and final data to txt
 * Develop SHG functions into class

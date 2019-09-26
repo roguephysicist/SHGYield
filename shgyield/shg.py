@@ -374,19 +374,21 @@ def shgyield(energy, eps_m1, eps_m2, eps_m3, chi2, theta, phi, thick, gamma=90, 
     '''
 
     eps_m1_num = {key: val for key, val in eps_m1.items() if not isinstance(val, dict)}
-    eps_m2_num = {key: val for key, val in eps_m2.items() if not isinstance(val, dict)}
-    eps_m3_num = {key: val for key, val in eps_m3.items() if not isinstance(val, dict)}
     eps_m1_brd = {key: {'energy': val['energy'], 'data': broadC(val['data'], sigma_eps)} for key, val in eps_m1.items() if isinstance(val, dict)}
-    eps_m2_brd = {key: {'energy': val['energy'], 'data': broadC(val['data'], sigma_eps)} for key, val in eps_m2.items() if isinstance(val, dict)}
-    eps_m3_brd = {key: {'energy': val['energy'], 'data': broadC(val['data'], sigma_eps)} for key, val in eps_m3.items() if isinstance(val, dict)}
     eps_m1_spl = splineEPS(eps_m1_brd, energy)
-    eps_m2_spl = splineEPS(eps_m2_brd, energy)
-    eps_m3_spl = splineEPS(eps_m3_brd, energy)
     eps_m1_spl[0].update(eps_m1_num)
-    eps_m2_spl[0].update(eps_m2_num)
-    eps_m3_spl[0].update(eps_m3_num)
     eps_m1_spl[1].update(eps_m1_num)
+
+    eps_m2_num = {key: val for key, val in eps_m2.items() if not isinstance(val, dict)}
+    eps_m2_brd = {key: {'energy': val['energy'], 'data': broadC(val['data'], sigma_eps)} for key, val in eps_m2.items() if isinstance(val, dict)}
+    eps_m2_spl = splineEPS(eps_m2_brd, energy)
+    eps_m2_spl[0].update(eps_m2_num)
     eps_m2_spl[1].update(eps_m2_num)
+    
+    eps_m3_num = {key: val for key, val in eps_m3.items() if not isinstance(val, dict)}
+    eps_m3_brd = {key: {'energy': val['energy'], 'data': broadC(val['data'], sigma_eps)} for key, val in eps_m3.items() if isinstance(val, dict)}
+    eps_m3_spl = splineEPS(eps_m3_brd, energy)
+    eps_m3_spl[0].update(eps_m3_num)
     eps_m3_spl[1].update(eps_m3_num)
 
     if mode == '3-layer':

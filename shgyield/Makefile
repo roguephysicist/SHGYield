@@ -2,7 +2,7 @@ PYUI=pyuic5
 NAME_LAYOUT=QtLayout
 NAME_PARAM=InputParameter
 
-all : layout input_param
+all : layout
 
 .PHONY: all 
 
