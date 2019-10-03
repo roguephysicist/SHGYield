@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_CustomWidget(object):
     def setupUi(self, CustomWidget):
         CustomWidget.setObjectName("CustomWidget")
-        CustomWidget.resize(1400, 703)
+        CustomWidget.resize(1400, 700)
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout(CustomWidget)
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.tabWidget = QtWidgets.QTabWidget(CustomWidget)
@@ -336,11 +336,6 @@ class Ui_CustomWidget(object):
         self.horizontalLayout_6.addWidget(self.box_broad_out)
         self.formLayout_3.setLayout(4, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_6)
         self.verticalLayout.addWidget(self.group_broad)
-        self.group_gap = QtWidgets.QGroupBox(self.widget)
-        self.group_gap.setObjectName("group_gap")
-        self.grid_gap = QtWidgets.QGridLayout(self.group_gap)
-        self.grid_gap.setObjectName("grid_gap")
-        self.verticalLayout.addWidget(self.group_gap)
         self.horizontalLayout_9.addWidget(self.widget, 0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter)
 
         self.retranslateUi(CustomWidget)
@@ -393,6 +388,5 @@ class Ui_CustomWidget(object):
         self.label_5.setText(_translate("CustomWidget", "Epsilon:"))
         self.label_6.setText(_translate("CustomWidget", "Chi2:"))
         self.label_7.setText(_translate("CustomWidget", "Output:"))
-        self.group_gap.setTitle(_translate("CustomWidget", "Gap"))
 
 from pyqtgraph import PlotWidget

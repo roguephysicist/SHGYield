@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>1400</width>
-    <height>703</height>
+    <height>700</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -657,14 +657,6 @@
           </layout>
          </item>
         </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="group_gap">
-        <property name="title">
-         <string>Gap</string>
-        </property>
-        <layout class="QGridLayout" name="grid_gap"/>
        </widget>
       </item>
      </layout>
