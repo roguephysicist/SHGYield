@@ -529,7 +529,7 @@
               <number>360</number>
              </property>
              <property name="value">
-              <number>90</number>
+              <number>0</number>
              </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -545,7 +545,7 @@
               <number>360</number>
              </property>
              <property name="value">
-              <number>90</number>
+              <number>0</number>
              </property>
             </widget>
            </item>

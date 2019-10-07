@@ -52,8 +52,9 @@ def avgEPS(data):
     return np.mean(list(data.values()), axis=0)
 
 
-def rotate(chi2, gamma):
+def rotate(chi2, rotang):
     ## in-plane rotatation for chi2 tensor components
+    gamma = np.radians(90) - rotang
     chi2rot = {
         'xxx' : + np.sin(gamma)**3*chi2['xxx'] \
                 + np.sin(gamma)*np.cos(gamma)**2*chi2['xyy'] \
