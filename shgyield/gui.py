@@ -15,7 +15,7 @@ pg.setConfigOption('useWeave', True)
 
 class CustomWidget(QtGui.QWidget):
 
-    def __init__(self, params, espect, epolar, experiment, material, scale, parent=None):
+    def __init__(self, params, material, experiment, scale, parent=None):
         super(CustomWidget, self).__init__(parent=parent)
 
         # set up the form class as a `ui` attribute
@@ -131,8 +131,8 @@ class CustomWidget(QtGui.QWidget):
 
         # init: energy
         self.einc = 0.01
-        self.epolar = epolar
-        self.erng = espect
+        self.epolar = self.params['energy']['polar']
+        self.erng = self.params['energy']['spect']
         # self.erng = np.arange(self.ui.box_energy_spect_min.value(),
         #                       self.ui.box_energy_spect_max.value()+self.einc,
         #                       self.einc)
@@ -143,6 +143,7 @@ class CustomWidget(QtGui.QWidget):
 
         self.ui.sld_angle_theta.setValue(self.params['theta'])
         self.ui.sld_angle_phi.setValue(self.params['phi'])
+        self.ui.sld_angle_gamma.setValue(self.params['gamma'])
         self.ui.sld_broad_eps.setValue(self.params['broad']['eps'])
         self.ui.sld_broad_chi.setValue(self.params['broad']['chi'])
         self.ui.sld_broad_out.setValue(self.params['broad']['out'])
@@ -195,7 +196,7 @@ class CustomWidget(QtGui.QWidget):
                                       theta =     self.ui.sld_angle_theta.value(),
                                       phi =       np.arange(0, 361),
                                       gamma =     self.ui.sld_angle_gamma.value(),
-                                      thick =     self.material[case]['lslab'],
+                                      thick =     self.material[case]['lslab']*5.2918E-2,
                                       sigma_eps = self.ui.sld_broad_eps.value(),
                                       sigma_chi = self.ui.sld_broad_chi.value(),
                                       sigma_out = 0)
@@ -210,7 +211,7 @@ class CustomWidget(QtGui.QWidget):
                                       theta =     self.ui.sld_angle_theta.value(),
                                       phi =       self.ui.sld_angle_phi.value(),
                                       gamma =     self.ui.sld_angle_gamma.value(),
-                                      thick =     self.material[case]['lslab'],
+                                      thick =     self.material[case]['lslab']*5.2918E-2,
                                       sigma_eps = self.ui.sld_broad_eps.value(),
                                       sigma_chi = self.ui.sld_broad_chi.value(),
                                       sigma_out = self.ui.sld_broad_out.value())
@@ -293,7 +294,7 @@ class CustomWidget(QtGui.QWidget):
                                  theta =     self.ui.sld_angle_theta.value(),
                                  phi =       np.arange(0, 361),
                                  gamma =     self.ui.sld_angle_gamma.value(),
-                                 thick =     self.material[case]['lslab'],
+                                 thick =     self.material[case]['lslab']*5.2918E-2,
                                  sigma_eps = self.ui.sld_broad_eps.value(),
                                  sigma_chi = self.ui.sld_broad_chi.value(),
                                  sigma_out = 0)
@@ -308,7 +309,7 @@ class CustomWidget(QtGui.QWidget):
                                  theta =     self.ui.sld_angle_theta.value(),
                                  phi =       self.ui.sld_angle_phi.value(),
                                  gamma =     self.ui.sld_angle_gamma.value(),
-                                 thick =     self.material[case]['lslab'],
+                                 thick =     self.material[case]['lslab']*5.2918E-2,
                                  sigma_eps = self.ui.sld_broad_eps.value(),
                                  sigma_chi = self.ui.sld_broad_chi.value(),
                                  sigma_out = self.ui.sld_broad_out.value())

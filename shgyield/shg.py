@@ -166,6 +166,7 @@ def ftranp(epsi, epsj, theta):
 def mrc2w(energy, eps0, fres1, fres2, theta, thick, mref):
     '''
     2w multiple reflection coefficient, see Eq. (18) of PRB 94, 115314 (2016).
+    THICKNESS MUST BE IN NANOMETERS!!!
     '''
     if mref:
         delta = 8*np.pi * ((energy * thick * 1e-9)/\
@@ -372,6 +373,7 @@ def rad_ss(energy, eps1w, eps2w, chi2, theta, phi, thick, mref):
 def shgyield(energy, eps_m1, eps_m2, eps_m3, chi2, theta, phi, thick, gamma=90, sigma_eps=0.0, sigma_chi=0.0, sigma_out=5.0, mode='3-layer', mref=True):
     '''
     Calculates the final SHG yield, see Eq. (38) of PRB 94, 115314 (2016).
+    THICKNESS MUST BE IN NANOMETERS!!!
     '''
 
     eps_m1_num = {key: val for key, val in eps_m1.items() if not isinstance(val, dict)}
