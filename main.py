@@ -1,18 +1,5 @@
 #!/usr/bin/env python
 
-'''
-todo:
-* SHG: SOME Nv=1 INSTANCES ARE HARDCODED, NEED TO GO BACK AND CHANGE
-* Allow for saving all data and parameters to NetCDF file, and final data to txt
-* Develop SHG functions into class
-* Improve rotation function and avoid running unless changed
-* Improve spline function and avoid running unless changed
-* Convert to absolute broadening to avoid trouble with polar plots
-
-* Develop GUI to ingest and pre-process data, provide initial values, etc.
-* Include every symmetry group (see Popov) into menus
-'''
-
 import numpy as np
 from PyQt5 import QtGui
 
@@ -132,7 +119,7 @@ INIT = {
 
 if __name__ == '__main__':
     app = QtGui.QApplication([])
-    widget = gui.CustomWidget(INIT, MATERIAL, EXP, 1e20)
+    widget = gui.CustomWidget(INIT, MATERIAL, EXP, 1)
     widget.show()
     app.exec_()
 
@@ -149,7 +136,7 @@ if __name__ == '__main__':
 #                      sigma_chi = INIT['broad']['chi'],
 #                      sigma_out = INIT['broad']['out'])
 
-# np.savetxt('test.spect.dat',
+# np.savetxt('spect.dat',
 #            np.column_stack((SPECT['energy'], SPECT['pp'], SPECT['sp'], SPECT['ps'], SPECT['ss'])),
 #            fmt = '%07.4f  %.8e  %.8e  %.8e  %.8e',
 #            header = 'w(eV)  RpP             RsP             RpS             RsS')

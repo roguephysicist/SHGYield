@@ -4,8 +4,16 @@ shgyield.py is a python module for exploring the SHG optical response of
 materials. It is well suited for 2D-materials, surfaces, bulks, and
 metamaterials. For a complete overview of the theory, see PRB 94, 115314 (2016).
 
-required packages:
-`numpy, scipy`
+todo:
+* SHG: SOME Nv=1 INSTANCES ARE HARDCODED, NEED TO GO BACK AND CHANGE
+* Allow for saving all data and parameters to NetCDF file, and final data to txt
+* Develop SHG functions into class
+* Improve rotation function and avoid running unless changed
+* Improve spline function and avoid running unless changed
+* Convert to absolute broadening to avoid trouble with polar plots
+
+* Develop GUI to ingest and pre-process data, provide initial values, etc.
+* Include every symmetry group (see Popov) into menus
 """
 
 import numpy as np
