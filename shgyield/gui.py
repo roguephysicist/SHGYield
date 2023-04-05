@@ -10,10 +10,11 @@ from shgyield.QtLayout import Ui_CustomWidget
 pg.setConfigOption('background', '#EAEAEA')
 pg.setConfigOption('foreground', 'k')
 pg.setConfigOption('antialias', True)
-pg.setConfigOption('useWeave', True)
+#pg.setConfigOption('useWeave', True)
 
 
-class CustomWidget(QtGui.QWidget):
+#class CustomWidget(QtGui.QWidget):
+class CustomWidget(QtWidgets.QWidget):
 
     def __init__(self, params, material, experiment, scale, parent=None):
         super(CustomWidget, self).__init__(parent=parent)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import numpy as np
-from PyQt5 import QtGui
+from PyQt5 import QtGui, QtWidgets
 
 import shgyield.gui as gui
 import shgyield.shg as shg
@@ -118,7 +118,7 @@ INIT = {
 }
 
 if __name__ == '__main__':
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     widget = gui.CustomWidget(INIT, MATERIAL, EXP, 1)
     widget.show()
     app.exec_()
