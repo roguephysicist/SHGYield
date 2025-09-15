@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import numpy as np
-from PyQt5 import QtGui, QtWidgets
+from PyQt6 import QtGui, QtWidgets
 
 import shgyield.gui as gui
 import shgyield.shg as shg
@@ -121,7 +121,7 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication([])
     widget = gui.CustomWidget(INIT, MATERIAL, EXP, 1)
     widget.show()
-    app.exec_()
+    app.exec()
 
 # SPECT = shg.shgyield(energy =    INIT['energy']['spect'],
 #                      eps_m1 =    MATERIAL['Si(111)']['medium 1']['eps'],

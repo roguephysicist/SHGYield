@@ -1,7 +1,7 @@
 import numpy as np
 import pyqtgraph as pg
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt6 import QtCore, QtGui, QtWidgets
 
 import shgyield.shg as shg
 from shgyield.QtLayout import Ui_CustomWidget
@@ -87,11 +87,11 @@ class CustomWidget(QtWidgets.QWidget):
             self.widgets['tab_' + pol]['exp_spect'].addLegend()
             for ang in np.arange(0, 361, 30):
                 self.widgets['tab_polar'][pol].addItem(
-                    pg.InfiniteLine(angle = ang, pen = pg.mkPen(color=0.8, width=0.5, style=QtCore.Qt.DashLine)))
+                    pg.InfiniteLine(angle = ang, pen = pg.mkPen(color=0.8, width=0.5, style=QtCore.Qt.PenStyle.DashLine)))
                 self.widgets['tab_' + pol]['thr_polar'].addItem(
-                    pg.InfiniteLine(angle = ang, pen = pg.mkPen(color=0.8, width=0.5, style=QtCore.Qt.DashLine)))
+                    pg.InfiniteLine(angle = ang, pen = pg.mkPen(color=0.8, width=0.5, style=QtCore.Qt.PenStyle.DashLine)))
                 self.widgets['tab_' + pol]['exp_polar'].addItem(
-                    pg.InfiniteLine(angle = ang, pen = pg.mkPen(color=0.8, width=0.5, style=QtCore.Qt.DashLine)))
+                    pg.InfiniteLine(angle = ang, pen = pg.mkPen(color=0.8, width=0.5, style=QtCore.Qt.PenStyle.DashLine)))
 
         # calculation time!
 
